@@ -859,6 +859,70 @@
 .auth-message.hidden {
   display: none;
       }
+    /* ========================================
+   ACCOUNT MENU
+======================================== */
+
+.account-area {
+    position: relative;
+    margin-left: auto;
+}
+
+.account-button {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: inherit;
+    padding: 9px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.account-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.account-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 220px;
+    padding: 14px;
+    border-radius: 14px;
+    background: #151820;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+    z-index: 1000;
+}
+
+.account-email {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 4px 4px 12px;
+    word-break: break-word;
+}
+
+.logout-button {
+    width: 100%;
+    border: 0;
+    background: rgba(255, 80, 80, 0.1);
+    color: #ff8b8b;
+    padding: 10px 12px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.logout-button:hover {
+    background: rgba(255, 80, 80, 0.18);
+}
+
+.hidden {
+    display: none !important;
+  }
   </style>
 </head>
 
@@ -940,6 +1004,21 @@
       <div class="status">
         <span class="status-dot"></span>
         <span>AI Voice Studio</span>
+      </div>
+      <div class="account-area">
+    <button id="accountButton" class="account-button">
+        👤 Account
+    </button>
+
+    <div id="accountMenu" class="account-menu hidden">
+        <div class="account-email" id="accountEmail">
+            Loading...
+        </div>
+
+        <button id="logoutButton" class="logout-button">
+            Log out
+        </button>
+    </div>
       </div>
 
     </header>
@@ -1736,6 +1815,119 @@ supabaseClient.auth.onAuthStateChange(
 
   }
 );
+    // ========================================
+// ACCOUNT MENU & LOGOUT
+// ========================================
+
+const accountButton =
+  document.getElementById("accountButton");
+
+const accountMenu =
+  document.getElementById("accountMenu");
+
+const accountEmail =
+  document.getElementById("accountEmail");
+
+const logoutButton =
+  document.getElementById("logoutButton");
+
+
+// ========================================
+// OPEN / CLOSE ACCOUNT MENU
+// ========================================
+
+accountButton.addEventListener("click", () => {
+
+  accountMenu.classList.toggle("hidden");
+
+});
+
+
+// ========================================
+// LOAD CURRENT USER
+// ========================================
+
+async function loadAccountInfo() {
+
+  const {
+    data: {
+      user
+    }
+  } = await supabaseClient.auth.getUser();
+
+  if (user) {
+
+    accountEmail.textContent =
+      user.email;
+
+  } else {
+
+    accountEmail.textContent =
+      "Not signed in";
+
+  }
+
+}
+
+
+// ========================================
+// LOGOUT
+// ========================================
+
+logoutButton.addEventListener("click", async () => {
+
+  const confirmLogout = window.confirm(
+    "Are you sure you want to log out?"
+  );
+
+  if (!confirmLogout) {
+    return;
+  }
+
+  logoutButton.disabled = true;
+
+  logoutButton.textContent =
+    "Logging out...";
+
+  const {
+    error
+  } = await supabaseClient.auth.signOut();
+
+  if (error) {
+
+    console.error(
+      "Logout error:",
+      error
+    );
+
+    logoutButton.disabled = false;
+
+    logoutButton.textContent =
+      "Log out";
+
+    showAuthMessage(
+      "Could not log out. Please try again."
+    );
+
+    return;
+
+  }
+
+  accountMenu.classList.add("hidden");
+
+  logoutButton.disabled = false;
+
+  logoutButton.textContent =
+    "Log out";
+
+});
+
+
+// ========================================
+// LOAD ACCOUNT INFORMATION
+// ========================================
+
+loadAccountInfo();
   </script>
 
 </body>
