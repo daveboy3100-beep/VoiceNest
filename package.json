@@ -1,1 +1,14 @@
-
+{
+  "name": "voicenest",
+  "version": "1.0.0",
+  "description": "VoiceNest AI Voice Studio",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@google/genai": "^1.15.0",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0"
+  }
+}
