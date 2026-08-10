@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="VoiceNest — Create natural AI voiceovers from your scripts."
+  >
+
+  <title>VoiceNest — AI Voice Studio</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #08090d;
+      --card: #11131a;
+      --card-soft: #151822;
+      --border: #292d38;
+      --text: #f5f7fb;
+      --muted: #9299a8;
+      --accent: #7c5cff;
+      --accent-light: #a48fff;
+      --success: #45d483;
+      --danger: #ff5f6d;
+    }
+
+    body {
+      min-height: 100vh;
+
+      background:
+        radial-gradient(
+          circle at top,
+          rgba(124, 92, 255, 0.18),
+          transparent 38%
+        ),
+        var(--bg);
+
+      color: var(--text);
+
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    button,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button,
+    select {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .app {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 22px 24px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      color: var(--text);
+      text-decoration: none;
+
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 12px;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-light)
+        );
+
+      color: white;
+      font-weight: 900;
+
+      box-shadow:
+        0 8px 24px rgba(124, 92, 255, 0.25);
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      color: var(--muted);
+
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+
+      border-radius: 50%;
+
+      background: var(--success);
+
+      box-shadow:
+        0 0 12px rgba(69, 212, 131, 0.7);
+    }
+
+    .main {
+      width: 100%;
+      max-width: 1180px;
+
+      margin: 0 auto;
+
+      padding: 40px 24px 80px;
+    }
+
+    .hero {
+      max-width: 760px;
+
+      margin: 0 auto 48px;
+
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+
+      padding: 8px 14px;
+
+      border: 1px solid rgba(124, 92, 255, 0.3);
+      border-radius: 999px;
+
+      background: rgba(124, 92, 255, 0.08);
+
+      color: var(--accent-light);
+
+      font-size: 0.72rem;
+      font-weight: 800;
+
+      letter-spacing: 0.08em;
+
+      margin-bottom: 22px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.7rem);
+
+      line-height: 1.03;
+
+      letter-spacing: -0.04em;
+
+      font-weight: 900;
+
+      margin-bottom: 20px;
+    }
+
+    .hero h1 span {
+      display: block;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-light)
+        );
+
+      -webkit-background-clip: text;
+      background-clip: text;
+
+      color: transparent;
+    }
+
+    .hero p {
+      max-width: 620px;
+
+      margin: 0 auto;
+
+      color: var(--muted);
+
+      font-size: 1.05rem;
+
+      line-height: 1.7;
+    }
+
+    .studio-card {
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 32px;
+
+      background: rgba(17, 19, 26, 0.92);
+
+      border: 1px solid var(--border);
+
+      border-radius: 24px;
+
+      box-shadow:
+        0 24px 80px rgba(0, 0, 0, 0.28);
+
+      backdrop-filter: blur(18px);
+    }
+
+    .section-heading {
+      margin-bottom: 26px;
+    }
+
+    .section-heading h2 {
+      font-size: 1.35rem;
+
+      font-weight: 800;
+
+      margin-bottom: 8px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+
+      font-size: 0.92rem;
+
+      line-height: 1.6;
+    }
+
+    .field-group {
+      margin-bottom: 24px;
+    }
+
+    .field-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 16px;
+
+      margin-bottom: 10px;
+    }
+
+    .field-label-row label {
+      color: var(--text);
+
+      font-size: 0.9rem;
+
+      font-weight: 700;
+    }
+
+    .script-stats {
+      display: flex;
+      align-items: center;
+
+      gap: 10px;
+
+      color: var(--muted);
+
+      font-size: 0.78rem;
+
+      font-weight: 600;
+
+      white-space: nowrap;
+    }
+
+    .stat-divider {
+      width: 3px;
+      height: 3px;
+
+      border-radius: 50%;
+
+      background: var(--border);
+    }
+
+    #script {
+      width: 100%;
+
+      min-height: 270px;
+
+      padding: 18px;
+
+      resize: vertical;
+
+      border: 1px solid var(--border);
+
+      border-radius: 16px;
+
+      outline: none;
+
+      background: #0c0e14;
+
+      color: var(--text);
+
+      line-height: 1.7;
+
+      font-size: 0.95rem;
+
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    #script::placeholder {
+      color: #626978;
+    }
+
+    #script:focus {
+      border-color: rgba(124, 92, 255, 0.75);
+
+      box-shadow:
+        0 0 0 3px rgba(124, 92, 255, 0.12);
+    }
+
+    .controls-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+      gap: 18px;
+
+      margin-bottom: 24px;
+    }
+
+    .control-group {
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 9px;
+    }
+
+    .control-group label {
+      font-size: 0.85rem;
+
+      font-weight: 700;
+    }
+
+    .control-group select {
+      width: 100%;
+
+      padding: 13px 14px;
+
+      border: 1px solid var(--border);
+
+      border-radius: 12px;
+
+      outline: none;
+
+      background: #0c0e14;
+
+      color: var(--text);
+
+      transition:
+        border-color 0.2s ease;
+    }
+
+    .control-group select:focus {
+      border-color: rgba(124, 92, 255, 0.75);
+    }
+
+    .button-row {
+      display: flex;
+
+      align-items: center;
+
+      gap: 12px;
+
+      margin-top: 4px;
+    }
+
+    .generate-btn,
+    .clear-btn {
+      min-height: 48px;
+
+      border-radius: 13px;
+
+      border: none;
+
+      font-weight: 800;
+
+      transition:
+        transform 0.2s ease,
+        opacity 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .generate-btn {
+      flex: 1;
+
+      padding: 0 22px;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-light)
+        );
+
+      color: white;
+
+      box-shadow:
+        0 10px 28px rgba(124, 92, 255, 0.25);
+    }
+
+    .generate-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+
+      box-shadow:
+        0 14px 34px rgba(124, 92, 255, 0.35);
+    }
+
+    .clear-btn {
+      padding: 0 22px;
+
+      border: 1px solid var(--border);
+
+      background: #171a23;
+
+      color: var(--text);
+    }
+
+    .clear-btn:hover:not(:disabled) {
+      background: #1d212c;
+    }
+
+    .message {
+      margin-top: 18px;
+
+      padding: 13px 15px;
+
+      border-radius: 12px;
+
+      font-size: 0.85rem;
+
+      line-height: 1.5;
+    }
+
+    .message.hidden {
+      display: none;
+    }
+
+    .message.loading {
+      background:
+        rgba(124, 92, 255, 0.08);
+
+      border:
+        1px solid rgba(124, 92, 255, 0.22);
+
+      color: var(--accent-light);
+    }
+
+    .message.success {
+      background:
+        rgba(69, 212, 131, 0.08);
+
+      border:
+        1px solid rgba(69, 212, 131, 0.22);
+
+      color: var(--success);
+    }
+
+    .message.error {
+      background:
+        rgba(255, 95, 109, 0.08);
+
+      border:
+        1px solid rgba(255, 95, 109, 0.22);
+
+      color: var(--danger);
+    }
+
+    .result-panel {
+      margin-top: 24px;
+
+      padding: 22px;
+
+      border: 1px solid var(--border);
+
+      border-radius: 18px;
+
+      background: var(--card-soft);
+    }
+
+    .result-panel.hidden {
+      display: none;
+    }
+
+    .result-header {
+      margin-bottom: 18px;
+    }
+
+    .result-label {
+      display: inline-block;
+
+      margin-bottom: 6px;
+
+      color: var(--success);
+
+      font-size: 0.7rem;
+
+      font-weight: 900;
+
+      letter-spacing: 0.08em;
+    }
+
+    .result-header h3 {
+      font-size: 1.05rem;
+
+      font-weight: 800;
+    }
+
+    #audioPlayer {
+      width: 100%;
+
+      margin-bottom: 16px;
+    }
+
+    .download-btn {
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      min-height: 44px;
+
+      padding: 0 18px;
+
+      border-radius: 11px;
+
+      background: #202430;
+
+      border: 1px solid var(--border);
+
+      color: var(--text);
+
+      text-decoration: none;
+
+      font-size: 0.85rem;
+
+      font-weight: 800;
+
+      transition:
+        background 0.2s ease;
+    }
+
+    .download-btn:hover {
+      background: #292e3a;
+    }
+
+    footer {
+      width: 100%;
+
+      padding: 0 24px 30px;
+
+      text-align: center;
+
+      color: var(--muted);
+
+      font-size: 0.78rem;
+    }
+
+    @media (max-width: 700px) {
+      .topbar {
+        padding: 18px 16px;
+      }
+
+      .brand {
+        font-size: 1.08rem;
+      }
+
+      .brand-mark {
+        width: 34px;
+        height: 34px;
+
+        border-radius: 10px;
+      }
+
+      .status {
+        font-size: 0.72rem;
+      }
+
+      .main {
+        padding:
+          28px 16px 60px;
+      }
+
+      .hero {
+        margin-bottom: 34px;
+      }
+
+      .hero-badge {
+        font-size: 0.62rem;
+
+        padding: 7px 11px;
+      }
+
+      .hero h1 {
+        font-size:
+          clamp(
+            2.25rem,
+            12vw,
+            3.4rem
+          );
+      }
+
+      .hero p {
+        font-size: 0.92rem;
+      }
+
+      .studio-card {
+        padding: 22px 16px;
+
+        border-radius: 20px;
+      }
+
+      .section-heading h2 {
+        font-size: 1.18rem;
+      }
+
+      .section-heading p {
+        font-size: 0.84rem;
+      }
+
+      .field-label-row {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 7px;
+      }
+
+      .script-stats {
+        font-size: 0.72rem;
+
+        white-space: normal;
+
+        flex-wrap: wrap;
+      }
+
+      #script {
+        min-height: 240px;
+
+        padding: 15px;
+      }
+
+      .controls-grid {
+        grid-template-columns: 1fr;
+
+        gap: 14px;
+      }
+
+      .button-row {
+        flex-direction: column;
+      }
+
+      .generate-btn,
+      .clear-btn {
+        width: 100%;
+      }
+
+      .result-panel {
+        padding: 17px;
+      }
+
+      footer {
+        padding:
+          0 16px 24px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .status {
+        display: none;
+      }
+
+      .hero h1 {
+        font-size: 2.15rem;
+      }
+
+      .studio-card {
+        padding: 18px 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <header class="topbar">
+
+      <a href="#" class="brand">
+        <span class="brand-mark">V</span>
+        <span>VoiceNest</span>
+      </a>
+
+      <div class="status">
+        <span class="status-dot"></span>
+        <span>AI Voice Studio</span>
+      </div>
+
+    </header>
+
+    <main class="main">
+
+      <section class="hero">
+
+        <div class="hero-badge">
+          POWERED BY GEMINI AI
+        </div>
+
+        <h1>
+          Turn your words into
+          <span>natural voice.</span>
+        </h1>
+
+        <p>
+          Create smooth, professional AI voiceovers
+          from your scripts in seconds.
+        </p>
+
+      </section>
+
+      <section class="studio-card">
+
+        <div class="section-heading">
+
+          <h2>
+            Create your voiceover
+          </h2>
+
+          <p>
+            Paste your script, choose a voice and style,
+            then generate your audio.
+          </p>
+
+        </div>
+
+        <div class="field-group">
+
+          <div class="field-label-row">
+
+            <label for="script">
+              Your script
+            </label>
+
+            <div
+              class="script-stats"
+              aria-live="polite"
+            >
+
+              <span id="charCount">
+                0 characters
+              </span>
+
+              <span class="stat-divider"></span>
+
+              <span id="wordCount">
+                0 words
+              </span>
+
+              <span class="stat-divider"></span>
+
+              <span id="durationCount">
+                ~0 sec
+              </span>
+
+            </div>
+
+          </div>
+
+          <textarea
+            id="script"
+            placeholder="Paste or write your script here..."
+            maxlength="10000"
+          ></textarea>
+
+        </div>
+
+        <div class="controls-grid">
+
+          <div class="control-group">
+
+            <label for="voice">
+              Voice
+            </label>
+
+            <select id="voice">
+
+              <option value="Kore">
+                Kore — Warm & Natural
+              </option>
+
+              <option value="Puck">
+                Puck — Friendly & Bright
+              </option>
+
+              <option value="Charon">
+                Charon — Deep & Clear
+              </option>
+
+              <option value="Fenrir">
+                Fenrir — Strong & Confident
+              </option>
+
+              <option value="Aoede">
+                Aoede — Smooth & Expressive
+              </option>
+
+            </select>
+
+          </div>
+
+          <div class="control-group">
+
+            <label for="style">
+              Voice style
+            </label>
+
+            <select id="style">
+
+              <option value="natural">
+                Natural
+              </option>
+
+              <option value="professional">
+                Professional
+              </option>
+
+              <option value="calm">
+                Calm
+              </option>
+
+              <option value="energetic">
+                Energetic
+              </option>
+
+              <option value="cinematic">
+                Cinematic
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+        <div class="button-row">
+
+          <button
+            type="button"
+            class="generate-btn"
+            id="generateBtn"
+          >
+            Generate Voice
+          </button>
+
+          <button
+            type="button"
+            class="clear-btn"
+            id="clearBtn"
+          >
+            Clear
+          </button>
+
+        </div>
+
+        <div
+          id="message"
+          class="message hidden"
+          role="alert"
+        ></div>
+
+        <div
+          id="resultPanel"
+          class="result-panel hidden"
+        >
+
+          <div class="result-header">
+
+            <span class="result-label">
+              VOICEOVER READY
+            </span>
+
+            <h3>
+              Your generated voice
+            </h3>
+
+          </div>
+
+          <audio
+            id="audioPlayer"
+            controls
+          ></audio>
+
+          <a
+            id="downloadBtn"
+            class="download-btn"
+            href="#"
+            download="voicenest-voiceover.wav"
+          >
+            Download WAV
+          </a>
+
+        </div>
+
+      </section>
+
+    </main>
+
+    <footer>
+
+      <p>
+        © 2026 VoiceNest. Create. Speak. Share.
+      </p>
+
+    </footer>
+
+  </div>
+
+  <script>
+    const scriptInput =
+      document.getElementById("script");
+
+    const charCount =
+      document.getElementById("charCount");
+
+    const wordCount =
+      document.getElementById("wordCount");
+
+    const durationCount =
+      document.getElementById("durationCount");
+
+    const voiceSelect =
+      document.getElementById("voice");
+
+    const styleSelect =
+      document.getElementById("style");
+
+    const generateBtn =
+      document.getElementById("generateBtn");
+
+    const clearBtn =
+      document.getElementById("clearBtn");
+
+    const message =
+      document.getElementById("message");
+
+    const resultPanel =
+      document.getElementById("resultPanel");
+
+    const audioPlayer =
+      document.getElementById("audioPlayer");
+
+    const downloadBtn =
+      document.getElementById("downloadBtn");
+
+
+    /*
+      Voice duration estimate
+
+      We use approximately 150 words per minute
+      as a normal narration speed.
+
+      This is only an estimate because actual
+      duration depends on the selected voice,
+      pauses, punctuation and speaking style.
+    */
+
+    const WORDS_PER_MINUTE = 150;
+
+
+    function updateScriptStats() {
+
+      const text =
+        scriptInput.value;
+
+      const characters =
+        text.length;
+
+      const words =
+        text.trim()
+          ? text.trim().split(/\s+/).length
+          : 0;
+
+      const totalSeconds =
+        Math.ceil(
+          (words / WORDS_PER_MINUTE) * 60
+        );
+
+
+      charCount.textContent =
+        `${characters} character${characters === 1 ? "" : "s"}`;
+
+      wordCount.textContent =
+        `${words} word${words === 1 ? "" : "s"}`;
+
+
+      if (totalSeconds < 60) {
+
+        durationCount.textContent =
+          `~${totalSeconds} sec`;
+
+      } else {
+
+        const minutes =
+          Math.floor(totalSeconds / 60);
+
+        const seconds =
+          totalSeconds % 60;
+
+        if (seconds === 0) {
+
+          durationCount.textContent =
+            `~${minutes} min`;
+
+        } else {
+
+          durationCount.textContent =
+            `~${minutes} min ${seconds} sec`;
+        }
+      }
+    }
+
+
+    function showMessage(
+      text,
+      type
+    ) {
+
+      message.textContent = text;
+
+      message.className =
+        `message ${type}`;
+    }
+
+
+    function hideMessage() {
+
+      message.textContent = "";
+
+      message.className =
+        "message hidden";
+    }
+
+
+    function setGeneratingState(
+      isGenerating
+    ) {
+
+      generateBtn.disabled =
+        isGenerating;
+
+      clearBtn.disabled =
+        isGenerating;
+
+      voiceSelect.disabled =
+        isGenerating;
+
+      styleSelect.disabled =
+        isGenerating;
+
+      if (isGenerating) {
+
+        generateBtn.textContent =
+          "Generating...";
+
+      } else {
+
+        generateBtn.textContent =
+          "Generate Voice";
+      }
+    }
+
+
+    scriptInput.addEventListener(
+      "input",
+      updateScriptStats
+    );
+
+
+    clearBtn.addEventListener(
+      "click",
+      () => {
+
+        scriptInput.value = "";
+
+        updateScriptStats();
+
+        audioPlayer.pause();
+
+        audioPlayer.removeAttribute(
+          "src"
+        );
+
+        audioPlayer.load();
+
+        downloadBtn.removeAttribute(
+          "href"
+        );
+
+        resultPanel.className =
+          "result-panel hidden";
+
+        hideMessage();
+
+        scriptInput.focus();
+      }
+    );
+
+
+    generateBtn.addEventListener(
+      "click",
+      async () => {
+
+        const script =
+          scriptInput.value.trim();
+
+        const voice =
+          voiceSelect.value;
+
+        const style =
+          styleSelect.value;
+
+
+        if (!script) {
+
+          showMessage(
+            "Please enter a script before generating your voice.",
+            "error"
+          );
+
+          scriptInput.focus();
+
+          return;
+        }
+
+
+        setGeneratingState(true);
+
+        showMessage(
+          "Creating your voiceover...",
+          "loading"
+        );
+
+
+        resultPanel.className =
+          "result-panel hidden";
+
+
+        try {
+
+          const response =
+            await fetch(
+              "/api/generate",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body: JSON.stringify({
+                  text: script,
+                  voice: voice,
+                  style: style
+                })
+              }
+            );
+
+
+          if (!response.ok) {
+
+            let errorMessage =
+              "Voice generation failed.";
+
+
+            try {
+
+              const errorData =
+                await response.json();
+
+              if (errorData.error) {
+
+                errorMessage =
+                  errorData.error;
+              }
+
+            } catch {
+
+              // Keep default error message.
+            }
+
+
+            throw new Error(
+              errorMessage
+            );
+          }
+
+
+          const audioBlob =
+            await response.blob();
+
+
+          if (!audioBlob.size) {
+
+            throw new Error(
+              "No audio was returned by the server."
+            );
+          }
+
+
+          const audioUrl =
+            URL.createObjectURL(
+              audioBlob
+            );
+
+
+          audioPlayer.src =
+            audioUrl;
+
+          downloadBtn.href =
+            audioUrl;
+
+          downloadBtn.download =
+            "voicenest-voiceover.wav";
+
+
+          resultPanel.className =
+            "result-panel";
+
+
+          showMessage(
+            "Voice generated successfully.",
+            "success"
+          );
+
+
+          audioPlayer.load();
+
+        } catch (error) {
+
+          console.error(
+            "Voice generation error:",
+            error
+          );
+
+
+          showMessage(
+            error.message ||
+              "Something went wrong while generating your voice.",
+            "error"
+          );
+
+
+          resultPanel.className =
+            "result-panel hidden";
+
+        } finally {
+
+          setGeneratingState(
+            false
+          );
+        }
+      }
+    );
+
+
+    updateScriptStats();
+  </script>
+
+</body>
+</html>
