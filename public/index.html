@@ -720,10 +720,213 @@
         padding: 18px 13px;
       }
     }
+    /* ================================
+   AUTHENTICATION SCREEN
+   ================================ */
+
+.auth-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg, #0b0b0f);
+}
+
+.auth-screen.hidden {
+  display: none;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 430px;
+  padding: 34px;
+  border-radius: 24px;
+  background: var(--card, #15151c);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.brand-mark {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-weight: 800;
+  background: #ffffff;
+  color: #111111;
+}
+
+.auth-card h1 {
+  margin: 0 0 10px;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.auth-card > p {
+  margin: 0 0 26px;
+  opacity: 0.65;
+  line-height: 1.5;
+}
+
+.auth-field {
+  margin-bottom: 18px;
+}
+
+.auth-field label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.auth-field input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  outline: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: inherit;
+  font: inherit;
+}
+
+.auth-field input:focus {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.auth-submit {
+  width: 100%;
+  margin-top: 6px;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  background: #ffffff;
+  color: #111111;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.auth-submit:hover {
+  transform: translateY(-1px);
+}
+
+.auth-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.auth-switch {
+  width: 100%;
+  margin-top: 18px;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  opacity: 0.7;
+  cursor: pointer;
+  font: inherit;
+}
+
+.auth-switch:hover {
+  opacity: 1;
+}
+
+.auth-message {
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.auth-message.hidden {
+  display: none;
+      }
   </style>
 </head>
 
 <body>
+  <!-- AUTHENTICATION SCREEN -->
+<div id="authScreen" class="auth-screen hidden">
+
+  <div class="auth-card">
+
+    <div class="auth-brand">
+      <span class="brand-mark">V</span>
+      <span>VoiceNest</span>
+    </div>
+
+    <h1 id="authTitle">Welcome to VoiceNest</h1>
+
+    <p id="authSubtitle">
+      Create an account to start creating.
+    </p>
+
+    <div id="authMessage" class="auth-message hidden"></div>
+
+    <form id="authForm">
+
+      <div class="auth-field">
+        <label for="authEmail">Email</label>
+
+        <input
+          type="email"
+          id="authEmail"
+          placeholder="you@example.com"
+          required
+        >
+      </div>
+
+      <div class="auth-field">
+        <label for="authPassword">Password</label>
+
+        <input
+          type="password"
+          id="authPassword"
+          placeholder="Enter your password"
+          required
+          minlength="6"
+        >
+      </div>
+
+      <button
+        type="submit"
+        id="authSubmit"
+        class="auth-submit"
+      >
+        Create Account
+      </button>
+
+    </form>
+
+    <button
+      type="button"
+      id="authSwitch"
+      class="auth-switch"
+    >
+      Already have an account? Sign in
+    </button>
+
+  </div>
+
+</div>
 
   <div class="app">
 
@@ -957,6 +1160,7 @@
     </footer>
 
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
     const scriptInput =
@@ -1308,6 +1512,228 @@
 
 
     updateScriptStats();
+    // ========================================
+// SUPABASE CONNECTION
+// ========================================
+
+const SUPABASE_URL = "https://okbipirfsusciztzstka.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_wp1MJ7xmnJjseGjFtM9PWQ_xQWRh7hW";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+    // ========================================
+// VOICENEST AUTHENTICATION
+// ========================================
+
+const authScreen = document.getElementById("authScreen");
+const authForm = document.getElementById("authForm");
+const authTitle = document.getElementById("authTitle");
+const authSubtitle = document.getElementById("authSubtitle");
+const authSubmit = document.getElementById("authSubmit");
+const authSwitch = document.getElementById("authSwitch");
+const authMessage = document.getElementById("authMessage");
+
+const authEmail = document.getElementById("authEmail");
+const authPassword = document.getElementById("authPassword");
+
+let isSignUpMode = true;
+
+
+// Show authentication message
+function showAuthMessage(message) {
+  authMessage.textContent = message;
+  authMessage.classList.remove("hidden");
+}
+
+
+// Hide authentication message
+function hideAuthMessage() {
+  authMessage.textContent = "";
+  authMessage.classList.add("hidden");
+}
+
+
+// Switch between Sign Up and Sign In
+authSwitch.addEventListener("click", () => {
+
+  isSignUpMode = !isSignUpMode;
+
+  hideAuthMessage();
+
+  if (isSignUpMode) {
+
+    authTitle.textContent =
+      "Welcome to VoiceNest";
+
+    authSubtitle.textContent =
+      "Create an account to start creating.";
+
+    authSubmit.textContent =
+      "Create Account";
+
+    authSwitch.textContent =
+      "Already have an account? Sign in";
+
+  } else {
+
+    authTitle.textContent =
+      "Welcome back";
+
+    authSubtitle.textContent =
+      "Sign in to continue creating.";
+
+    authSubmit.textContent =
+      "Sign In";
+
+    authSwitch.textContent =
+      "Don't have an account? Create one";
+
+  }
+
+});
+
+
+// Handle authentication form
+authForm.addEventListener("submit", async (event) => {
+
+  event.preventDefault();
+
+  hideAuthMessage();
+
+  const email = authEmail.value.trim();
+  const password = authPassword.value;
+
+  if (!email || !password) {
+
+    showAuthMessage(
+      "Please enter your email and password."
+    );
+
+    return;
+  }
+
+  authSubmit.disabled = true;
+
+  authSubmit.textContent =
+    isSignUpMode
+      ? "Creating account..."
+      : "Signing in...";
+
+  try {
+
+    let result;
+
+    if (isSignUpMode) {
+
+      result =
+        await supabaseClient.auth.signUp({
+          email: email,
+          password: password
+        });
+
+    } else {
+
+      result =
+        await supabaseClient.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+    }
+
+    if (result.error) {
+      throw result.error;
+    }
+
+    if (isSignUpMode) {
+
+      showAuthMessage(
+        "Account created successfully!"
+      );
+
+      authForm.reset();
+
+    } else {
+
+      authScreen.classList.add("hidden");
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Authentication error:",
+      error
+    );
+
+    showAuthMessage(
+      error.message ||
+      "Authentication failed. Please try again."
+    );
+
+  } finally {
+
+    authSubmit.disabled = false;
+
+    authSubmit.textContent =
+      isSignUpMode
+        ? "Create Account"
+        : "Sign In";
+
+  }
+
+});
+    // ========================================
+// CHECK EXISTING SESSION
+// ========================================
+
+async function checkAuthSession() {
+
+  const {
+    data: {
+      session
+    }
+  } = await supabaseClient.auth.getSession();
+
+  if (session) {
+
+    // User is already signed in
+    authScreen.classList.add("hidden");
+
+  } else {
+
+    // User is not signed in
+    authScreen.classList.remove("hidden");
+
+  }
+
+}
+
+
+// Run authentication check
+checkAuthSession();
+
+
+// Listen for authentication changes
+supabaseClient.auth.onAuthStateChange(
+  (event, session) => {
+
+    if (session) {
+
+      authScreen.classList.add("hidden");
+
+    } else {
+
+      authScreen.classList.remove("hidden");
+
+    }
+
+  }
+);
   </script>
 
 </body>
