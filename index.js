@@ -7,7 +7,10 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_PUBLISHABLE_KEY
+);
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
 });
