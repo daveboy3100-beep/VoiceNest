@@ -1851,13 +1851,33 @@ authForm.addEventListener("submit", async (event) => {
 
     if (isSignUpMode) {
 
-      showAuthMessage(
-        `We've sent a verification link to ${email}. Please check your inbox and verify your email before signing in.`,
-        "Check your email",
-        "📧"
-      );
+  const createdUser = result.data?.user;
 
-      authForm.reset();
+  // Detect an existing confirmed account
+  if (
+    createdUser &&
+    Array.isArray(createdUser.identities) &&
+    createdUser.identities.length === 0
+  ) {
+
+    showAuthMessage(
+      "This email already has a VoiceNest account. Kindly sign in instead.",
+      "Account already exists",
+      "⚠️"
+    );
+
+    authForm.reset();
+
+    return;
+  }
+
+  showAuthMessage(
+    `We've sent a verification link to ${email}. Please check your inbox and verify your email before signing in.`,
+    "Check your email",
+    "📧"
+  );
+
+  authForm.reset();
 
     }
 
