@@ -1778,7 +1778,6 @@ authSwitch.addEventListener("click", () => {
 
 });
 
-
 // Handle authentication form
 authForm.addEventListener("submit", async (event) => {
 
@@ -1792,7 +1791,9 @@ authForm.addEventListener("submit", async (event) => {
   if (!email || !password) {
 
     showAuthMessage(
-      "Please enter your email and password."
+      "Please enter your email and password.",
+      "Missing information",
+      "⚠️"
     );
 
     return;
@@ -1809,6 +1810,10 @@ authForm.addEventListener("submit", async (event) => {
 
     let result;
 
+    // ========================================
+    // CREATE ACCOUNT
+    // ========================================
+
     if (isSignUpMode) {
 
       result =
@@ -1817,7 +1822,13 @@ authForm.addEventListener("submit", async (event) => {
           password: password
         });
 
-    } else {
+    }
+
+    // ========================================
+    // SIGN IN
+    // ========================================
+
+    else {
 
       result =
         await supabaseClient.auth.signInWithPassword({
@@ -1827,24 +1838,35 @@ authForm.addEventListener("submit", async (event) => {
 
     }
 
+    // ========================================
+    // HANDLE SUPABASE ERROR
+    // ========================================
+
     if (result.error) {
       throw result.error;
     }
 
+    // ========================================
+    // SIGN UP SUCCESS
+    // ========================================
+
     if (isSignUpMode) {
 
       showAuthMessage(
-  `We've sent a verification link to ${authEmail.value}. Please check your inbox and verify your email before signing in.`,
-  "Check your email",
-  "📧"
-);
-
-    
-      
+        `We've sent a verification link to ${email}. Please check your inbox and verify your email before signing in.`,
+        "Check your email",
+        "📧"
+      );
 
       authForm.reset();
 
-    } else {
+    }
+
+    // ========================================
+    // SIGN IN SUCCESS
+    // ========================================
+
+    else {
 
       authScreen.classList.add("hidden");
 
@@ -1859,7 +1881,9 @@ authForm.addEventListener("submit", async (event) => {
 
     showAuthMessage(
       error.message ||
-      "Authentication failed. Please try again."
+      "Authentication failed. Please try again.",
+      "Authentication failed",
+      "❌"
     );
 
   } finally {
@@ -1874,6 +1898,7 @@ authForm.addEventListener("submit", async (event) => {
   }
 
 });
+
     // ========================================
 // CHECK EXISTING SESSION
 // ========================================
