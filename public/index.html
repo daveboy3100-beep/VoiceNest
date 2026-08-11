@@ -923,6 +923,70 @@
 .hidden {
     display: none !important;
   }
+    /* ========================================
+   AUTH MESSAGE / NOTIFICATION
+======================================== */
+
+.auth-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 18px 0;
+    padding: 15px 16px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    animation: authMessageIn 0.25s ease;
+}
+
+.auth-message.hidden {
+    display: none;
+}
+
+.auth-message-icon {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 19px;
+}
+
+.auth-message-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.auth-message-content strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.auth-message-content p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+@keyframes authMessageIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    }
   </style>
 </head>
 
@@ -943,7 +1007,25 @@
       Create an account to start creating.
     </p>
 
-    <div id="authMessage" class="auth-message hidden"></div>
+    <div id="authMessage" class="auth-message hidden">
+
+  <div class="auth-message-icon" id="authMessageIcon">
+    📧
+  </div>
+
+  <div class="auth-message-content">
+
+    <strong id="authMessageTitle">
+      Check your email
+    </strong>
+
+    <p id="authMessageText">
+      We've sent a verification link to your email address.
+    </p>
+
+  </div>
+
+    </div>
 
     <form id="authForm">
 
@@ -1623,10 +1705,31 @@ let isSignUpMode = true;
 
 
 // Show authentication message
-function showAuthMessage(message) {
-  authMessage.textContent = message;
+function showAuthMessage(
+  message,
+  title = "Notice",
+  icon = "ℹ️"
+) {
+
+  const authMessageIcon =
+    document.getElementById("authMessageIcon");
+
+  const authMessageTitle =
+    document.getElementById("authMessageTitle");
+
+  const authMessageText =
+    document.getElementById("authMessageText");
+
+
+  authMessageIcon.textContent = icon;
+
+  authMessageTitle.textContent = title;
+
+  authMessageText.textContent = message;
+
   authMessage.classList.remove("hidden");
 }
+
 
 
 // Hide authentication message
@@ -1731,8 +1834,11 @@ authForm.addEventListener("submit", async (event) => {
     if (isSignUpMode) {
 
       showAuthMessage(
-  "Account created! Please check your email and click the verification link before signing in."
+  `We've sent a verification link to ${authEmail.value}. Please check your inbox and verify your email before signing in.`,
+  "Check your email",
+  "📧"
 );
+
     
       
 
