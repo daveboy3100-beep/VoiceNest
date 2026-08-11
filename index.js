@@ -2,7 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
 const { GoogleGenAI } = require("@google/genai");
-
+const { createClient } = require("@supabase/supabase-js");
 dotenv.config();
 
 const app = express();
