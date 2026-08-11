@@ -1555,24 +1555,28 @@
 
         try {
 
-          const response =
-            await fetch(
-              "/api/generate",
-              {
-                method: "POST",
+          const {
+  data: { session }
+} = await supabaseClient.auth.getSession();
 
-                headers: {
-                  "Content-Type":
-                    "application/json"
-                },
+if (!session) {
+  throw new Error("Please sign in before generating a voiceover.");
+}
 
-                body: JSON.stringify({
-                  text: script,
-                  voice: voice,
-                  style: style
-                })
-              }
-            );
+const response = await fetch("/api/generate", {
+  method: "POST",
+
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${session.access_token}`
+  },
+
+  body: JSON.stringify({
+    text: script,
+    voice: voice,
+    style: style
+  })
+});
 
 
           if (!response.ok) {
