@@ -196,7 +196,7 @@ app.post("/api/generate", (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(
     `VoiceNest is running on port ${PORT}`
   );
