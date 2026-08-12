@@ -23,8 +23,30 @@ app.use(
   )
 );
 
-app.get("/api/health", (req, res) => {
-  res.json({
+app.post("/api/generate", async (req, res) => {
+
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+      error: "Please sign in before generating a voiceover."
+    });
+  }
+
+  const accessToken = authHeader.replace("Bearer ", "");
+
+  const {
+    data: { user },
+    error: authError
+  } = await supabase.auth.getUser(accessToken);
+
+  if (authError || !user) {
+    return res.status(401).json({
+      error: "Your session is invalid. Please sign in again."
+    });
+  }
+
+  const userId = user.id;
     status: "ok",
     message: "VoiceNest backend is working"
   });
