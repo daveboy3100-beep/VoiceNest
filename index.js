@@ -22,7 +22,12 @@ app.use(
     path.join(__dirname, "public")
   )
 );
-
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    message: "VoiceNest backend is working"
+  });
+});
 app.post("/api/generate", async (req, res) => {
 
   const authHeader = req.headers.authorization;
@@ -45,14 +50,8 @@ app.post("/api/generate", async (req, res) => {
       error: "Your session is invalid. Please sign in again."
     });
   }
-
-  const userId = user.id;
-    status: "ok",
-    message: "VoiceNest backend is working"
-  });
-});
-
-app.post("/api/generate", (req, res) => {
+const userId = user.id;
+  
   const text = String(req.body.text || "").trim();
   const voice = req.body.voice || "Kore";
   const style = req.body.style || "natural";
@@ -69,7 +68,8 @@ app.post("/api/generate", (req, res) => {
     });
   }
 
-  const styleInstructions = {
+  const styleInstructio 
+    ns = {
     natural: "Speak naturally and conversationally.",
     professional: "Speak professionally and clearly.",
     calm: "Speak calmly and smoothly.",
