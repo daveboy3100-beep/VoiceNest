@@ -46,13 +46,41 @@ app.post("/api/generate", async (req, res) => {
   } = await supabase.auth.getUser(accessToken);
 
   if (authError || !user) {
-    return res.status(401).json({
-      error: "Your session is invalid. Please sign in again."
-    });
-  }
+  return res.status(401).json({
+    error: "Your session is invalid. Please sign in again."
+  });
+}
+
 const userId = user.id;
-  
-  const text = String(req.body.text || "").trim();
+
+const today = new Date().toISOString().split("T")[0];
+
+const { data: usageData, error: usageError } = await supabase
+  .from("voice_usage")
+  .select("generation_count")
+  .eq("user_id", userId)
+  .eq("usage_date", today)
+  .maybeSingle();
+
+if (usageError) {
+  console.error("Usage check error:", usageError);
+
+  return res.status(500).json({
+    error: "Unable to check your daily voice usage."
+  });
+}
+
+const DAILY_LIMIT = 5;
+const usageCount = usageData?.generation_count || 0;
+
+if (usageCount >= DAILY_LIMIT) {
+  return res.status(429).json({
+    error:
+      "Daily voice generation limit reached. Please try again tomorrow."
+  });
+}
+
+const text = String(req.body.text || "").trim();
   const voice = req.body.voice || "Kore";
   const style = req.body.style || "natural";
 
@@ -103,7 +131,7 @@ const userId = user.id;
       }
     }
   })
-    .then((response) => {
+    .then(async (response) => {
       const audioPart =
         response.candidates?.[0]?.content?.parts?.find(
           (part) => part.inlineData?.data
@@ -168,19 +196,38 @@ const userId = user.id;
       );
 
       const wavFile = Buffer.concat([
-        header,
-        pcmData
-      ]);
+  header,
+  pcmData
+]);
 
-      res.set({
-        "Content-Type": "audio/wav",
-        "Content-Length": wavFile.length,
-        "Cache-Control": "no-store"
-      });
+const { error: usageInsertError } = await supabase.rpc(
+  "increment_voice_usage",
+  {
+    p_user_id: userId,
+    p_usage_date: today
+  }
+);
 
-      res.send(wavFile);
-    })
-    .catch((error) => {
+if (usageInsertError) {
+  console.error(
+    "Usage record error:",
+    usageInsertError
+  );
+
+  return res.status(500).json({
+    error: "Voice generated, but usage could not be recorded."
+  });
+}
+
+res.set({
+  "Content-Type": "audio/wav",
+  "Content-Length": wavFile.length,
+  "Cache-Control": "no-store"
+});
+
+res.send(wavFile);
+})
+.catch((error) => {
       console.error(
         "Voice generation error:",
         error
