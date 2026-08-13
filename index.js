@@ -68,15 +68,13 @@ const userId = user.id;
     });
   }
 
-  const styleInstructio 
-    ns = {
-    natural: "Speak naturally and conversationally.",
-    professional: "Speak professionally and clearly.",
-    calm: "Speak calmly and smoothly.",
-    energetic: "Speak with energy and enthusiasm.",
-    cinematic: "Speak with a dramatic cinematic storytelling tone."
-  };
-
+  const styleInstructions = {
+  natural: "Speak naturally and conversationally.",
+  professional: "Speak professionally and clearly.",
+  calm: "Speak calmly and smoothly.",
+  energetic: "Speak with energy and enthusiasm.",
+  cinematic: "Speak with a dramatic cinematic storytelling tone."
+};
   const prompt =
     `${styleInstructions[style] || styleInstructions.natural} ` +
     "Read the following script exactly as written. " +
