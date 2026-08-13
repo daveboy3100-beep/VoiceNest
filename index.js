@@ -52,10 +52,21 @@ app.post("/api/generate", async (req, res) => {
 }
 
 const userId = user.id;
-
 const today = new Date().toISOString().split("T")[0];
 
-const { data: usageData, error: usageError } = await supabase
+const userSupabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_PUBLISHABLE_KEY,
+  {
+    global: {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    }
+  }
+);
+
+const { data: usageData, error: usageError } = await userSupabase
   .from("voice_usage")
   .select("generation_count")
   .eq("user_id", userId)
