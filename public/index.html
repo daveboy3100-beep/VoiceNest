@@ -1465,7 +1465,107 @@ const downloadMp3Btn =
       message.className =
         "message hidden";
     }
+    async function convertWavToMp3(
+      wavBlob
+    ) {
 
+      const arrayBuffer =
+        await wavBlob.arrayBuffer();
+
+      const audioContext =
+        new AudioContext();
+
+      const audioBuffer =
+        await audioContext.decodeAudioData(
+          arrayBuffer
+        );
+
+      const sampleRate =
+        audioBuffer.sampleRate;
+
+      const channelData =
+        audioBuffer.getChannelData(0);
+
+      const mp3Encoder =
+        new lamejs.Mp3Encoder(
+          1,
+          sampleRate,
+          128
+        );
+
+      const sampleBlockSize =
+        1152;
+
+      const mp3Data = [];
+
+      const samples =
+        new Int16Array(
+          channelData.length
+        );
+
+      for (
+        let i = 0;
+        i < channelData.length;
+        i++
+      ) {
+
+        const sample =
+          Math.max(
+            -1,
+            Math.min(
+              1,
+              channelData[i]
+            )
+          );
+
+        samples[i] =
+          sample < 0
+            ? sample * 0x8000
+            : sample * 0x7fff;
+      }
+
+      for (
+        let i = 0;
+        i < samples.length;
+        i += sampleBlockSize
+      ) {
+
+        const chunk =
+          samples.subarray(
+            i,
+            i + sampleBlockSize
+          );
+
+        const mp3buf =
+          mp3Encoder.encodeBuffer(
+            chunk
+          );
+
+        if (mp3buf.length > 0) {
+          mp3Data.push(
+            new Int8Array(mp3buf)
+          );
+        }
+      }
+
+      const end =
+        mp3Encoder.flush();
+
+      if (end.length > 0) {
+        mp3Data.push(
+          new Int8Array(end)
+        );
+      }
+
+      await audioContext.close();
+
+      return new Blob(
+        mp3Data,
+        {
+          type: "audio/mpeg"
+        }
+      );
+    }
 
     function setGeneratingState(
       isGenerating
@@ -1653,7 +1753,21 @@ const response = await fetch("/api/generate", {
           downloadBtn.download =
             "voicenest-voiceover.wav";
 
+    const mp3Blob =
+  await convertWavToMp3(
+    audioBlob
+  );
 
+const mp3Url =
+  URL.createObjectURL(
+    mp3Blob
+  );
+
+downloadMp3Btn.href =
+  mp3Url;
+
+downloadMp3Btn.download =
+  "voicenest-voiceover.mp3";
           resultPanel.className =
             "result-panel";
 
