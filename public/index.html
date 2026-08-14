@@ -1501,10 +1501,15 @@ const downloadMp3Btn =
 
     } else if (selectedVoice === "Puck") {
 
-      previewFile =
-        "/previews/voicenest-voiceover%20(3).mp3";
+  previewFile =
+    "/previews/voicenest-voiceover%20(3).mp3";
 
-    } else {
+} else if (selectedVoice === "Charon") {
+
+  previewFile =
+    "/previews/voicenest-voiceover%20(4).mp3";
+
+} else {
 
       showMessage(
         "Preview for this voice is coming soon.",
