@@ -108,11 +108,29 @@ const text = String(req.body.text || "").trim();
   }
 
   const styleInstructions = {
-  natural: "Speak naturally and conversationally.",
-  professional: "Speak professionally and clearly.",
-  calm: "Speak calmly and smoothly.",
-  energetic: "Speak with energy and enthusiasm.",
-  cinematic: "Speak with a dramatic cinematic storytelling tone."
+  natural:
+    "Speak naturally and conversationally, with a relaxed and authentic delivery.",
+
+  professional:
+    "Speak professionally and clearly, with a polished, confident, and trustworthy delivery.",
+
+  calm:
+    "Speak calmly and smoothly, with a gentle, relaxed, and reassuring delivery.",
+
+  energetic:
+    "Speak with energy and enthusiasm, using an upbeat, lively, and engaging delivery.",
+
+  cinematic:
+    "Speak with a dramatic cinematic storytelling tone, using controlled intensity, emotional emphasis, and a sense of narrative depth.",
+
+  motivational:
+    "Speak with an inspiring, powerful, and confident motivational delivery. Build energy naturally, emphasize important words, and sound encouraging without becoming exaggerated.",
+
+  documentary:
+    "Speak with a calm, authoritative, and engaging documentary narration style. Sound informative, composed, intelligent, and slightly cinematic while maintaining clear storytelling.",
+
+  news:
+    "Speak with a professional broadcast-news delivery. Sound clear, precise, composed, and authoritative, with controlled pacing and strong emphasis on important information."
 };
   const prompt =
     `${styleInstructions[style] || styleInstructions.natural} ` +
