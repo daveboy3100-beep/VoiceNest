@@ -1377,7 +1377,11 @@
 
     const generateBtn =
       document.getElementById("generateBtn");
+     const previewVoiceBtn =
+  document.getElementById("previewVoiceBtn");
 
+const voicePreviewPlayer =
+  document.getElementById("voicePreviewPlayer");
     const clearBtn =
       document.getElementById("clearBtn");
 
@@ -1481,6 +1485,33 @@ const downloadMp3Btn =
       message.className =
         "message hidden";
     }
+    previewVoiceBtn.addEventListener(
+  "click",
+  () => {
+
+    const selectedVoice =
+      voiceSelect.value;
+
+    if (selectedVoice !== "Kore") {
+
+      showMessage(
+        "Preview for this voice is coming soon.",
+        "info"
+      );
+
+      return;
+    }
+
+    voicePreviewPlayer.src =
+      "/previews/voicenest-voiceover%20(2).mp3";
+
+    voicePreviewPlayer.classList.remove(
+      "hidden"
+    );
+
+    voicePreviewPlayer.play();
+  }
+);
     async function convertWavToMp3(
       wavBlob
     ) {
