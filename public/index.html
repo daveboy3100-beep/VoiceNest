@@ -1722,12 +1722,16 @@ const downloadMp3Btn =
 
         generateBtn.textContent =
           "Creating your voice...";
-
+         generateBtn.classList.add(
+  "generating"
+);
       } else {
 
         generateBtn.textContent =
   "Generate Voice";
-      }
+     generateBtn.classList.remove(
+  "generating"
+); }
     }
 
 
