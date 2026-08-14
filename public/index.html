@@ -1492,7 +1492,19 @@ const downloadMp3Btn =
     const selectedVoice =
       voiceSelect.value;
 
-    if (selectedVoice !== "Kore") {
+    let previewFile = "";
+
+    if (selectedVoice === "Kore") {
+
+      previewFile =
+        "/previews/voicenest-voiceover%20(2).mp3";
+
+    } else if (selectedVoice === "Puck") {
+
+      previewFile =
+        "/previews/voicenest-voiceover%20(3).mp3";
+
+    } else {
 
       showMessage(
         "Preview for this voice is coming soon.",
@@ -1503,7 +1515,7 @@ const downloadMp3Btn =
     }
 
     voicePreviewPlayer.src =
-      "/previews/voicenest-voiceover%20(2).mp3";
+      previewFile;
 
     voicePreviewPlayer.classList.remove(
       "hidden"
