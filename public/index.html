@@ -1846,6 +1846,254 @@ function openHistoryDB() {
     }
   );
     }
+    async function loadVoiceoverHistory() {
+
+  try {
+
+    const db =
+      await openHistoryDB();
+
+    const voiceovers =
+      await new Promise(
+        (resolve, reject) => {
+
+          const transaction =
+            db.transaction(
+              HISTORY_STORE_NAME,
+              "readonly"
+            );
+
+          const store =
+            transaction.objectStore(
+              HISTORY_STORE_NAME
+            );
+
+          const request =
+            store.getAll();
+
+          request.onsuccess =
+            () => {
+
+              resolve(
+                request.result
+              );
+            };
+
+          request.onerror =
+            () => {
+
+              reject(
+                request.error
+              );
+            };
+        }
+      );
+
+    db.close();
+
+    return voiceovers;
+
+  } catch (error) {
+
+    console.error(
+      "History load error:",
+      error
+    );
+
+    return [];
+
+  }
+    }
+    function renderVoiceoverHistory(
+  voiceovers
+) {
+
+  historyList.innerHTML = "";
+
+  if (!voiceovers.length) {
+
+    historySection.classList.add(
+      "hidden"
+    );
+
+    return;
+  }
+
+  historySection.classList.remove(
+    "hidden"
+  );
+
+  voiceovers.sort(
+    (a, b) =>
+      b.createdAt.localeCompare(
+        a.createdAt
+      )
+  );
+
+  voiceovers.forEach(
+    (voiceover) => {
+
+      const historyItem =
+        document.createElement(
+          "div"
+        );
+
+      historyItem.className =
+        "history-item";
+
+      const historyInfo =
+        document.createElement(
+          "div"
+        );
+
+      historyInfo.className =
+        "history-info";
+
+      const historyTitle =
+        document.createElement(
+          "div"
+        );
+
+      historyTitle.className =
+        "history-title";
+
+      historyTitle.textContent =
+        `${voiceover.voice} · ${
+          voiceover.style.charAt(0).toUpperCase() +
+          voiceover.style.slice(1)
+        }`;
+
+      const historyDate =
+        document.createElement(
+          "div"
+        );
+
+      historyDate.className =
+        "history-date";
+
+      historyDate.textContent =
+        new Date(
+          voiceover.createdAt
+        ).toLocaleString();
+
+      const historyScript =
+        document.createElement(
+          "div"
+        );
+
+      historyScript.className =
+        "history-script";
+
+      historyScript.textContent =
+        voiceover.script;
+
+      historyInfo.appendChild(
+        historyTitle
+      );
+
+      historyInfo.appendChild(
+        historyDate
+      );
+
+      historyInfo.appendChild(
+        historyScript
+      );
+
+      const historyActions =
+        document.createElement(
+          "div"
+        );
+
+      historyActions.className =
+        "history-actions";
+
+      const playButton =
+        document.createElement(
+          "button"
+        );
+
+      playButton.type =
+        "button";
+
+      playButton.className =
+        "history-play-btn";
+
+      playButton.textContent =
+        "▶ Play";
+
+      playButton.addEventListener(
+        "click",
+        () => {
+
+          const audioUrl =
+            URL.createObjectURL(
+              voiceover.mp3Blob
+            );
+
+          audioPlayer.src =
+            audioUrl;
+
+          audioPlayer.load();
+
+          audioPlayer.play();
+
+        }
+      );
+
+      const downloadButton =
+        document.createElement(
+          "a"
+        );
+
+      downloadButton.className =
+        "history-download-btn";
+
+      downloadButton.textContent =
+        "Download";
+
+      const downloadUrl =
+        URL.createObjectURL(
+          voiceover.mp3Blob
+        );
+
+      downloadButton.href =
+        downloadUrl;
+
+      downloadButton.download =
+        "voicenest-voiceover.mp3";
+
+      historyActions.appendChild(
+        playButton
+      );
+
+      historyActions.appendChild(
+        downloadButton
+      );
+
+      historyItem.appendChild(
+        historyInfo
+      );
+
+      historyItem.appendChild(
+        historyActions
+      );
+
+      historyList.appendChild(
+        historyItem
+      );
+
+    }
+  );
+    }
+    async function initializeVoiceoverHistory() {
+
+  const voiceovers =
+    await loadVoiceoverHistory();
+
+  renderVoiceoverHistory(
+    voiceovers
+  );
+    }
 async function convertWavToMp3(
   wavBlob
 ) {
@@ -2653,6 +2901,7 @@ logoutButton.addEventListener("click", async () => {
 // ========================================
 
 loadAccountInfo();
+    initializeVoiceoverHistory();
   </script>
 
 </body>
