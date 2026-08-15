@@ -1496,7 +1496,8 @@ const voicePreviewPlayer =
 
     const resultPanel =
       document.getElementById("resultPanel");
-
+       const resultMeta =
+  document.getElementById("resultMeta");
     const audioPlayer =
       document.getElementById("audioPlayer");
 
@@ -1955,7 +1956,8 @@ downloadMp3Btn.download =
           resultPanel.className =
             "result-panel";
 
-
+          resultMeta.textContent =
+  `${voice} · ${style}`;
           showMessage(
             "Voice generated successfully.",
             "success"
