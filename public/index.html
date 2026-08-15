@@ -1786,7 +1786,66 @@ function openHistoryDB() {
     }
   );
 }
-    
+    function saveVoiceoverToHistory(
+  voiceover
+) {
+
+  return openHistoryDB().then(
+    (db) => {
+
+      return new Promise(
+        (resolve, reject) => {
+
+          const transaction =
+            db.transaction(
+              HISTORY_STORE_NAME,
+              "readwrite"
+            );
+
+          const store =
+            transaction.objectStore(
+              HISTORY_STORE_NAME
+            );
+
+          const request =
+            store.add(
+              voiceover
+            );
+
+          request.onsuccess =
+            () => {
+
+              resolve(
+                request.result
+              );
+            };
+
+          request.onerror =
+            () => {
+
+              reject(
+                request.error
+              );
+            };
+
+          transaction.oncomplete =
+            () => {
+
+              db.close();
+            };
+
+          transaction.onerror =
+            () => {
+
+              reject(
+                transaction.error
+              );
+            };
+        }
+      );
+    }
+  );
+    }
 async function convertWavToMp3(
   wavBlob
 ) {
@@ -2094,6 +2153,35 @@ downloadMp3Btn.href =
 
 downloadMp3Btn.download =
   "voicenest-voiceover.mp3";
+          try {
+
+  await saveVoiceoverToHistory({
+
+    id: Date.now(),
+
+    script: text,
+
+    voice: voice,
+
+    style: style,
+
+    wavBlob: audioBlob,
+
+    mp3Blob: mp3Blob,
+
+    createdAt:
+      new Date().toISOString()
+
+  });
+
+} catch (historyError) {
+
+  console.error(
+    "History save error:",
+    historyError
+  );
+
+    }
           resultPanel.className =
             "result-panel";
 
