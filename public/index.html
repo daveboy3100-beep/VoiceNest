@@ -1493,7 +1493,39 @@
   Download MP3
 </a>
         </div>
+          <section
+          id="historySection"
+          class="history-section hidden"
+        >
 
+          <div class="history-header">
+
+            <div>
+              <span class="history-label">
+                YOUR HISTORY
+              </span>
+
+              <h3>
+                Recent voiceovers
+              </h3>
+            </div>
+
+            <button
+              type="button"
+              id="clearHistoryBtn"
+              class="clear-history-btn"
+            >
+              Clear history
+            </button>
+
+          </div>
+
+          <div
+            id="historyList"
+            class="history-list"
+          ></div>
+
+          </section>
       </section>
 
     </main>
@@ -1547,7 +1579,14 @@ const voicePreviewPlayer =
   document.getElementById("resultMeta");
     const audioPlayer =
       document.getElementById("audioPlayer");
+      const historySection =
+  document.getElementById("historySection");
 
+const historyList =
+  document.getElementById("historyList");
+
+const clearHistoryBtn =
+  document.getElementById("clearHistoryBtn");
     const downloadBtn =
       document.getElementById("downloadBtn");
 const downloadMp3Btn =
@@ -1693,9 +1732,64 @@ const downloadMp3Btn =
     voicePreviewPlayer.play();
   }
 );
-    async function convertWavToMp3(
-      wavBlob
-    ) {
+    const HISTORY_DB_NAME =
+  "VoiceNestHistoryDB";
+
+const HISTORY_STORE_NAME =
+  "voiceovers";
+
+function openHistoryDB() {
+
+  return new Promise(
+    (resolve, reject) => {
+
+      const request =
+        indexedDB.open(
+          HISTORY_DB_NAME,
+          1
+        );
+
+      request.onupgradeneeded =
+        () => {
+
+          const db =
+            request.result;
+
+          if (
+            !db.objectStoreNames.contains(
+              HISTORY_STORE_NAME
+            )
+          ) {
+
+            db.createObjectStore(
+              HISTORY_STORE_NAME,
+              {
+                keyPath: "id"
+              }
+            );
+          }
+        };
+           request.onsuccess =
+        () => {
+
+          resolve(
+            request.result
+          );
+        };
+            request.onerror =
+        () => {
+
+          reject(
+            request.error
+          );
+        };
+    }
+  );
+}
+    
+async function convertWavToMp3(
+  wavBlob
+) {
 
       const arrayBuffer =
         await wavBlob.arrayBuffer();
