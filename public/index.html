@@ -1957,7 +1957,7 @@ downloadMp3Btn.download =
             "result-panel";
 
           resultMeta.textContent =
-  `${voice} · ${style}`;
+  `${voice} · ${style.charAt(0).toUpperCase() + style.slice(1)}`;
           showMessage(
             "Voice generated successfully.",
             "success"
