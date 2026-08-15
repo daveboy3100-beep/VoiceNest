@@ -1977,24 +1977,48 @@ downloadMp3Btn.download =
 
         } catch (error) {
 
-          console.error(
-            "Voice generation error:",
-            error
-          );
+  console.error(
+    "Voice generation error:",
+    error
+  );
 
+  const errorText =
+    error.message || "";
 
-          showMessage(
-            error.message ||
-              "Something went wrong while generating your voice.",
-            "error"
-          );
+  if (
+    errorText.includes("429") ||
+    errorText.includes("RESOURCE_EXHAUSTED") ||
+    errorText.includes("Quota exceeded") ||
+    errorText.includes("quota")
+  ) {
 
+    showMessage(
+      "Voice generation is temporarily unavailable because the current generation limit has been reached. Please try again shortly.",
+      "error"
+    );
 
-          resultPanel.className =
-            "result-panel hidden";
+  } else if (
+    errorText.includes("Failed to fetch") ||
+    errorText.includes("NetworkError")
+  ) {
 
-        } finally {
+    showMessage(
+      "Unable to connect to VoiceNest. Please check your internet connection and try again.",
+      "error"
+    );
 
+  } else {
+
+    showMessage(
+      "Something went wrong while generating your voice. Please try again.",
+      "error"
+    );
+  }
+
+  resultPanel.className =
+    "result-panel hidden";
+
+} finally {
           setGeneratingState(
             false
           );
