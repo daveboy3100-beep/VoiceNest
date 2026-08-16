@@ -269,7 +269,175 @@ res.send(wavFile);
       });
     });
 });
+// ========================================
+// AI SCRIPT GENERATOR
+// ========================================
 
+app.post(
+  "/api/generate-script",
+  async (req, res) => {
+
+    const authHeader =
+      req.headers.authorization;
+
+    if (
+      !authHeader ||
+      !authHeader.startsWith("Bearer ")
+    ) {
+      return res.status(401).json({
+        error:
+          "Please sign in before generating a script."
+      });
+    }
+
+    const accessToken =
+      authHeader.replace(
+        "Bearer ",
+        ""
+      );
+
+    const {
+      data: { user },
+      error: authError
+    } =
+      await supabase.auth.getUser(
+        accessToken
+      );
+
+    if (
+      authError ||
+      !user
+    ) {
+      return res.status(401).json({
+        error:
+          "Your session is invalid. Please sign in again."
+      });
+    }
+
+    const topic =
+      String(
+        req.body.topic || ""
+      ).trim();
+
+    const platform =
+      req.body.platform ||
+      "YouTube";
+
+    const contentType =
+      req.body.contentType ||
+      "Educational";
+
+    const tone =
+      req.body.tone ||
+      "Cinematic";
+
+    const duration =
+      req.body.duration ||
+      "2 minutes";
+
+
+    if (!topic) {
+      return res.status(400).json({
+        error:
+          "Please enter a topic or idea first."
+      });
+    }
+
+
+    if (
+      !process.env.GEMINI_API_KEY
+    ) {
+      return res.status(500).json({
+        error:
+          "Gemini API key is missing."
+      });
+    }
+
+
+    const prompt = `
+You are the AI script generator for VoiceNest, a professional creator tool.
+
+Create a high-quality ${duration} script based on the following idea:
+
+TOPIC:
+${topic}
+
+PLATFORM:
+${platform}
+
+CONTENT TYPE:
+${contentType}
+
+TONE:
+${tone}
+
+Requirements:
+
+- Make the script engaging from the beginning.
+- Start with a strong hook appropriate for the platform.
+- Keep the writing natural and easy to narrate.
+- Structure the script logically.
+- Match the requested tone.
+- Avoid unnecessary headings unless they improve the script.
+- Do not explain what you are doing.
+- Do not include notes to the creator.
+- Do not wrap the script in quotation marks.
+- Return only the finished script.
+`;
+
+
+    try {
+
+      const response =
+        await ai.models.generateContent({
+
+          model:
+            "gemini-3.1-flash-preview",
+
+          contents: prompt
+
+        });
+
+
+      const generatedText =
+        response.text?.trim();
+
+
+      if (!generatedText) {
+
+        throw new Error(
+          "Gemini returned an empty script."
+        );
+
+      }
+
+
+      return res.json({
+
+        script:
+          generatedText
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        "Script generation error:",
+        error
+      );
+
+      return res.status(500).json({
+
+        error:
+          error?.message ||
+          "Script generation failed."
+
+      });
+
+    }
+
+  }
+);
 app.listen(PORT, "0.0.0.0", () => {
   console.log(
     `VoiceNest is running on port ${PORT}`
