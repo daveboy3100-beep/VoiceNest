@@ -2407,6 +2407,93 @@ function openHistoryDB() {
     voiceovers
   );
     }
+    async function clearVoiceoverHistory() {
+
+  const confirmed =
+    confirm(
+      "Are you sure you want to clear your voiceover history?"
+    );
+
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+
+    const db =
+      await openHistoryDB();
+
+    await new Promise(
+      (resolve, reject) => {
+
+        const transaction =
+          db.transaction(
+            HISTORY_STORE_NAME,
+            "readwrite"
+          );
+
+        const store =
+          transaction.objectStore(
+            HISTORY_STORE_NAME
+          );
+
+        const request =
+          store.clear();
+
+        request.onsuccess =
+          () => {
+
+            resolve();
+          };
+
+        request.onerror =
+          () => {
+
+            reject(
+              request.error
+            );
+          };
+
+        transaction.oncomplete =
+          () => {
+
+            db.close();
+          };
+
+        transaction.onerror =
+          () => {
+
+            reject(
+              transaction.error
+            );
+          };
+      }
+    );
+
+    historyList.innerHTML = "";
+
+    historySection.classList.add(
+      "hidden"
+    );
+
+    showMessage(
+      "Voiceover history cleared.",
+      "success"
+    );
+
+  } catch (error) {
+
+    console.error(
+      "History clear error:",
+      error
+    );
+
+    showMessage(
+      "Unable to clear your voiceover history. Please try again.",
+      "error"
+    );
+  }
+    }
 async function convertWavToMp3(
   wavBlob
 ) {
@@ -3215,6 +3302,10 @@ logoutButton.addEventListener("click", async () => {
 
 loadAccountInfo();
     initializeVoiceoverHistory();
+    clearHistoryBtn.addEventListener(
+  "click",
+  clearVoiceoverHistory
+);
   </script>
 
 </body>
