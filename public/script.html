@@ -763,9 +763,21 @@
     </section>
 
   </main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<script>
 
-  <script>
+const SUPABASE_URL =
+  "https://okbipirfsusciztzstka.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_wp1MJ7xmnJjseGjFtM9PWQ_xQWRh7hW";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
 
     const topicInput =
       document.getElementById(
@@ -922,34 +934,165 @@
 
 
     generateScriptBtn.addEventListener(
-      "click",
-      () => {
+  "click",
+  async () => {
 
-        hideMessage();
+    hideMessage();
 
-        const topic =
-          topicInput.value.trim();
+    const topic =
+      topicInput.value.trim();
 
-        if (!topic) {
+    if (!topic) {
 
-          showMessage(
-            "Please enter a topic or idea first.",
-            "error"
-          );
+      showMessage(
+        "Please enter a topic or idea first.",
+        "error"
+      );
 
-          topicInput.focus();
+      topicInput.focus();
 
-          return;
+      return;
+    }
+
+    setGeneratingState(true);
+
+    resultPanel.className =
+      "result-panel hidden";
+
+    try {
+
+      const {
+        data: {
+          session
         }
+      } =
+        await supabaseClient.auth.getSession();
 
-        showMessage(
-          "Script generation will be connected next.",
-          "success"
+      if (!session) {
+
+        throw new Error(
+          "Please sign in before generating a script."
         );
 
       }
-    );
 
+      const response =
+        await fetch(
+          "/api/generate-script",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+
+              "Authorization":
+                `Bearer ${session.access_token}`
+            },
+
+            body: JSON.stringify({
+
+              topic:
+                topic,
+
+              platform:
+                platformSelect.value,
+
+              contentType:
+                contentTypeSelect.value,
+
+              tone:
+                toneSelect.value,
+
+              duration:
+                durationSelect.value
+
+            })
+          }
+        );
+
+
+      let data = {};
+
+      try {
+
+        data =
+          await response.json();
+
+      } catch {
+
+        throw new Error(
+          "The server returned an invalid response."
+        );
+
+      }
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "Script generation failed."
+        );
+
+      }
+
+
+      if (
+        !data.script ||
+        !data.script.trim()
+      ) {
+
+        throw new Error(
+          "No script was returned."
+        );
+
+      }
+
+
+      generatedScript.value =
+        data.script;
+
+      resultPanel.className =
+        "result-panel";
+
+      showMessage(
+        "Script generated successfully.",
+        "success"
+      );
+
+      resultPanel.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+
+    } catch (error) {
+
+      console.error(
+        "Script generation error:",
+        error
+      );
+
+      showMessage(
+        error.message ||
+        "Something went wrong while generating your script. Please try again.",
+        "error"
+      );
+
+      resultPanel.className =
+        "result-panel hidden";
+
+
+    } finally {
+
+      setGeneratingState(false);
+
+    }
+
+  }
+);
+    
   </script>
 
 </body>
