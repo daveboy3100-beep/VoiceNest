@@ -1136,6 +1136,319 @@
         transform: translateY(0);
     }
     }
+    /* ========================================
+   VOICENEST HISTORY
+======================================== */
+
+.history-section {
+  width: 100%;
+
+  margin-top: 24px;
+
+  padding: 20px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 16px;
+
+  background: #11141c;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.history-section.hidden {
+  display: none;
+}
+
+.history-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-bottom: 18px;
+}
+
+.history-label {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: var(--accent-light);
+
+  font-size: 0.68rem;
+
+  font-weight: 900;
+
+  letter-spacing: 0.12em;
+}
+
+.history-header h3 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 1.05rem;
+
+  font-weight: 800;
+}
+
+.clear-history-btn {
+  min-height: 36px;
+
+  padding: 0 12px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 9px;
+
+  background: #171a23;
+
+  color: var(--text);
+
+  font-size: 0.72rem;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.clear-history-btn:hover {
+  background: #202430;
+
+  border-color:
+    rgba(124, 92, 255, 0.4);
+
+  transform: translateY(-1px);
+}
+
+.clear-history-btn:active {
+  transform: translateY(0);
+}
+
+.history-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.history-item {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 15px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 13px;
+
+  background: #0c0f16;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.history-item:hover {
+  background: #11151e;
+
+  border-color:
+    rgba(124, 92, 255, 0.3);
+
+  transform: translateY(-1px);
+}
+
+.history-info {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.history-title {
+  margin-bottom: 4px;
+
+  color: var(--text);
+
+  font-size: 0.84rem;
+
+  font-weight: 800;
+}
+
+.history-date {
+  margin-bottom: 8px;
+
+  color: var(--muted);
+
+  font-size: 0.68rem;
+}
+
+.history-script {
+  overflow: hidden;
+
+  display: -webkit-box;
+
+  -webkit-box-orient: vertical;
+
+  -webkit-line-clamp: 2;
+
+  color: var(--muted);
+
+  font-size: 0.76rem;
+
+  line-height: 1.45;
+}
+
+.history-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  flex-shrink: 0;
+}
+
+.history-play-btn,
+.history-download-btn {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 36px;
+
+  padding: 0 12px;
+
+  border-radius: 9px;
+
+  font-size: 0.72rem;
+
+  font-weight: 800;
+
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.history-play-btn {
+  border: 1px solid
+    rgba(124, 92, 255, 0.35);
+
+  background:
+    rgba(124, 92, 255, 0.08);
+
+  color: var(--accent-light);
+}
+
+.history-play-btn:hover {
+  background:
+    rgba(124, 92, 255, 0.15);
+
+  border-color:
+    rgba(124, 92, 255, 0.55);
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 6px 16px rgba(124, 92, 255, 0.1);
+}
+
+.history-download-btn {
+  border: 1px solid var(--border);
+
+  background: #202430;
+
+  color: var(--text);
+}
+
+.history-download-btn:hover {
+  background: #292e3a;
+
+  border-color:
+    rgba(124, 92, 255, 0.35);
+
+  transform: translateY(-1px);
+}
+
+
+/* ========================================
+   MOBILE HISTORY
+======================================== */
+
+@media (max-width: 600px) {
+
+  .history-section {
+    margin-top: 20px;
+
+    padding: 16px;
+  }
+
+  .history-header {
+    align-items: flex-start;
+
+    gap: 12px;
+  }
+
+  .clear-history-btn {
+    flex-shrink: 0;
+
+    min-height: 34px;
+
+    padding: 0 10px;
+
+    font-size: 0.68rem;
+  }
+
+  .history-item {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    padding: 14px;
+  }
+
+  .history-info {
+    width: 100%;
+  }
+
+  .history-actions {
+    width: 100%;
+  }
+
+  .history-play-btn,
+  .history-download-btn {
+    flex: 1;
+
+    min-height: 38px;
+  }
+
+      }
   </style>
 </head>
 
