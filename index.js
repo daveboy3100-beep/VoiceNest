@@ -392,8 +392,7 @@ Requirements:
         await ai.models.generateContent({
 
           model:
-            "gemini-3.1-flash-preview",
-
+  "gemini-3.1-flash-lite",
           contents: prompt
 
         });
