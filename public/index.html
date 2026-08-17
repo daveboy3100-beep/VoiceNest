@@ -2785,76 +2785,117 @@ const response = await fetch("/api/generate", {
 
 
           const audioUrl =
-            URL.createObjectURL(
-              audioBlob
-            );
-
-
-          audioPlayer.src =
-            audioUrl;
-
-          downloadBtn.href =
-            audioUrl;
-
-          downloadBtn.download =
-            "voicenest-voiceover.wav";
-
-    const mp3Blob =
-  await convertWavToMp3(
+          const audioUrl =
+  URL.createObjectURL(
     audioBlob
   );
 
-const mp3Url =
-  URL.createObjectURL(
-    mp3Blob
-  );
+audioPlayer.src =
+  audioUrl;
 
-downloadMp3Btn.href =
-  mp3Url;
+downloadBtn.href =
+  audioUrl;
 
-downloadMp3Btn.download =
-  "voicenest-voiceover.mp3";
-          try {
+downloadBtn.download =
+  "voicenest-voiceover.wav";
 
-  await saveVoiceoverToHistory({
+resultPanel.className =
+  "result-panel";
 
-    id: Date.now(),
+resultMeta.textContent =
+  `${voice} · ${
+    style.charAt(0).toUpperCase() +
+    style.slice(1)
+  }`;
 
-    script: script,
+showMessage(
+  "Voice generated! Preparing MP3...",
+  "loading"
+);
 
-    voice: voice,
+audioPlayer.load();
 
-    style: style,
 
-    wavBlob: audioBlob,
+let mp3Blob;
 
-    mp3Blob: mp3Blob,
+try {
 
-    createdAt:
-      new Date().toISOString()
+  mp3Blob =
+    await convertWavToMp3(
+      audioBlob
+    );
 
-  });
+  const mp3Url =
+    URL.createObjectURL(
+      mp3Blob
+    );
 
-} catch (historyError) {
+  downloadMp3Btn.href =
+    mp3Url;
+
+  downloadMp3Btn.download =
+    "voicenest-voiceover.mp3";
+
+} catch (mp3Error) {
 
   console.error(
-    "History save error:",
-    historyError
+    "MP3 conversion error:",
+    mp3Error
   );
 
-    }
-          resultPanel.className =
-            "result-panel";
+  showMessage(
+    "Voice generated successfully, but MP3 conversion failed. You can still download the WAV.",
+    "error"
+  );
 
-          resultMeta.textContent =
-  `${voice} · ${style.charAt(0).toUpperCase() + style.slice(1)}`;
-          showMessage(
-            "Voice generated successfully.",
-            "success"
-          );
+  mp3Blob = null;
+}
 
 
-          audioPlayer.load();
+if (mp3Blob) {
+
+  showMessage(
+    "Voice generated! Saving to history...",
+    "loading"
+  );
+
+  try {
+
+    await saveVoiceoverToHistory({
+
+      id: Date.now(),
+
+      script: script,
+
+      voice: voice,
+
+      style: style,
+
+      wavBlob: audioBlob,
+
+      mp3Blob: mp3Blob,
+
+      createdAt:
+        new Date().toISOString()
+
+    });
+
+  } catch (historyError) {
+
+    console.error(
+      "History save error:",
+      historyError
+    );
+
+  }
+
+}
+
+
+showMessage(
+  "Voice generated successfully.",
+  "success"
+);
 
         } catch (error) {
 
