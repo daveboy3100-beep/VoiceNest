@@ -151,6 +151,432 @@ async function generatePcmForChunk(
     "base64"
   );
   }
+async function processVoiceJob(jobId, chunks, voice, styleInstruction) {
+
+  const job = voiceJobs.get(jobId);
+
+  if (!job) {
+    return;
+  }
+
+  try {
+
+    job.status = "processing";
+    job.progress = 0;
+
+    const pcmChunks = [];
+
+    for (let i = 0; i < chunks.length; i++) {
+
+      console.log(
+        `Voice job ${jobId}: generating chunk ${i + 1} of ${chunks.length}`
+      );
+
+      const pcmData =
+        await generatePcmForChunk(
+          chunks[i],
+          voice,
+          styleInstruction
+        );
+
+      pcmChunks.push(pcmData);
+
+      job.progress =
+        Math.round(
+          ((i + 1) / chunks.length) * 90
+        );
+    }
+
+    const pcmData =
+      Buffer.concat(pcmChunks);
+
+    const sampleRate = 24000;
+    const channels = 1;
+    const bitsPerSample = 16;
+    const blockAlign = 2;
+    const byteRate = 48000;
+
+    const header =
+      Buffer.alloc(44);
+
+    header.write("RIFF", 0);
+
+    header.writeUInt32LE(
+      36 + pcmData.length,
+      4
+    );
+
+    header.write("WAVE", 8);
+    header.write("fmt ", 12);
+
+    header.writeUInt32LE(16, 16);
+    header.writeUInt16LE(1, 20);
+    header.writeUInt16LE(channels, 22);
+
+    header.writeUInt32LE(
+      sampleRate,
+      24
+    );
+
+    header.writeUInt32LE(
+      byteRate,
+      28
+    );
+
+    header.writeUInt16LE(
+      blockAlign,
+      32
+    );
+
+    header.writeUInt16LE(
+      bitsPerSample,
+      34
+    );
+
+    header.write("data", 36);
+
+    header.writeUInt32LE(
+      pcmData.length,
+      40
+    );
+
+    const wavFile =
+      Buffer.concat([
+        header,
+        pcmData
+      ]);
+
+    job.audio = wavFile;
+    job.progress = 100;
+    job.status = "completed";
+
+    console.log(
+      `Voice job ${jobId}: completed`
+    );
+
+  } catch (error) {
+
+    console.error(
+      `Voice job ${jobId} failed:`,
+      error
+    );
+
+    job.status = "failed";
+
+    job.error =
+      error?.message ||
+      "Voice generation failed.";
+
+  }
+    }
+app.post(
+  "/api/voice-job",
+  async (req, res) => {
+
+    const authHeader =
+      req.headers.authorization;
+
+    if (
+      !authHeader ||
+      !authHeader.startsWith("Bearer ")
+    ) {
+      return res.status(401).json({
+        error:
+          "Please sign in before generating a voiceover."
+      });
+    }
+
+    const accessToken =
+      authHeader.replace(
+        "Bearer ",
+        ""
+      );
+
+    const {
+      data: {
+        user
+      },
+      error: authError
+    } =
+      await supabase.auth.getUser(
+        accessToken
+      );
+
+    if (
+      authError ||
+      !user
+    ) {
+      return res.status(401).json({
+        error:
+          "Your session is invalid. Please sign in again."
+      });
+    }
+
+    const text =
+      String(
+        req.body.text || ""
+      ).trim();
+
+    const voice =
+      req.body.voice || "Kore";
+
+    const style =
+      req.body.style || "natural";
+
+    if (!text) {
+      return res.status(400).json({
+        error:
+          "Please enter a script first."
+      });
+    }
+
+    const MAX_SCRIPT_CHARACTERS =
+      10000;
+
+    if (
+      text.length >
+      MAX_SCRIPT_CHARACTERS
+    ) {
+      return res.status(400).json({
+        error:
+          "Your script is too long. Please keep it under 10,000 characters."
+      });
+    }
+
+    const DAILY_LIMIT = 5;
+
+    const today =
+      new Date()
+        .toISOString()
+        .split("T")[0];
+
+    const userSupabase =
+      createClient(
+        process.env.SUPABASE_URL,
+        process.env.SUPABASE_PUBLISHABLE_KEY,
+        {
+          global: {
+            headers: {
+              Authorization:
+                `Bearer ${accessToken}`
+            }
+          }
+        }
+      );
+
+    const {
+      data: usageData,
+      error: usageError
+    } =
+      await userSupabase
+        .from("voice_usage")
+        .select(
+          "generation_count"
+        )
+        .eq(
+          "user_id",
+          user.id
+        )
+        .eq(
+          "usage_date",
+          today
+        )
+        .maybeSingle();
+
+    if (usageError) {
+
+      console.error(
+        "Usage check error:",
+        usageError
+      );
+
+      return res.status(500).json({
+        error:
+          "Unable to check your daily voice usage."
+      });
+    }
+
+    const usageCount =
+      usageData?.generation_count || 0;
+
+    if (
+      usageCount >= DAILY_LIMIT
+    ) {
+      return res.status(429).json({
+        error:
+          "Daily voice generation limit reached. Please try again tomorrow."
+      });
+    }
+
+    const styleInstructions = {
+
+      natural:
+        "Speak naturally and conversationally, with a relaxed and authentic delivery.",
+
+      professional:
+        "Speak professionally and clearly, with a polished, confident, and trustworthy delivery.",
+
+      calm:
+        "Speak calmly and smoothly, with a gentle, relaxed, and reassuring delivery.",
+
+      energetic:
+        "Speak with energy and enthusiasm, using an upbeat, lively, and engaging delivery.",
+
+      cinematic:
+        "Speak with a dramatic cinematic storytelling tone, using controlled intensity, emotional emphasis, and a sense of narrative depth.",
+
+      motivational:
+        "Speak with an inspiring, powerful, and confident motivational delivery. Build energy naturally, emphasize important words, and sound encouraging without becoming exaggerated.",
+
+      documentary:
+        "Speak with a calm, authoritative, and engaging documentary narration style. Sound informative, composed, intelligent, and slightly cinematic while maintaining clear storytelling.",
+
+      news:
+        "Speak with a professional broadcast-news delivery. Sound clear, precise, composed, and authoritative, with controlled pacing and strong emphasis on important information."
+
+    };
+
+    const styleInstruction =
+      styleInstructions[style] ||
+      styleInstructions.natural;
+
+    const chunks =
+      splitScriptIntoChunks(
+        text,
+        3500
+      );
+
+    const jobId =
+      `${user.id}-${Date.now()}`;
+
+    voiceJobs.set(
+      jobId,
+      {
+        userId:
+          user.id,
+
+        status:
+          "queued",
+
+        progress:
+          0,
+
+        audio:
+          null,
+
+        error:
+          null,
+
+        createdAt:
+          Date.now()
+      }
+    );
+
+    res.status(202).json({
+      jobId:
+        jobId,
+
+      status:
+        "queued",
+
+      totalChunks:
+        chunks.length
+    });
+
+    setImmediate(
+      () => {
+        processVoiceJob(
+          jobId,
+          chunks,
+          voice,
+          styleInstruction
+        );
+      }
+    );
+
+  }
+);
+app.get(
+  "/api/voice-job/:jobId",
+  async (req, res) => {
+
+    const authHeader =
+      req.headers.authorization;
+
+    if (
+      !authHeader ||
+      !authHeader.startsWith("Bearer ")
+    ) {
+      return res.status(401).json({
+        error:
+          "Please sign in before checking your voiceover."
+      });
+    }
+
+    const accessToken =
+      authHeader.replace(
+        "Bearer ",
+        ""
+      );
+
+    const {
+      data: {
+        user
+      },
+      error: authError
+    } =
+      await supabase.auth.getUser(
+        accessToken
+      );
+
+    if (
+      authError ||
+      !user
+    ) {
+      return res.status(401).json({
+        error:
+          "Your session is invalid. Please sign in again."
+      });
+    }
+
+    const jobId =
+      req.params.jobId;
+
+    const job =
+      voiceJobs.get(jobId);
+
+    if (!job) {
+      return res.status(404).json({
+        error:
+          "Voiceover job not found."
+      });
+    }
+
+    if (
+      job.userId !== user.id
+    ) {
+      return res.status(403).json({
+        error:
+          "You do not have access to this voiceover job."
+      });
+    }
+
+    return res.json({
+      status:
+        job.status,
+
+      progress:
+        job.progress,
+
+      totalChunks:
+        job.totalChunks || null,
+
+      error:
+        job.error || null
+    });
+
+  }
+);
 dotenv.config();
 
 const app = express();
@@ -162,7 +588,7 @@ const supabase = createClient(
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
 });
-
+const voiceJobs = new Map();
 app.use(express.json());
 
 app.use(
