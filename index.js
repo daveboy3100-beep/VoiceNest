@@ -3,6 +3,81 @@ const dotenv = require("dotenv");
 const path = require("path");
 const { GoogleGenAI } = require("@google/genai");
 const { createClient } = require("@supabase/supabase-js");
+function splitScriptIntoChunks(
+  text,
+  maxCharacters = 3500
+) {
+  const chunks = [];
+
+  let remaining =
+    text.trim();
+
+  while (
+    remaining.length >
+    maxCharacters
+  ) {
+
+    let splitAt =
+      remaining.lastIndexOf(
+        "\n",
+        maxCharacters
+      );
+
+    if (splitAt < maxCharacters * 0.6) {
+
+      splitAt =
+        remaining.lastIndexOf(
+          ". ",
+          maxCharacters
+        );
+
+    }
+
+    if (splitAt < maxCharacters * 0.6) {
+
+      splitAt =
+        remaining.lastIndexOf(
+          "! ",
+          maxCharacters
+        );
+
+    }
+
+    if (splitAt < maxCharacters * 0.6) {
+
+      splitAt =
+        remaining.lastIndexOf(
+          "? ",
+          maxCharacters
+        );
+
+    }
+
+    if (splitAt < maxCharacters * 0.6) {
+
+      splitAt =
+        maxCharacters;
+
+    }
+
+    chunks.push(
+      remaining
+        .slice(0, splitAt)
+        .trim()
+    );
+
+    remaining =
+      remaining
+        .slice(splitAt)
+        .trim();
+  }
+
+  if (remaining) {
+    chunks.push(remaining);
+  }
+
+  return chunks;
+}
 dotenv.config();
 
 const app = express();
