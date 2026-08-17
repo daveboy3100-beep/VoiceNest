@@ -288,104 +288,133 @@ if (text.length > MAX_SCRIPT_CHARACTERS) {
   news:
     "Speak with a professional broadcast-news delivery. Sound clear, precise, composed, and authoritative, with controlled pacing and strong emphasis on important information."
 };
-  const prompt =
-    `${styleInstructions[style] || styleInstructions.natural} ` +
-    "Read the following script exactly as written. " +
-    "Do not add extra words.\n\n" +
-    text;
+  
+const styleInstruction =
+  styleInstructions[style] ||
+  styleInstructions.natural;
 
-  ai.models.generateContent({
-    model: "gemini-3.1-flash-tts-preview",
-    contents: [
-      {
-        parts: [
-          {
-            text: prompt
-          }
-        ]
-      }
-    ],
-    config: {
-      responseModalities: ["AUDIO"],
-      speechConfig: {
-        voiceConfig: {
-          prebuiltVoiceConfig: {
-            voiceName: voice
-          }
-        }
-      }
-    }
-  })
-    .then(async (response) => {
-      const audioPart =
-        response.candidates?.[0]?.content?.parts?.find(
-          (part) => part.inlineData?.data
-        );
+const chunks =
+  splitScriptIntoChunks(
+    text,
+    3500
+  );
 
-      if (!audioPart) {
-        throw new Error("Gemini returned no audio.");
-      }
+console.log(
+  `Voice generation: ${chunks.length} chunk(s)`
+);
 
-      const pcmData = Buffer.from(
-        audioPart.inlineData.data,
-        "base64"
-      );
+const pcmChunks = [];
 
-      const sampleRate = 24000;
-      const channels = 1;
-      const bitsPerSample = 16;
-      const blockAlign = 2;
-      const byteRate = 48000;
+for (
+  let i = 0;
+  i < chunks.length;
+  i++
+) {
 
-      const header = Buffer.alloc(44);
+  console.log(
+    `Generating voice chunk ${i + 1} of ${chunks.length}`
+  );
 
-      header.write("RIFF", 0);
+  const pcmData =
+    await generatePcmForChunk(
+      chunks[i],
+      voice,
+      styleInstruction
+    );
 
-      header.writeUInt32LE(
-        36 + pcmData.length,
-        4
-      );
+  pcmChunks.push(
+    pcmData
+  );
+}
 
-      header.write("WAVE", 8);
-      header.write("fmt ", 12);
+const pcmData =
+  Buffer.concat(
+    pcmChunks
+  );
 
-      header.writeUInt32LE(16, 16);
-      header.writeUInt16LE(1, 20);
-      header.writeUInt16LE(channels, 22);
+const sampleRate = 24000;
+const channels = 1;
+const bitsPerSample = 16;
+const blockAlign = 2;
+const byteRate = 48000;
 
-      header.writeUInt32LE(
-        sampleRate,
-        24
-      );
+const header =
+  Buffer.alloc(44);
 
-      header.writeUInt32LE(
-        byteRate,
-        28
-      );
+header.write(
+  "RIFF",
+  0
+);
 
-      header.writeUInt16LE(
-        blockAlign,
-        32
-      );
+header.writeUInt32LE(
+  36 + pcmData.length,
+  4
+);
 
-      header.writeUInt16LE(
-        bitsPerSample,
-        34
-      );
+header.write(
+  "WAVE",
+  8
+);
 
-      header.write("data", 36);
+header.write(
+  "fmt ",
+  12
+);
 
-      header.writeUInt32LE(
-        pcmData.length,
-        40
-      );
+header.writeUInt32LE(
+  16,
+  16
+);
 
-      const wavFile = Buffer.concat([
-  header,
-  pcmData
-]);
+header.writeUInt16LE(
+  1,
+  20
+);
 
-const { error: usageInsertError } = await supabase.rpc(
+header.writeUInt16LE(
+  channels,
+  22
+);
+
+header.writeUInt32LE(
+  sampleRate,
+  24
+);
+
+header.writeUInt32LE(
+  byteRate,
+  28
+);
+
+header.writeUInt16LE(
+  blockAlign,
+  32
+);
+
+header.writeUInt16LE(
+  bitsPerSample,
+  34
+);
+
+header.write(
+  "data",
+  36
+);
+
+header.writeUInt32LE(
+  pcmData.length,
+  40
+);
+
+const wavFile =
+  Buffer.concat([
+    header,
+    pcmData
+  ]);
+
+const {
+  error: usageInsertError
+} = await supabase.rpc(
   "increment_voice_usage",
   {
     p_user_id: userId,
@@ -394,23 +423,34 @@ const { error: usageInsertError } = await supabase.rpc(
 );
 
 if (usageInsertError) {
+
   console.error(
     "Usage record error:",
     usageInsertError
   );
 
   return res.status(500).json({
-    error: "Voice generated, but usage could not be recorded."
+    error:
+      "Voice generated, but usage could not be recorded."
   });
 }
 
 res.set({
-  "Content-Type": "audio/wav",
-  "Content-Length": wavFile.length,
-  "Cache-Control": "no-store"
+  "Content-Type":
+    "audio/wav",
+
+  "Content-Length":
+    wavFile.length,
+
+  "Cache-Control":
+    "no-store"
 });
 
-res.send(wavFile);
+res.send(
+  wavFile
+);
+      
+      
 })
 .catch((error) => {
       console.error(
