@@ -78,6 +78,79 @@ function splitScriptIntoChunks(
 
   return chunks;
 }
+async function generatePcmForChunk(
+  text,
+  voice,
+  styleInstructions
+) {
+
+  const prompt =
+    `${styleInstructions} ` +
+    "Read the following script exactly as written. " +
+    "Do not add extra words.\n\n" +
+    text;
+
+  const response =
+    await ai.models.generateContent({
+
+      model:
+        "gemini-3.1-flash-tts-preview",
+
+      contents: [
+        {
+          parts: [
+            {
+              text: prompt
+            }
+          ]
+        }
+      ],
+
+      config: {
+
+        responseModalities: [
+          "AUDIO"
+        ],
+
+        speechConfig: {
+
+          voiceConfig: {
+
+            prebuiltVoiceConfig: {
+
+              voiceName: voice
+
+            }
+
+          }
+
+        }
+
+      }
+
+    });
+
+  const audioPart =
+    response
+      .candidates?.[0]
+      ?.content?.parts?.find(
+        (part) =>
+          part.inlineData?.data
+      );
+
+  if (!audioPart) {
+
+    throw new Error(
+      "Gemini returned no audio for one of the script sections."
+    );
+
+  }
+
+  return Buffer.from(
+    audioPart.inlineData.data,
+    "base64"
+  );
+  }
 dotenv.config();
 
 const app = express();
