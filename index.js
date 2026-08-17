@@ -449,32 +449,32 @@ res.set({
 res.send(
   wavFile
 );
-      
-      
-})
-.catch((error) => {
-      console.error(
-        "Voice generation error:",
-        error
-      );
 
-      res.status(500).json({
-        error:
-          error?.message ||
-          "Voice generation failed."
-      });
-    });
+} catch (error) {
+
+  console.error(
+    "Voice generation error:",
+    error
+  );
+
+  return res.status(500).json({
+    error:
+      error?.message ||
+      "Voice generation failed."
+  });
+
+}
+
 });
 // ========================================
 // AI SCRIPT GENERATOR
 // ========================================
 
-app.post(
-  "/api/generate-script",
-  async (req, res) => {
+app.post("/api/generate", async (req, res) => {
 
-    const authHeader =
-      req.headers.authorization;
+  try {
+
+    const authHeader = req.headers.authorization;
 
     if (
       !authHeader ||
