@@ -92,6 +92,14 @@ if (usageCount >= DAILY_LIMIT) {
 }
 
 const text = String(req.body.text || "").trim();
+  const MAX_SCRIPT_CHARACTERS = 10000;
+
+if (text.length > MAX_SCRIPT_CHARACTERS) {
+  return res.status(400).json({
+    error:
+      "Your script is too long. Please keep it under 10,000 characters."
+  });
+    }
   const voice = req.body.voice || "Kore";
   const style = req.body.style || "natural";
 
