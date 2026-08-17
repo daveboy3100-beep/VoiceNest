@@ -834,7 +834,10 @@ const supabaseClient =
       document.getElementById(
         "copyScriptBtn"
       );
-
+        const useInVoiceoverBtn =
+  document.getElementById(
+    "useInVoiceoverBtn"
+  );
     const clearScriptBtn =
       document.getElementById(
         "clearScriptBtn"
@@ -937,7 +940,24 @@ const supabaseClient =
 
       }
     );
+      useInVoiceoverBtn.addEventListener(
+  "click",
+  () => {
 
+    const script =
+      generatedScript.value.trim();
+
+    if (!script) {
+      return;
+    }
+
+    const encodedScript =
+      encodeURIComponent(script);
+
+    window.location.href =
+      `/index.html?script=${encodedScript}`;
+  }
+);
 
     generateScriptBtn.addEventListener(
   "click",
