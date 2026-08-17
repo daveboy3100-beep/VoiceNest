@@ -2627,7 +2627,29 @@ async function convertWavToMp3(
 ); }
     }
 
+  const urlParams =
+  new URLSearchParams(
+    window.location.search
+  );
 
+const scriptFromUrl =
+  urlParams.get("script");
+
+if (scriptFromUrl) {
+
+  scriptInput.value =
+    scriptFromUrl;
+
+  updateScriptStats();
+
+  scriptInput.focus();
+
+  window.history.replaceState(
+    {},
+    document.title,
+    window.location.pathname
+  );
+    }
     scriptInput.addEventListener(
       "input",
       updateScriptStats
