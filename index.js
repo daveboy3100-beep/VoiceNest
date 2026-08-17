@@ -178,8 +178,9 @@ app.get("/api/health", (req, res) => {
 });
 app.post("/api/generate", async (req, res) => {
 
-  const authHeader = req.headers.authorization;
+  try {
 
+    const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       error: "Please sign in before generating a voiceover."
@@ -470,9 +471,9 @@ res.send(
 // AI SCRIPT GENERATOR
 // ========================================
 
-app.post("/api/generate", async (req, res) => {
-
-try {
+app.post(
+  "/api/generate-script",
+  async (req, res) => {
 
 const authHeader = req.headers.authorization;
     if (
