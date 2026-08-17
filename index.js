@@ -472,10 +472,9 @@ res.send(
 
 app.post("/api/generate", async (req, res) => {
 
-  try {
+try {
 
-    const authHeader = req.headers.authorization;
-
+const authHeader = req.headers.authorization;
     if (
       !authHeader ||
       !authHeader.startsWith("Bearer ")
