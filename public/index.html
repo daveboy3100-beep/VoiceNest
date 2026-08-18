@@ -2685,8 +2685,7 @@ if (scriptFromUrl) {
       }
     );
 
-
-    generateBtn.addEventListener(
+ generateBtn.addEventListener(
   "click",
   async () => {
 
@@ -2709,265 +2708,709 @@ if (scriptFromUrl) {
       return;
     }
 
+
     const voice =
       voiceSelect.value;
 
     const style =
       styleSelect.value;
-        if (!script) {
 
-          showMessage(
-            "Please enter a script before generating your voice.",
-            "error"
-          );
 
-          scriptInput.focus();
+    if (!script) {
 
-          return;
+      showMessage(
+        "Please enter a script before generating your voice.",
+        "error"
+      );
+
+      scriptInput.focus();
+
+      return;
+    }
+
+
+    setGeneratingState(true);
+
+
+    showMessage(
+      "Starting your voiceover...",
+      "loading"
+    );
+
+
+    resultPanel.className =
+      "result-panel hidden";
+
+
+    try {
+
+      // =====================================================
+      // GET CURRENT SUPABASE SESSION
+      // =====================================================
+
+      const {
+        data: {
+          session
         }
+      } =
+        await supabaseClient.auth.getSession();
 
 
-        setGeneratingState(true);
+      if (!session) {
 
-        showMessage(
-          "Creating your voiceover...",
-          "loading"
+        throw new Error(
+          "Please sign in before generating a voiceover."
+        );
+
+      }
+
+
+      // =====================================================
+      // CREATE BACKGROUND VOICE JOB
+      // =====================================================
+
+      const response =
+        await fetch(
+          "/api/voice-job",
+          {
+
+            method: "POST",
+
+            headers: {
+
+              "Content-Type":
+                "application/json",
+
+              "Authorization":
+                `Bearer ${session.access_token}`
+
+            },
+
+            body:
+              JSON.stringify({
+
+                text:
+                  script,
+
+                voice:
+                  voice,
+
+                style:
+                  style
+
+              })
+
+          }
         );
 
 
-        resultPanel.className =
-          "result-panel hidden";
+      if (!response.ok) {
+
+        let errorMessage =
+          "Unable to start voice generation.";
 
 
         try {
 
-          const {
-  data: { session }
-} = await supabaseClient.auth.getSession();
-
-if (!session) {
-  throw new Error("Please sign in before generating a voiceover.");
-}
-
-const response = await fetch("/api/generate", {
-  method: "POST",
-
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${session.access_token}`
-  },
-
-  body: JSON.stringify({
-    text: script,
-    voice: voice,
-    style: style
-  })
-});
+          const errorData =
+            await response.json();
 
 
-          if (!response.ok) {
+          if (
+            errorData.error
+          ) {
 
-            let errorMessage =
-              "Voice generation failed.";
+            errorMessage =
+              errorData.error;
+
+          }
+
+        } catch {
+
+          // Keep default message.
+
+        }
 
 
-            try {
+        throw new Error(
+          errorMessage
+        );
 
-              const errorData =
-                await response.json();
+      }
 
-              if (errorData.error) {
 
-                errorMessage =
-                  errorData.error;
+      const jobData =
+        await response.json();
+
+
+      const jobId =
+        jobData.jobId;
+
+
+      if (!jobId) {
+
+        throw new Error(
+          "The server did not return a voiceover job ID."
+        );
+
+      }
+
+
+      // =====================================================
+      // SHOW INITIAL STATUS
+      // =====================================================
+
+      showMessage(
+        `Voiceover started... 0%`,
+        "loading"
+      );
+
+
+      // =====================================================
+      // POLL JOB STATUS
+      // =====================================================
+
+      let completedJob =
+        null;
+
+
+      while (true) {
+
+        await new Promise(
+          (resolve) =>
+            setTimeout(
+              resolve,
+              2000
+            )
+        );
+
+
+        // Get a fresh session because
+        // Supabase tokens can refresh.
+
+        const {
+          data: {
+            session: currentSession
+          }
+        } =
+          await supabaseClient.auth.getSession();
+
+
+        if (!currentSession) {
+
+          throw new Error(
+            "Your session expired. Please sign in again."
+          );
+
+        }
+
+
+        const statusResponse =
+          await fetch(
+            `/api/voice-job/${encodeURIComponent(jobId)}`,
+            {
+
+              method: "GET",
+
+              headers: {
+
+                "Authorization":
+                  `Bearer ${currentSession.access_token}`
+
               }
 
-            } catch {
+            }
+          );
 
-              // Keep default error message.
+
+        if (!statusResponse.ok) {
+
+          let errorMessage =
+            "Unable to check voiceover progress.";
+
+
+          try {
+
+            const errorData =
+              await statusResponse.json();
+
+
+            if (
+              errorData.error
+            ) {
+
+              errorMessage =
+                errorData.error;
+
             }
 
+          } catch {
 
-            throw new Error(
-              errorMessage
-            );
+            // Keep default message.
+
           }
 
 
-          const audioBlob =
-            await response.blob();
-
-
-          if (!audioBlob.size) {
-
-            throw new Error(
-              "No audio was returned by the server."
-            );
-          }
-          
-          const audioUrl =
-  URL.createObjectURL(
-    audioBlob
-  );
-
-audioPlayer.src =
-  audioUrl;
-
-downloadBtn.href =
-  audioUrl;
-
-downloadBtn.download =
-  "voicenest-voiceover.wav";
-
-resultPanel.className =
-  "result-panel";
-
-resultMeta.textContent =
-  `${voice} · ${
-    style.charAt(0).toUpperCase() +
-    style.slice(1)
-  }`;
-
-showMessage(
-  "Voice generated! Preparing MP3...",
-  "loading"
-);
-
-audioPlayer.load();
-
-
-let mp3Blob;
-
-try {
-
-  mp3Blob =
-    await convertWavToMp3(
-      audioBlob
-    );
-
-  const mp3Url =
-    URL.createObjectURL(
-      mp3Blob
-    );
-
-  downloadMp3Btn.href =
-    mp3Url;
-
-  downloadMp3Btn.download =
-    "voicenest-voiceover.mp3";
-
-} catch (mp3Error) {
-
-  console.error(
-    "MP3 conversion error:",
-    mp3Error
-  );
-
-  showMessage(
-    "Voice generated successfully, but MP3 conversion failed. You can still download the WAV.",
-    "error"
-  );
-
-  mp3Blob = null;
-}
-
-
-if (mp3Blob) {
-
-  showMessage(
-    "Voice generated! Saving to history...",
-    "loading"
-  );
-
-  try {
-
-    await saveVoiceoverToHistory({
-
-      id: Date.now(),
-
-      script: script,
-
-      voice: voice,
-
-      style: style,
-
-      wavBlob: audioBlob,
-
-      mp3Blob: mp3Blob,
-
-      createdAt:
-        new Date().toISOString()
-
-    });
-
-  } catch (historyError) {
-
-    console.error(
-      "History save error:",
-      historyError
-    );
-
-  }
-
-}
-
-
-showMessage(
-  "Voice generated successfully.",
-  "success"
-);
-
-        } catch (error) {
-
-  console.error(
-    "Voice generation error:",
-    error
-  );
-
-  const errorText =
-    error.message || "";
-
-  if (
-    errorText.includes("429") ||
-    errorText.includes("RESOURCE_EXHAUSTED") ||
-    errorText.includes("Quota exceeded") ||
-    errorText.includes("quota")
-  ) {
-
-    showMessage(
-      "Voice generation is temporarily unavailable because the current generation limit has been reached. Please try again shortly.",
-      "error"
-    );
-
-  } else if (
-    errorText.includes("Failed to fetch") ||
-    errorText.includes("NetworkError")
-  ) {
-
-    showMessage(
-      "Unable to connect to VoiceNest. Please check your internet connection and try again.",
-      "error"
-    );
-
-  } else {
-
-    showMessage(
-      "Something went wrong while generating your voice. Please try again.",
-      "error"
-    );
-  }
-
-  resultPanel.className =
-    "result-panel hidden";
-
-} finally {
-          setGeneratingState(
-            false
+          throw new Error(
+            errorMessage
           );
-        }
-      }
-    );
 
+        }
+
+
+        const status =
+          await statusResponse.json();
+
+
+        const progress =
+          Number(
+            status.progress || 0
+          );
+
+
+        const completedChunks =
+          Number(
+            status.completedChunks || 0
+          );
+
+
+        const totalChunks =
+          Number(
+            status.totalChunks || 0
+          );
+
+
+        // ================================================
+        // QUEUED
+        // ================================================
+
+        if (
+          status.status ===
+          "queued"
+        ) {
+
+          showMessage(
+            "Voiceover job started. Preparing audio...",
+            "loading"
+          );
+
+        }
+
+
+        // ================================================
+        // PROCESSING
+        // ================================================
+
+        else if (
+          status.status ===
+          "processing"
+        ) {
+
+          if (
+            totalChunks > 0
+          ) {
+
+            showMessage(
+              `Creating voiceover... ${progress}% (${completedChunks}/${totalChunks} sections)`,
+              "loading"
+            );
+
+          } else {
+
+            showMessage(
+              `Creating voiceover... ${progress}%`,
+              "loading"
+            );
+
+          }
+
+        }
+
+
+        // ================================================
+        // FAILED
+        // ================================================
+
+        else if (
+          status.status ===
+          "failed"
+        ) {
+
+          throw new Error(
+            status.error ||
+            "Voice generation failed."
+          );
+
+        }
+
+
+        // ================================================
+        // COMPLETED
+        // ================================================
+
+        else if (
+          status.status ===
+          "completed"
+        ) {
+
+          completedJob =
+            status;
+
+          break;
+
+        }
+
+      }
+
+
+      // =====================================================
+      // DOWNLOAD FINAL AUDIO FROM JOB
+      // =====================================================
+
+      showMessage(
+        "Voiceover finished! Preparing your audio...",
+        "loading"
+      );
+
+
+      const {
+        data: {
+          session: finalSession
+        }
+      } =
+        await supabaseClient.auth.getSession();
+
+
+      if (!finalSession) {
+
+        throw new Error(
+          "Your session expired. Please sign in again."
+        );
+
+      }
+
+
+      const audioResponse =
+        await fetch(
+          `/api/voice-job/${encodeURIComponent(jobId)}/audio`,
+          {
+
+            method: "GET",
+
+            headers: {
+
+              "Authorization":
+                `Bearer ${finalSession.access_token}`
+
+            }
+
+          }
+        );
+
+
+      if (!audioResponse.ok) {
+
+        let errorMessage =
+          "Voiceover completed, but the audio could not be downloaded.";
+
+
+        try {
+
+          const errorData =
+            await audioResponse.json();
+
+
+          if (
+            errorData.error
+          ) {
+
+            errorMessage =
+              errorData.error;
+
+          }
+
+        } catch {
+
+          // Keep default error.
+
+        }
+
+
+        throw new Error(
+          errorMessage
+        );
+
+      }
+
+
+      const audioBlob =
+        await audioResponse.blob();
+
+
+      if (
+        !audioBlob.size
+      ) {
+
+        throw new Error(
+          "The server returned an empty audio file."
+        );
+
+      }
+
+
+      // =====================================================
+      // CREATE AUDIO URL
+      // =====================================================
+
+      const audioUrl =
+        URL.createObjectURL(
+          audioBlob
+        );
+
+
+      audioPlayer.src =
+        audioUrl;
+
+
+      downloadBtn.href =
+        audioUrl;
+
+
+      downloadBtn.download =
+        "voicenest-voiceover.wav";
+
+
+      resultPanel.className =
+        "result-panel";
+
+
+      resultMeta.textContent =
+        `${voice} · ${
+          style.charAt(0).toUpperCase() +
+          style.slice(1)
+        }`;
+
+
+      audioPlayer.load();
+
+
+      // =====================================================
+      // CONVERT WAV → MP3
+      // =====================================================
+
+      showMessage(
+        "Voice generated! Preparing MP3...",
+        "loading"
+      );
+
+
+      let mp3Blob;
+
+
+      try {
+
+        mp3Blob =
+          await convertWavToMp3(
+            audioBlob
+          );
+
+
+        const mp3Url =
+          URL.createObjectURL(
+            mp3Blob
+          );
+
+
+        downloadMp3Btn.href =
+          mp3Url;
+
+
+        downloadMp3Btn.download =
+          "voicenest-voiceover.mp3";
+
+
+      } catch (
+        mp3Error
+      ) {
+
+        console.error(
+          "MP3 conversion error:",
+          mp3Error
+        );
+
+
+        showMessage(
+          "Voice generated successfully, but MP3 conversion failed. You can still download the WAV.",
+          "error"
+        );
+
+
+        mp3Blob =
+          null;
+
+      }
+
+
+      // =====================================================
+      // SAVE TO HISTORY
+      // =====================================================
+
+      if (
+        mp3Blob
+      ) {
+
+        showMessage(
+          "Voice generated! Saving to history...",
+          "loading"
+        );
+
+
+        try {
+
+          await saveVoiceoverToHistory({
+
+            id:
+              Date.now(),
+
+            script:
+              script,
+
+            voice:
+              voice,
+
+            style:
+              style,
+
+            wavBlob:
+              audioBlob,
+
+            mp3Blob:
+              mp3Blob,
+
+            createdAt:
+              new Date().toISOString()
+
+          });
+
+
+        } catch (
+          historyError
+        ) {
+
+          console.error(
+            "History save error:",
+            historyError
+          );
+
+        }
+
+      }
+
+
+      // =====================================================
+      // FINAL SUCCESS
+      // =====================================================
+
+      showMessage(
+        "Voice generated successfully.",
+        "success"
+      );
+
+
+    } catch (
+      error
+    ) {
+
+      console.error(
+        "Voice generation error:",
+        error
+      );
+
+
+      const errorText =
+        error?.message ||
+        "";
+
+
+      if (
+        errorText.includes(
+          "429"
+        ) ||
+        errorText.includes(
+          "RESOURCE_EXHAUSTED"
+        ) ||
+        errorText.includes(
+          "Quota exceeded"
+        ) ||
+        errorText.toLowerCase().includes(
+          "quota"
+        )
+      ) {
+
+        showMessage(
+          "Voice generation is temporarily unavailable because the current generation limit has been reached. Please try again shortly.",
+          "error"
+        );
+
+      }
+
+      else if (
+        errorText.includes(
+          "session expired"
+        )
+      ) {
+
+        showMessage(
+          "Your session expired. Please sign in again.",
+          "error"
+        );
+
+      }
+
+      else if (
+        errorText.includes(
+          "Failed to fetch"
+        ) ||
+        errorText.includes(
+          "NetworkError"
+        )
+      ) {
+
+        showMessage(
+          "Unable to connect to VoiceNest. Please check your internet connection and try again.",
+          "error"
+        );
+
+      }
+
+      else {
+
+        showMessage(
+          errorText ||
+          "Something went wrong while generating your voice. Please try again.",
+          "error"
+        );
+
+      }
+
+
+      resultPanel.className =
+        "result-panel hidden";
+
+
+    } finally {
+
+      setGeneratingState(
+        false
+      );
+
+    }
+
+  }
+);
+    
+    
+  
 
     updateScriptStats();
     // ========================================
