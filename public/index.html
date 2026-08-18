@@ -2867,200 +2867,353 @@ if (scriptFromUrl) {
 
 
       // =====================================================
-      // POLL JOB STATUS
-      // =====================================================
+// POLL JOB STATUS
+// =====================================================
 
-      let completedJob =
-        null;
+let completedJob = null;
 
+let consecutiveNetworkErrors = 0;
 
-      while (true) {
+const MAX_NETWORK_RETRIES = 15;
 
-        await new Promise(
-          (resolve) =>
-            setTimeout(
-              resolve,
-              2000
-            )
-        );
+let lastProgress = -1;
 
 
-        // Get a fresh session because
-        // Supabase tokens can refresh.
+// -----------------------------------------------------
+// Helper: wait before polling again
+// -----------------------------------------------------
 
-        const {
-          data: {
-            session: currentSession
-          }
-        } =
-          await supabaseClient.auth.getSession();
+const waitForNextPoll = (ms) => {
 
+  return new Promise((resolve) => {
 
-        if (!currentSession) {
+    setTimeout(resolve, ms);
 
-          throw new Error(
-            "Your session expired. Please sign in again."
-          );
+  });
 
-        }
+};
 
 
-        const statusResponse =
-          await fetch(
-            `/api/voice-job/${encodeURIComponent(jobId)}`,
-            {
+// -----------------------------------------------------
+// Helper: check the job once
+// -----------------------------------------------------
 
-              method: "GET",
+const checkVoiceJob = async () => {
 
-              headers: {
+  const {
+    data: {
+      session: currentSession
+    }
+  } = await supabaseClient.auth.getSession();
 
-                "Authorization":
-                  `Bearer ${currentSession.access_token}`
 
-              }
+  if (!currentSession) {
 
-            }
-          );
+    throw new Error(
+      "Your session expired. Please sign in again."
+    );
 
+  }
 
-        if (!statusResponse.ok) {
 
-          let errorMessage =
-            "Unable to check voiceover progress.";
+  const statusResponse = await fetch(
+    `/api/voice-job/${encodeURIComponent(jobId)}`,
+    {
+      method: "GET",
 
+      headers: {
+        "Authorization":
+          `Bearer ${currentSession.access_token}`,
 
-          try {
+        "Cache-Control":
+          "no-cache"
+      },
 
-            const errorData =
-              await statusResponse.json();
+      cache: "no-store"
+    }
+  );
 
 
-            if (
-              errorData.error
-            ) {
+  if (!statusResponse.ok) {
 
-              errorMessage =
-                errorData.error;
+    let errorMessage =
+      "Unable to check voiceover progress.";
 
-            }
 
-          } catch {
+    try {
 
-            // Keep default message.
+      const errorData =
+        await statusResponse.json();
 
-          }
 
+      if (errorData.error) {
 
-          throw new Error(
-            errorMessage
-          );
-
-        }
-
-
-        const status =
-          await statusResponse.json();
-
-
-        const progress =
-          Number(
-            status.progress || 0
-          );
-
-
-        const completedChunks =
-          Number(
-            status.completedChunks || 0
-          );
-
-
-        const totalChunks =
-          Number(
-            status.totalChunks || 0
-          );
-
-
-        // ================================================
-        // QUEUED
-        // ================================================
-
-        if (
-          status.status ===
-          "queued"
-        ) {
-
-          showMessage(
-            "Voiceover job started. Preparing audio...",
-            "loading"
-          );
-
-        }
-
-
-        // ================================================
-        // PROCESSING
-        // ================================================
-
-        else if (
-          status.status ===
-          "processing"
-        ) {
-
-          if (
-            totalChunks > 0
-          ) {
-
-            showMessage(
-              `Creating voiceover... ${progress}% (${completedChunks}/${totalChunks} sections)`,
-              "loading"
-            );
-
-          } else {
-
-            showMessage(
-              `Creating voiceover... ${progress}%`,
-              "loading"
-            );
-
-          }
-
-        }
-
-
-        // ================================================
-        // FAILED
-        // ================================================
-
-        else if (
-          status.status ===
-          "failed"
-        ) {
-
-          throw new Error(
-            status.error ||
-            "Voice generation failed."
-          );
-
-        }
-
-
-        // ================================================
-        // COMPLETED
-        // ================================================
-
-        else if (
-          status.status ===
-          "completed"
-        ) {
-
-          completedJob =
-            status;
-
-          break;
-
-        }
+        errorMessage =
+          errorData.error;
 
       }
+
+    } catch {
+
+      // Keep default message.
+
+    }
+
+
+    const error =
+      new Error(errorMessage);
+
+
+    error.isHttpError = true;
+
+    error.status =
+      statusResponse.status;
+
+
+    throw error;
+
+  }
+
+
+  return await statusResponse.json();
+
+};
+
+
+// -----------------------------------------------------
+// Keep checking until the job finishes
+// -----------------------------------------------------
+
+while (true) {
+
+  let status;
+
+
+  try {
+
+    status =
+      await checkVoiceJob();
+
+
+    // A successful request means
+    // our connection is healthy again.
+
+    consecutiveNetworkErrors = 0;
+
+
+  } catch (pollError) {
+
+    console.warn(
+      "Temporary voice job polling error:",
+      pollError
+    );
+
+
+    // -------------------------------------------------
+    // IMPORTANT:
+    //
+    // Do NOT immediately kill the voice job.
+    //
+    // Chrome/Android can temporarily suspend or
+    // interrupt requests when the page is minimized.
+    // -------------------------------------------------
+
+    consecutiveNetworkErrors++;
+
+
+    if (
+      consecutiveNetworkErrors >
+      MAX_NETWORK_RETRIES
+    ) {
+
+      throw new Error(
+        "VoiceNest could not reconnect to the voice generation job after several attempts. Please reopen the page and try again."
+      );
+
+    }
+
+
+    showMessage(
+      `Connection temporarily interrupted. Reconnecting... (${consecutiveNetworkErrors}/${MAX_NETWORK_RETRIES})`,
+      "loading"
+    );
+
+
+    // Exponential backoff.
+    //
+    // 2s → 3s → 4s → ... → 10s
+
+    const retryDelay =
+      Math.min(
+        2000 +
+          (
+            consecutiveNetworkErrors *
+            1000
+          ),
+        10000
+      );
+
+
+    await waitForNextPoll(
+      retryDelay
+    );
+
+
+    continue;
+
+  }
+
+
+  // ===================================================
+  // JOB STATUS
+  // ===================================================
+
+  const progress =
+    Number(
+      status.progress || 0
+    );
+
+
+  const completedChunks =
+    Number(
+      status.completedChunks || 0
+    );
+
+
+  const totalChunks =
+    Number(
+      status.totalChunks || 0
+    );
+
+
+  // ===================================================
+  // QUEUED
+  // ===================================================
+
+  if (
+    status.status ===
+    "queued"
+  ) {
+
+    showMessage(
+      "Voiceover job started. Preparing audio...",
+      "loading"
+    );
+
+  }
+
+
+  // ===================================================
+  // PROCESSING
+  // ===================================================
+
+  else if (
+    status.status ===
+    "processing"
+  ) {
+
+    const progressChanged =
+      progress !== lastProgress;
+
+
+    if (
+      totalChunks > 0
+    ) {
+
+      showMessage(
+        `Creating voiceover... ${progress}% (${completedChunks}/${totalChunks} sections)`,
+        "loading"
+      );
+
+    } else {
+
+      showMessage(
+        `Creating voiceover... ${progress}%`,
+        "loading"
+      );
+
+    }
+
+
+    if (
+      progressChanged
+    ) {
+
+      lastProgress =
+        progress;
+
+    }
+
+  }
+
+
+  // ===================================================
+  // FAILED
+  // ===================================================
+
+  else if (
+    status.status ===
+    "failed"
+  ) {
+
+    throw new Error(
+      status.error ||
+      "Voice generation failed."
+    );
+
+  }
+
+
+  // ===================================================
+  // COMPLETED
+  // ===================================================
+
+  else if (
+    status.status ===
+    "completed"
+  ) {
+
+    completedJob =
+      status;
+
+    break;
+
+  }
+
+
+  // ===================================================
+  // UNKNOWN STATUS
+  // ===================================================
+
+  else {
+
+    console.warn(
+      "Unknown voice job status:",
+      status.status
+    );
+
+  }
+
+
+  // ---------------------------------------------------
+  // Normal polling interval
+  // ---------------------------------------------------
+
+  await waitForNextPoll(
+    2000
+  );
+
+    }
+      
+
+          
+
+          
+
+        
+
+
+        
 
 
       // =====================================================
