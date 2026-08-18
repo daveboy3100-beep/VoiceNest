@@ -3194,118 +3194,184 @@ if (scriptFromUrl) {
       audioPlayer.load();
 
 
-      // =====================================================
-      // CONVERT WAV → MP3
-      // =====================================================
+// =====================================================
+// WAV IS READY — MAKE IT AVAILABLE IMMEDIATELY
+// =====================================================
 
-      showMessage(
-        "Voice generated! Preparing MP3...",
-        "loading"
-      );
-
-
-      let mp3Blob;
+showMessage(
+  "Voice generated! Your WAV audio is ready.",
+  "success"
+);
 
 
-      try {
-
-        mp3Blob =
-          await convertWavToMp3(
-            audioBlob
-          );
-
-
-        const mp3Url =
-          URL.createObjectURL(
-            mp3Blob
-          );
+// The WAV is already attached to the audio player
+// and download button above.
+//
+// The user can play/download it immediately.
+// We do NOT wait for MP3 conversion anymore.
 
 
-        downloadMp3Btn.href =
-          mp3Url;
+// =====================================================
+// CONVERT WAV → MP3 IN THE BACKGROUND
+// =====================================================
+
+let mp3Blob = null;
+
+try {
+
+  showMessage(
+    "Voice generated! Preparing MP3 in the background...",
+    "loading"
+  );
 
 
-        downloadMp3Btn.download =
-          "voicenest-voiceover.mp3";
+  mp3Blob =
+    await convertWavToMp3(
+      audioBlob
+    );
 
 
-      } catch (
-        mp3Error
-      ) {
+  if (
+    !mp3Blob ||
+    !mp3Blob.size
+  ) {
 
-        console.error(
-          "MP3 conversion error:",
-          mp3Error
-        );
+    throw new Error(
+      "MP3 conversion returned an empty file."
+    );
 
-
-        showMessage(
-          "Voice generated successfully, but MP3 conversion failed. You can still download the WAV.",
-          "error"
-        );
+  }
 
 
-        mp3Blob =
-          null;
-
-      }
-
-
-      // =====================================================
-      // SAVE TO HISTORY
-      // =====================================================
-
-      if (
-        mp3Blob
-      ) {
-
-        showMessage(
-          "Voice generated! Saving to history...",
-          "loading"
-        );
+  const mp3Url =
+    URL.createObjectURL(
+      mp3Blob
+    );
 
 
-        try {
-
-          await saveVoiceoverToHistory({
-
-            id:
-              Date.now(),
-
-            script:
-              script,
-
-            voice:
-              voice,
-
-            style:
-              style,
-
-            wavBlob:
-              audioBlob,
-
-            mp3Blob:
-              mp3Blob,
-
-            createdAt:
-              new Date().toISOString()
-
-          });
+  downloadMp3Btn.href =
+    mp3Url;
 
 
-        } catch (
-          historyError
-        ) {
+  downloadMp3Btn.download =
+    "voicenest-voiceover.mp3";
 
-          console.error(
-            "History save error:",
-            historyError
-          );
 
-        }
+  console.log(
+    "MP3 conversion completed successfully."
+  );
 
-      }
 
+} catch (
+  mp3Error
+) {
+
+  console.error(
+    "MP3 conversion error:",
+    mp3Error
+  );
+
+
+  mp3Blob =
+    null;
+
+
+  // IMPORTANT:
+  // Do NOT hide the generated result.
+  //
+  // The WAV is still valid and playable.
+
+  showMessage(
+    "Voice generated successfully. WAV is ready, but MP3 conversion could not be completed.",
+    "error"
+  );
+
+}
+
+
+// =====================================================
+// SAVE TO HISTORY
+// =====================================================
+//
+// The existing history system expects an MP3 blob,
+// so only save when MP3 conversion succeeded.
+//
+// We will improve this later so history can store WAV
+// independently as well.
+// =====================================================
+
+if (
+  mp3Blob
+) {
+
+  try {
+
+    await saveVoiceoverToHistory({
+
+      id:
+        Date.now(),
+
+      script:
+        script,
+
+      voice:
+        voice,
+
+      style:
+        style,
+
+      wavBlob:
+        audioBlob,
+
+      mp3Blob:
+        mp3Blob,
+
+      createdAt:
+        new Date().toISOString()
+
+    });
+
+
+    console.log(
+      "Voiceover saved to history."
+    );
+
+
+  } catch (
+    historyError
+  ) {
+
+    console.error(
+      "History save error:",
+      historyError
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// FINAL STATE
+// =====================================================
+
+if (
+  mp3Blob
+) {
+
+  showMessage(
+    "Voice generated successfully. WAV and MP3 are ready.",
+    "success"
+  );
+
+} else {
+
+  showMessage(
+    "Voice generated successfully. WAV is ready.",
+    "success"
+  );
+
+    }
 
       // =====================================================
       // FINAL SUCCESS
