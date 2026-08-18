@@ -594,7 +594,82 @@ ${text}`;
   );
 
 }
+function convertWavToMp3(wavBuffer) {
+  return new Promise((resolve, reject) => {
+    if (!ffmpegPath) {
+      return reject(
+        new Error("FFmpeg executable could not be found.")
+      );
+    }
 
+    const ffmpeg = spawn(ffmpegPath, [
+      "-hide_banner",
+      "-loglevel",
+      "error",
+      "-f",
+      "wav",
+      "-i",
+      "pipe:0",
+      "-codec:a",
+      "libmp3lame",
+      "-b:a",
+      "128k",
+      "-f",
+      "mp3",
+      "pipe:1"
+    ]);
+
+    const outputChunks = [];
+    const errorChunks = [];
+
+    ffmpeg.stdout.on("data", (chunk) => {
+      outputChunks.push(chunk);
+    });
+
+    ffmpeg.stderr.on("data", (chunk) => {
+      errorChunks.push(chunk);
+    });
+
+    ffmpeg.on("error", (error) => {
+      reject(error);
+    });
+
+    ffmpeg.on("close", (code) => {
+      if (code !== 0) {
+        const errorMessage =
+          Buffer.concat(errorChunks)
+            .toString("utf8")
+            .trim();
+
+        return reject(
+          new Error(
+            errorMessage ||
+            `FFmpeg exited with code ${code}.`
+          )
+        );
+      }
+
+      const mp3Buffer =
+        Buffer.concat(outputChunks);
+
+      if (!mp3Buffer.length) {
+        return reject(
+          new Error(
+            "FFmpeg produced an empty MP3 file."
+          )
+        );
+      }
+
+      resolve(mp3Buffer);
+    });
+
+    ffmpeg.stdin.on("error", (error) => {
+      reject(error);
+    });
+
+    ffmpeg.stdin.end(wavBuffer);
+  });
+      }
 
 // ============================================================
 // PCM → WAV
