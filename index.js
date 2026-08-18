@@ -887,17 +887,32 @@ async function processVoiceJob(
 
 
     const wavFile =
-      createWavFromPcm(
-        pcmData
-      );
+  createWavFromPcm(
+    pcmData
+  );
 
 
-    job.audio =
-      wavFile;
+job.audio =
+  wavFile;
 
 
-    job.progress =
-      95;
+job.progress =
+  95;
+
+
+console.log(
+  `Voice job ${jobId}: converting WAV to MP3`
+);
+
+
+const mp3File =
+  await convertWavToMp3(
+    wavFile
+  );
+
+
+job.mp3 =
+  mp3File;
 
 
     console.log(
