@@ -1616,6 +1616,142 @@ app.get(
   }
 );
 // ============================================================
+// GET COMPLETED VOICE JOB MP3
+// ============================================================
+
+app.get(
+  "/api/voice-job/:jobId/mp3",
+  async (req, res) => {
+
+    try {
+
+      const auth =
+        await getAuthenticatedUser(
+          req
+        );
+
+
+      if (!auth.user) {
+
+        return res
+          .status(auth.status)
+          .json({
+            error:
+              auth.error
+          });
+
+      }
+
+
+      const job =
+        voiceJobs.get(
+          req.params.jobId
+        );
+
+
+      if (!job) {
+
+        return res
+          .status(404)
+          .json({
+            error:
+              "Voiceover job not found."
+          });
+
+      }
+
+
+      if (
+        job.userId !==
+        auth.user.id
+      ) {
+
+        return res
+          .status(403)
+          .json({
+            error:
+              "You do not have access to this voiceover job."
+          });
+
+      }
+
+
+      if (
+        job.status !==
+        "completed"
+      ) {
+
+        return res
+          .status(409)
+          .json({
+
+            error:
+              "This voiceover is not ready yet.",
+
+            status:
+              job.status,
+
+            progress:
+              job.progress
+
+          });
+
+      }
+
+
+      if (!job.mp3) {
+
+        return res
+          .status(500)
+          .json({
+            error:
+              "Voiceover completed but MP3 audio is unavailable."
+          });
+
+      }
+
+
+      res.set({
+
+        "Content-Type":
+          "audio/mpeg",
+
+        "Content-Length":
+          job.mp3.length,
+
+        "Cache-Control":
+          "no-store"
+
+      });
+
+
+      return res.send(
+        job.mp3
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Voice job MP3 error:",
+        error
+      );
+
+
+      return res
+        .status(500)
+        .json({
+
+          error:
+            "Unable to retrieve voiceover MP3."
+
+        });
+
+    }
+
+  }
+);
+// ============================================================
 // LEGACY /api/generate
 // ============================================================
 //
