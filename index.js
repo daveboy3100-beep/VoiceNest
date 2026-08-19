@@ -54,7 +54,10 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_PUBLISHABLE_KEY
 );
-
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SECRET_KEY
+);
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
 });
