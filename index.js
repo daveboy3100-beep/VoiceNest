@@ -1268,12 +1268,42 @@ app.post(
           null
 
       };
+};
 
+const { error: jobInsertError } =
+  await supabase
+    .from("voice_jobs")
+    .insert({
+      id: jobId,
+      user_id: user.id,
+      status: "queued",
+      progress: 0,
+      total_chunks: chunks.length,
+      completed_chunks: 0
+    });
 
-      voiceJobs.set(
-        jobId,
-        job
-      );
+if (jobInsertError) {
+
+  console.error(
+    "Supabase voice job creation error:",
+    jobInsertError
+  );
+
+  return res
+    .status(500)
+    .json({
+      error:
+        "Unable to create your voice generation job. Please try again."
+    });
+
+}
+
+voiceJobs.set(
+  jobId,
+  job
+);
+
+      
 
 
       console.log(
