@@ -530,8 +530,9 @@ ${text}`;
   const response =
     await ai.models.generateContent({
 
-      model:
-        "gemini-3.1-flash-tts-preview",
+    
+        model:
+  "gemini-2.5-flash-tts",
 
       contents: [
         {
