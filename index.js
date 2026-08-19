@@ -828,7 +828,22 @@ async function processVoiceJob(
 
     job.progress =
       0;
+       const { error: processingUpdateError } =
+  await supabase
+    .from("voice_jobs")
+    .update({
+      status: "processing",
+      progress: 0
+    })
+    .eq("id", jobId)
+    .eq("user_id", job.userId);
 
+if (processingUpdateError) {
+  console.error(
+    `Voice job ${jobId}: failed to update processing status`,
+    processingUpdateError
+  );
+}
 
     const pcmChunks = [];
 
