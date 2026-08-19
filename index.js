@@ -1268,7 +1268,7 @@ app.post(
           null
 
       };
-};
+    
 
 const { error: jobInsertError } =
   await supabase
