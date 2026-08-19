@@ -532,7 +532,7 @@ ${text}`;
 
     
         model:
-  "gemini-2.5-flash-tts",
+  "gemini-3.1-flash-tts-preview",
 
       contents: [
         {
