@@ -1271,7 +1271,7 @@ app.post(
     
 
 const { error: jobInsertError } =
-  await supabase
+  await createUserSupabaseClient(accessToken)
     .from("voice_jobs")
     .insert({
       id: jobId,
