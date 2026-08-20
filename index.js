@@ -932,7 +932,40 @@ const mp3File =
 
 job.mp3 =
   mp3File;
+const audioPath =
+  `${job.userId}/${job.jobId}.mp3`;
 
+const {
+  error: uploadError
+} =
+  await supabaseAdmin
+    .storage
+    .from("voice-audio")
+    .upload(
+      audioPath,
+      mp3File,
+      {
+        contentType: "audio/mpeg",
+        upsert: false
+      }
+    );
+
+if (uploadError) {
+
+  console.error(
+    `Voice job ${jobId}: audio upload failed`,
+    uploadError
+  );
+
+  throw new Error(
+    "Voice was generated, but saving the audio failed."
+  );
+
+}
+
+console.log(
+  `Voice job ${jobId}: MP3 uploaded to Supabase Storage`
+);
 
     console.log(
       `Voice job ${jobId}: recording usage`
