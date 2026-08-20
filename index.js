@@ -832,7 +832,7 @@ async function processVoiceJob(
     job.progress =
       0;
        const { error: processingUpdateError } =
-  await supabase
+  await supabaseAdmin
     .from("voice_jobs")
     .update({
       status: "processing",
