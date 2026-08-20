@@ -966,6 +966,29 @@ if (uploadError) {
 console.log(
   `Voice job ${jobId}: MP3 uploaded to Supabase Storage`
 );
+    const { error: audioPathUpdateError } =
+  await supabaseAdmin
+    .from("voice_jobs")
+    .update({
+      audio_path: audioPath
+    })
+    .eq("id", jobId)
+    .eq("user_id", job.userId);
+
+if (audioPathUpdateError) {
+  console.error(
+    `Voice job ${jobId}: failed to save audio path`,
+    audioPathUpdateError
+  );
+
+  throw new Error(
+    "Voice was saved, but the audio reference could not be recorded."
+  );
+}
+
+console.log(
+  `Voice job ${jobId}: audio path saved to database`
+);
 
     console.log(
       `Voice job ${jobId}: recording usage`
