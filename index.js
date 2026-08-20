@@ -1021,7 +1021,28 @@ if (completedUpdateError) {
 
     job.failedAt =
       Date.now();
+   const { error: failedUpdateError } =
+  await supabaseAdmin
+    .from("voice_jobs")
+    .update({
+      status: "failed",
+      error:
+        job.error ||
+        "Voice generation failed.",
+      failed_at:
+        new Date(
+          job.failedAt
+        ).toISOString()
+    })
+    .eq("id", jobId)
+    .eq("user_id", job.userId);
 
+if (failedUpdateError) {
+  console.error(
+    `Voice job ${jobId}: failed to persist failed status`,
+    failedUpdateError
+  );
+    }
   }
 
 }
