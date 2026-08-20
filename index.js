@@ -976,8 +976,27 @@ job.mp3 =
 
     job.completedAt =
       Date.now();
+   const { error: completedUpdateError } =
+  await supabaseAdmin
+    .from("voice_jobs")
+    .update({
+      status: "completed",
+      progress: 100,
+      completed_chunks: job.totalChunks,
+      completed_at: new Date(
+        job.completedAt
+      ).toISOString()
+    })
+    .eq("id", jobId)
+    .eq("user_id", job.userId);
 
-
+if (completedUpdateError) {
+  console.error(
+    `Voice job ${jobId}: failed to update completed status`,
+    completedUpdateError
+  );
+}
+    
     console.log(
       `Voice job ${jobId}: completed`
     );
