@@ -848,51 +848,79 @@ if (processingUpdateError) {
   );
 }
 
-    const pcmChunks = [];
+    const pcmChunks =
+  new Array(job.chunks.length);
+
+const MAX_CONCURRENT_CHUNKS = 2;
+
+let nextChunkIndex = 0;
+
+async function processNextChunk() {
+
+  const index =
+    nextChunkIndex++;
+
+  if (
+    index >= job.chunks.length
+  ) {
+    return;
+  }
+
+  console.log(
+    `Voice job ${jobId}: generating chunk ${index + 1} of ${job.chunks.length}`
+  );
+
+  const pcmData =
+    await generatePcmForChunk(
+      job.chunks[index],
+      job.voice,
+      job.styleInstruction
+    );
+
+  // Store the audio at its ORIGINAL position.
+  // This is important because concurrent requests
+  // may finish in a different order.
+  pcmChunks[index] =
+    pcmData;
+
+  job.completedChunks++;
+
+  job.progress =
+    Math.round(
+      (
+        job.completedChunks /
+        job.chunks.length
+      ) * 90
+    );
+
+  // Process another chunk when this worker finishes.
+  await processNextChunk();
+}
 
 
-    for (
-      let i = 0;
-      i < job.chunks.length;
-      i++
-    ) {
+const workers = [];
 
-      console.log(
-        `Voice job ${jobId}: generating chunk ${i + 1} of ${job.chunks.length}`
-      );
+const workerCount =
+  Math.min(
+    MAX_CONCURRENT_CHUNKS,
+    job.chunks.length
+  );
 
+for (
+  let i = 0;
+  i < workerCount;
+  i++
+) {
 
-      const pcmData =
-        await generatePcmForChunk(
+  workers.push(
+    processNextChunk()
+  );
 
-          job.chunks[i],
+}
 
-          job.voice,
-
-          job.styleInstruction
-
-        );
-
-
-      pcmChunks.push(
-        pcmData
-      );
-
-
-      job.completedChunks =
-        i + 1;
-
-
-      job.progress =
-        Math.round(
-          (
-            (i + 1) /
-            job.chunks.length
-          ) * 90
-        );
-
-    }
-
+await Promise.all(
+  workers
+);
 
     console.log(
       `Voice job ${jobId}: combining audio`
