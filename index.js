@@ -74,6 +74,38 @@ const VOICE_CHUNK_SIZE = 3500;
 const DAILY_VOICE_LIMIT = 5;
 
 const DAILY_SCRIPT_LIMIT = 5;
+const MAX_SCRIPT_TOPIC_CHARACTERS = 5000;
+
+const ALLOWED_SCRIPT_PLATFORMS = [
+  "YouTube",
+  "TikTok",
+  "Instagram",
+  "Facebook"
+];
+
+const ALLOWED_SCRIPT_CONTENT_TYPES = [
+  "Educational",
+  "Story",
+  "Documentary",
+  "Motivational",
+  "Explainer"
+];
+
+const ALLOWED_SCRIPT_TONES = [
+  "Cinematic",
+  "Professional",
+  "Casual",
+  "Energetic",
+  "Emotional"
+];
+
+const ALLOWED_SCRIPT_DURATIONS = [
+  "30s",
+  "1m",
+  "2m",
+  "5m",
+  "10m"
+];
 // ============================================================
 // JOB STORAGE
 // ============================================================
@@ -2356,8 +2388,83 @@ if (
           });
 
       }
+        if (
+  topic.length >
+  MAX_SCRIPT_TOPIC_CHARACTERS
+) {
+
+  return res
+    .status(400)
+    .json({
+
+      error:
+        "Your topic is too long. Please keep it under 5,000 characters."
+
+    });
+
+        }
+             if (
+  !ALLOWED_SCRIPT_PLATFORMS.includes(
+    platform
+  )
+) {
+
+  return res
+    .status(400)
+    .json({
+      error:
+        "Invalid platform selected."
+    });
+
+}
 
 
+if (
+  !ALLOWED_SCRIPT_CONTENT_TYPES.includes(
+    contentType
+  )
+) {
+
+  return res
+    .status(400)
+    .json({
+      error:
+        "Invalid content type selected."
+    });
+
+}
+
+
+if (
+  !ALLOWED_SCRIPT_TONES.includes(
+    tone
+  )
+) {
+
+  return res
+    .status(400)
+    .json({
+      error:
+        "Invalid tone selected."
+    });
+
+}
+
+
+if (
+  !ALLOWED_SCRIPT_DURATIONS.includes(
+    duration
+  )
+) {
+
+  return res
+    .status(400)
+    .json({
+      error:
+        "Invalid target duration selected."
+    });
+
+}
       if (
         !process.env.GEMINI_API_KEY
       ) {
