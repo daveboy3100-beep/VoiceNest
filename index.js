@@ -100,11 +100,11 @@ const ALLOWED_SCRIPT_TONES = [
 ];
 
 const ALLOWED_SCRIPT_DURATIONS = [
-  "30s",
-  "1m",
-  "2m",
-  "5m",
-  "10m"
+  "30 seconds",
+  "1 minute",
+  "2 minutes",
+  "5 minutes",
+  "10 minutes"
 ];
 // ============================================================
 // JOB STORAGE
@@ -2372,8 +2372,8 @@ if (
 
 
       const duration =
-        req.body.duration ||
-        "2m";
+  req.body.duration ||
+  "2 minutes";
 
 
       if (!topic) {
