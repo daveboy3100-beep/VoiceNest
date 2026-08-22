@@ -477,18 +477,19 @@ async function incrementScriptUsage(
 
   if (error) {
 
-    console.error(
-      "Script usage increment error:",
-      error
-    );
+  console.error(
+    "Script usage increment error:",
+    error
+  );
 
-    throw new Error(
-      "Script generated, but usage could not be recorded."
-    );
-
-  }
+  return false;
 
 }
+
+return true; 
+}
+ 
+
 
 // ============================================================
 // SCRIPT CHUNKING
