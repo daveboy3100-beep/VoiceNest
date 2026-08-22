@@ -73,7 +73,7 @@ const VOICE_CHUNK_SIZE = 3500;
 
 const DAILY_VOICE_LIMIT = 5;
 
-
+const DAILY_SCRIPT_LIMIT = 5;
 // ============================================================
 // JOB STORAGE
 // ============================================================
@@ -387,7 +387,108 @@ async function incrementVoiceUsage(
   }
 
 }
+// ============================================================
+// HELPER: CHECK SCRIPT USAGE
+// ============================================================
 
+async function checkScriptUsage(
+  userId,
+  accessToken
+) {
+
+  const today =
+    getToday();
+
+  const userSupabase =
+    createUserSupabaseClient(
+      accessToken
+    );
+
+  const {
+    data,
+    error
+  } =
+    await userSupabase
+      .from("script_usage")
+      .select("generation_count")
+      .eq(
+        "user_id",
+        userId
+      )
+      .eq(
+        "usage_date",
+        today
+      )
+      .maybeSingle();
+
+  if (error) {
+
+    console.error(
+      "Script usage check error:",
+      error
+    );
+
+    throw new Error(
+      "Unable to check your daily script usage."
+    );
+
+  }
+
+  const count =
+    data?.generation_count || 0;
+
+  return {
+    today,
+    count,
+    remaining:
+      Math.max(
+        DAILY_SCRIPT_LIMIT - count,
+        0
+      )
+  };
+
+}
+
+
+// ============================================================
+// HELPER: INCREMENT SCRIPT USAGE
+// ============================================================
+
+async function incrementScriptUsage(
+  userId
+) {
+
+  const today =
+    getToday();
+
+  const {
+    error
+  } =
+    await supabaseAdmin.rpc(
+      "increment_script_usage",
+      {
+        p_user_id:
+          userId,
+
+        p_usage_date:
+          today
+      }
+    );
+
+  if (error) {
+
+    console.error(
+      "Script usage increment error:",
+      error
+    );
+
+    throw new Error(
+      "Script generated, but usage could not be recorded."
+    );
+
+  }
+
+}
 
 // ============================================================
 // SCRIPT CHUNKING
@@ -2189,7 +2290,32 @@ app.post(
           });
 
       }
+       const {
+  user,
+  accessToken
+} = auth;
 
+
+const scriptUsage =
+  await checkScriptUsage(
+    user.id,
+    accessToken
+  );
+
+
+if (
+  scriptUsage.count >=
+  DAILY_SCRIPT_LIMIT
+) {
+
+  return res
+    .status(429)
+    .json({
+      error:
+        "Daily script generation limit reached. Please try again tomorrow."
+    });
+
+}
 
       const topic =
         String(
@@ -2299,19 +2425,24 @@ Requirements:
 
       if (!generatedText) {
 
-        throw new Error(
-          "Gemini returned an empty script."
-        );
+  throw new Error(
+    "Gemini returned an empty script."
+  );
 
-      }
+}
 
 
-      return res.json({
+await incrementScriptUsage(
+  user.id
+);
 
-        script:
-          generatedText
 
-      });
+return res.json({
+
+  script:
+    generatedText
+
+});
 
 
     } catch (error) {
