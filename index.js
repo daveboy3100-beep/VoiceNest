@@ -2581,6 +2581,199 @@ return res.json({
   }
 );
 // ============================================================
+// SAVE GENERATED SCRIPT
+// ============================================================
+
+app.post(
+  "/api/save-script",
+  async (req, res) => {
+
+    try {
+
+      const auth =
+        await getAuthenticatedUser(
+          req
+        );
+
+
+      if (!auth.user) {
+
+        return res
+          .status(auth.status)
+          .json({
+            error:
+              "Please sign in before saving a script."
+          });
+
+      }
+
+
+      const user =
+        auth.user;
+
+
+      const topic =
+        String(
+          req.body.topic || ""
+        ).trim();
+
+
+      const platform =
+        String(
+          req.body.platform || ""
+        ).trim();
+
+
+      const contentType =
+        String(
+          req.body.contentType || ""
+        ).trim();
+
+
+      const tone =
+        String(
+          req.body.tone || ""
+        ).trim();
+
+
+      const duration =
+        String(
+          req.body.duration || ""
+        ).trim();
+
+
+      const script =
+        String(
+          req.body.script || ""
+        ).trim();
+
+
+      const title =
+        String(
+          req.body.title ||
+          topic ||
+          "Untitled Script"
+        ).trim();
+
+
+      if (!script) {
+
+        return res
+          .status(400)
+          .json({
+            error:
+              "There is no generated script to save."
+          });
+
+      }
+
+
+      if (
+        script.length >
+        MAX_SCRIPT_CHARACTERS
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            error:
+              "This script is too long to save."
+          });
+
+      }
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseAdmin
+          .from("saved_scripts")
+          .insert({
+            user_id:
+              user.id,
+
+            title:
+              title,
+
+            script:
+              script,
+
+            topic:
+              topic || null,
+
+            platform:
+              platform || null,
+
+            content_type:
+              contentType || null,
+
+            tone:
+              tone || null,
+
+            duration:
+              duration || null
+          })
+          .select(
+            "id, created_at"
+          )
+          .single();
+
+
+      if (error) {
+
+        console.error(
+          "Save script database error:",
+          error
+        );
+
+        return res
+          .status(500)
+          .json({
+            error:
+              "Unable to save your script right now."
+          });
+
+      }
+
+
+      return res.json({
+
+        success:
+          true,
+
+        scriptId:
+          data.id,
+
+        createdAt:
+          data.created_at
+
+      });
+
+
+    } catch (error) {
+
+      console.error(
+        "Save script error:",
+        error
+      );
+
+
+      return res
+        .status(500)
+        .json({
+
+          error:
+            error?.message ||
+            "Unable to save your script."
+
+        });
+
+    }
+
+  }
+);
+// ============================================================
 // 404 API HANDLER
 // ============================================================
 
