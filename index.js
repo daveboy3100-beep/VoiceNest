@@ -2373,7 +2373,7 @@ if (
 
       const duration =
         req.body.duration ||
-        "2 minutes";
+        "2m";
 
 
       if (!topic) {
