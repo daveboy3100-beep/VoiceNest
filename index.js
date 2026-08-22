@@ -2506,6 +2506,11 @@ Requirements:
 - Keep the writing natural and easy to narrate.
 - Structure the script logically.
 - Match the requested tone.
+- Do not invent factual information about people, brands, companies, places, events, statistics, experiences, or other real-world details that are not provided by the user.
+- If important factual information is missing, write around it instead of making up details.
+- Treat facts provided by the user as authoritative for the purpose of the script.
+- Do not assign ages, occupations, locations, personal histories, relationships, achievements, or other personal details to real people unless the user provides them.
+- Creative descriptions are allowed when appropriate, but they must not be presented as factual information about real people or real-world events.
 - Avoid unnecessary headings unless they improve the script.
 - Do not explain what you are doing.
 - Do not include notes to the creator.
