@@ -761,6 +761,13 @@
           id="clearScriptBtn"
           class="result-btn"
         >
+          <button
+  type="button"
+  id="saveScriptBtn"
+  class="result-btn"
+>
+  💾 Save Script
+          </button>
           Clear
         </button>
 
@@ -842,7 +849,10 @@ const supabaseClient =
       document.getElementById(
         "clearScriptBtn"
       );
-
+       const saveScriptBtn =
+  document.getElementById(
+    "saveScriptBtn"
+  );
 
     function showMessage(
       text,
@@ -940,6 +950,158 @@ const supabaseClient =
 
       }
     );
+  saveScriptBtn.addEventListener(
+  "click",
+  async () => {
+
+    hideMessage();
+
+    const script =
+      generatedScript.value.trim();
+
+    if (!script) {
+
+      showMessage(
+        "There is no generated script to save.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    saveScriptBtn.disabled =
+      true;
+
+    saveScriptBtn.textContent =
+      "Saving...";
+
+
+    try {
+
+      const {
+        data: {
+          session
+        }
+      } =
+        await supabaseClient.auth.getSession();
+
+
+      if (!session) {
+
+        throw new Error(
+          "Please sign in before saving a script."
+        );
+
+      }
+
+
+      const response =
+        await fetch(
+          "/api/save-script",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+
+              "Authorization":
+                `Bearer ${session.access_token}`
+            },
+
+            body:
+              JSON.stringify({
+
+                title:
+                  topicInput.value.trim() ||
+                  "Untitled Script",
+
+                script:
+                  script,
+
+                topic:
+                  topicInput.value.trim(),
+
+                platform:
+                  platformSelect.value,
+
+                contentType:
+                  contentTypeSelect.value,
+
+                tone:
+                  toneSelect.value,
+
+                duration:
+                  durationSelect.value
+
+              })
+          }
+        );
+
+
+      let data = {};
+
+
+      try {
+
+        data =
+          await response.json();
+
+      } catch {
+
+        throw new Error(
+          "The server returned an invalid response."
+        );
+
+      }
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "Unable to save your script."
+        );
+
+      }
+
+
+      saveScriptBtn.textContent =
+        "✓ Saved";
+
+      showMessage(
+        "Script saved successfully.",
+        "success"
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Save script error:",
+        error
+      );
+
+
+      saveScriptBtn.disabled =
+        false;
+
+      saveScriptBtn.textContent =
+        "💾 Save Script";
+
+
+      showMessage(
+        error.message ||
+        "Unable to save your script. Please try again.",
+        "error"
+      );
+
+    }
+
+  }
+);
       useInVoiceoverBtn.addEventListener(
   "click",
   () => {
