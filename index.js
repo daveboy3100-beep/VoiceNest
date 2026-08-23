@@ -3234,6 +3234,182 @@ app.delete(
   }
 );
 // ============================================================
+// UPDATE SAVED SCRIPT
+// ============================================================
+
+app.put(
+  "/api/saved-scripts/:id",
+  async (req, res) => {
+
+    try {
+
+      const auth =
+        await getAuthenticatedUser(
+          req
+        );
+
+
+      if (!auth.user) {
+
+        return res
+          .status(auth.status)
+          .json({
+            error:
+              "Please sign in before updating a saved script."
+          });
+
+      }
+
+
+      const scriptId =
+        String(
+          req.params.id || ""
+        ).trim();
+
+
+      const title =
+        String(
+          req.body.title || ""
+        ).trim();
+
+
+      const script =
+        String(
+          req.body.script || ""
+        ).trim();
+
+
+      if (!scriptId) {
+
+        return res
+          .status(400)
+          .json({
+            error:
+              "Script ID is required."
+          });
+
+      }
+
+
+      if (!script) {
+
+        return res
+          .status(400)
+          .json({
+            error:
+              "Script content is required."
+          });
+
+      }
+
+
+      if (
+        script.length >
+        MAX_SCRIPT_CHARACTERS
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            error:
+              "This script is too long to save."
+          });
+
+      }
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseAdmin
+          .from("saved_scripts")
+          .update({
+
+            title:
+              title ||
+              "Untitled Script",
+
+            script:
+              script
+
+          })
+          .eq(
+            "id",
+            scriptId
+          )
+          .eq(
+            "user_id",
+            auth.user.id
+          )
+          .select(
+            "id, title, script"
+          )
+          .maybeSingle();
+
+
+      if (error) {
+
+        console.error(
+          "Update saved script database error:",
+          error
+        );
+
+        return res
+          .status(500)
+          .json({
+            error:
+              "Unable to update your saved script right now."
+          });
+
+      }
+
+
+      if (!data) {
+
+        return res
+          .status(404)
+          .json({
+            error:
+              "Saved script not found."
+          });
+
+      }
+
+
+      return res.json({
+
+        success:
+          true,
+
+        script:
+          data
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        "Update saved script error:",
+        error
+      );
+
+
+      return res
+        .status(500)
+        .json({
+
+          error:
+            error?.message ||
+            "Unable to update your saved script."
+
+        });
+
+    }
+
+  }
+);
+// ============================================================
 // 404 API HANDLER
 // ============================================================
 
