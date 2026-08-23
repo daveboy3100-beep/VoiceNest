@@ -2580,6 +2580,204 @@ return res.json({
 
   }
 );
+app.post(
+  "/api/regenerate-script",
+  async (req, res) => {
+
+    try {
+
+      const auth =
+        await getAuthenticatedUser(
+          req
+        );
+
+
+      if (!auth.user) {
+
+        return res
+          .status(auth.status)
+          .json({
+            error:
+              "Please sign in before regenerating a script."
+          });
+
+      }
+
+
+      const originalScript =
+        String(
+          req.body.originalScript ||
+          ""
+        ).trim();
+
+
+      const requestedChanges =
+        String(
+          req.body.requestedChanges ||
+          ""
+        ).trim();
+
+
+      const platform =
+        req.body.platform ||
+        "YouTube";
+
+
+      const contentType =
+        req.body.contentType ||
+        "Educational";
+
+
+      const tone =
+        req.body.tone ||
+        "Cinematic";
+
+
+      const duration =
+        req.body.duration ||
+        "2 minutes";
+
+
+      if (!originalScript) {
+
+        return res
+          .status(400)
+          .json({
+            error:
+              "The original script is required."
+          });
+
+      }
+
+
+      if (!requestedChanges) {
+
+        return res
+          .status(400)
+          .json({
+            error:
+              "Please describe what you want to change."
+          });
+
+      }
+
+
+      if (
+        !process.env.GEMINI_API_KEY
+      ) {
+
+        return res
+          .status(500)
+          .json({
+            error:
+              "Gemini API key is missing."
+          });
+
+      }
+
+
+      const prompt = `
+
+You are the AI script regeneration system for VoiceNest, a professional creator tool.
+
+Your task is to revise an existing script based on the user's requested changes.
+
+IMPORTANT:
+
+- Preserve the original topic and intended meaning unless the user explicitly asks to change them.
+- Preserve facts and personal information provided by the user.
+- Do not invent personal details, ages, occupations, locations, identities, companies, or life events.
+- Do not assume that a name refers to a famous person unless the user explicitly establishes that.
+- Only change what the user asks you to change.
+- Keep everything else that works well in the original script.
+- Maintain the requested platform, content type, tone, and duration.
+- Keep the writing natural and easy to narrate.
+- Keep the structure logical and engaging.
+- Return only the finished revised script.
+- Do not explain what you changed.
+- Do not include notes to the creator.
+- Do not wrap the script in quotation marks.
+
+PLATFORM:
+${platform}
+
+CONTENT TYPE:
+${contentType}
+
+TONE:
+${tone}
+
+TARGET DURATION:
+${duration}
+
+ORIGINAL SCRIPT:
+${originalScript}
+
+USER'S REQUESTED CHANGES:
+${requestedChanges}
+
+Now rewrite the original script according to the user's requested changes.
+
+Return only the finished revised script.
+
+`;
+
+
+      const response =
+        await ai.models.generateContent({
+
+          model:
+            "gemini-3.1-flash-lite",
+
+          contents:
+            prompt
+
+        });
+
+
+      const generatedText =
+        response.text?.trim();
+
+
+      if (!generatedText) {
+
+        throw new Error(
+          "Gemini returned an empty regenerated script."
+        );
+
+      }
+
+
+      return res.json({
+
+        script:
+          generatedText
+
+      });
+
+
+    } catch (error) {
+
+      console.error(
+        "Script regeneration error:",
+        error
+      );
+
+
+      return res
+        .status(500)
+        .json({
+
+          error:
+            error?.message ||
+            "Script regeneration failed."
+
+        });
+
+    }
+
+  }
+);
 // ============================================================
 // SAVE GENERATED SCRIPT
 // ============================================================
