@@ -2073,69 +2073,7 @@
             );
 
           }
-                saveEditedScriptButton.addEventListener(
-      "click",
-      async () => {
-
-        if (
-          !currentScript ||
-          !currentScript.id
-        ) {
-
-          regenerateStatus.textContent =
-            "No saved script is currently selected.";
-
-          return;
-
-        }
-
-
-        const updatedTitle =
-          editScriptTitle.value.trim();
-
-
-        const updatedScript =
-          editScriptContent.value.trim();
-
-
-        if (!updatedScript) {
-
-          regenerateStatus.textContent =
-            "Script content cannot be empty.";
-
-          editScriptContent.focus();
-
-          return;
-
-        }
-
-
-        saveEditedScriptButton.disabled =
-          true;
-
-
-        regenerateStatus.textContent =
-          "Saving your changes...";
-
-
-        try {
-
-          const {
-            data: {
-              session
-            }
-          } =
-            await supabaseClient.auth.getSession();
-
-
-          if (!session) {
-
-            throw new Error(
-              "Please sign in before saving changes."
-            );
-
-          }
-
+                
 
           const response =
             await fetch(
