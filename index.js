@@ -2616,7 +2616,32 @@ app.post(
           req.body.requestedChanges ||
           ""
         ).trim();
+         const {
+        user,
+        accessToken
+      } = auth;
 
+
+      const scriptUsage =
+        await checkScriptUsage(
+          user.id,
+          accessToken
+        );
+
+
+      if (
+        scriptUsage.count >=
+        DAILY_SCRIPT_LIMIT
+      ) {
+
+        return res
+          .status(429)
+          .json({
+            error:
+              "Daily script generation limit reached. Please try again tomorrow."
+          });
+
+      }
 
       const platform =
         req.body.platform ||
@@ -2746,7 +2771,9 @@ Return only the finished revised script.
         );
 
       }
-
+           await incrementScriptUsage(
+        user.id
+      );
 
       return res.json({
 
