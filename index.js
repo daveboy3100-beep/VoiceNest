@@ -2774,6 +2774,241 @@ app.post(
   }
 );
 // ============================================================
+// GET SAVED SCRIPTS
+// ============================================================
+
+app.get(
+  "/api/saved-scripts",
+  async (req, res) => {
+
+    try {
+
+      const auth =
+        await getAuthenticatedUser(
+          req
+        );
+
+
+      if (!auth.user) {
+
+        return res
+          .status(auth.status)
+          .json({
+            error:
+              "Please sign in before viewing your saved scripts."
+          });
+
+      }
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseAdmin
+          .from("saved_scripts")
+          .select(`
+            id,
+            title,
+            script,
+            topic,
+            platform,
+            content_type,
+            tone,
+            duration,
+            created_at
+          `)
+          .eq(
+            "user_id",
+            auth.user.id
+          )
+          .order(
+            "created_at",
+            {
+              ascending: false
+            }
+          );
+
+
+      if (error) {
+
+        console.error(
+          "Get saved scripts database error:",
+          error
+        );
+
+        return res
+          .status(500)
+          .json({
+            error:
+              "Unable to load your saved scripts right now."
+          });
+
+      }
+
+
+      return res.json({
+
+        success:
+          true,
+
+        scripts:
+          data || []
+
+      });
+
+
+    } catch (error) {
+
+      console.error(
+        "Get saved scripts error:",
+        error
+      );
+
+
+      return res
+        .status(500)
+        .json({
+
+          error:
+            error?.message ||
+            "Unable to load your saved scripts."
+
+        });
+
+    }
+
+  }
+);
+// ============================================================
+// DELETE SAVED SCRIPT
+// ============================================================
+
+app.delete(
+  "/api/saved-scripts/:id",
+  async (req, res) => {
+
+    try {
+
+      const auth =
+        await getAuthenticatedUser(
+          req
+        );
+
+
+      if (!auth.user) {
+
+        return res
+          .status(auth.status)
+          .json({
+            error:
+              "Please sign in before deleting a saved script."
+          });
+
+      }
+
+
+      const scriptId =
+        String(
+          req.params.id || ""
+        ).trim();
+
+
+      if (!scriptId) {
+
+        return res
+          .status(400)
+          .json({
+            error:
+              "Script ID is required."
+          });
+
+      }
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseAdmin
+          .from("saved_scripts")
+          .delete()
+          .eq(
+            "id",
+            scriptId
+          )
+          .eq(
+            "user_id",
+            auth.user.id
+          )
+          .select(
+            "id"
+          );
+
+
+      if (error) {
+
+        console.error(
+          "Delete saved script database error:",
+          error
+        );
+
+        return res
+          .status(500)
+          .json({
+            error:
+              "Unable to delete your saved script right now."
+          });
+
+      }
+
+
+      if (
+        !data ||
+        data.length === 0
+      ) {
+
+        return res
+          .status(404)
+          .json({
+            error:
+              "Saved script not found."
+          });
+
+      }
+
+
+      return res.json({
+
+        success:
+          true
+
+      });
+
+
+    } catch (error) {
+
+      console.error(
+        "Delete saved script error:",
+        error
+      );
+
+
+      return res
+        .status(500)
+        .json({
+
+          error:
+            error?.message ||
+            "Unable to delete your saved script."
+
+        });
+
+    }
+
+  }
+);
+// ============================================================
 // 404 API HANDLER
 // ============================================================
 
