@@ -1124,7 +1124,13 @@
 
 
       <div class="viewer-actions">
-
+               <button
+          type="button"
+          id="editViewerScript"
+          class="primary"
+        >
+          ✏️ Edit & Regenerate
+               </button>
         <button
           type="button"
           id="copyViewerScript"
@@ -1153,7 +1159,113 @@
 
   </div>
 
+  <!-- =========================
+       EDIT & REGENERATE
+  ========================= -->
 
+  <div
+    id="editScriptModal"
+    class="edit-modal-overlay"
+  >
+
+    <div class="edit-modal">
+
+      <div class="edit-modal-header">
+
+        <div>
+
+          <div class="edit-modal-label">
+            Edit & Regenerate
+          </div>
+
+          <h2>
+            Improve your script
+          </h2>
+
+        </div>
+
+        <button
+          type="button"
+          id="closeEditModal"
+          class="close-viewer"
+          aria-label="Close editor"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="edit-modal-body">
+
+        <label
+          for="editScriptTitle"
+        >
+          Script title
+        </label>
+
+        <input
+          id="editScriptTitle"
+          type="text"
+          autocomplete="off"
+        />
+
+
+        <label
+          for="editScriptContent"
+        >
+          Current script
+        </label>
+
+        <textarea
+          id="editScriptContent"
+          rows="14"
+        ></textarea>
+
+
+        <label
+          for="editScriptChanges"
+        >
+          What would you like to change?
+        </label>
+
+        <textarea
+          id="editScriptChanges"
+          rows="5"
+          placeholder="Example: Make the hook more dramatic, add stronger transitions, and make the ending more emotional."
+        ></textarea>
+
+
+        <div
+          id="regenerateStatus"
+          class="regenerate-status"
+        ></div>
+
+      </div>
+
+
+      <div class="edit-modal-actions">
+
+        <button
+          type="button"
+          id="cancelEditScript"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          id="regenerateScriptButton"
+          class="primary"
+        >
+          ✨ Regenerate Script
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
   <!-- =========================
        SUPABASE
   ========================= -->
@@ -1244,7 +1356,50 @@
       document.getElementById(
         "copyViewerScript"
       );
+       const editViewerScript =
+      document.getElementById(
+        "editViewerScript"
+      );
 
+    const editScriptModal =
+      document.getElementById(
+        "editScriptModal"
+      );
+
+    const editScriptTitle =
+      document.getElementById(
+        "editScriptTitle"
+      );
+
+    const editScriptContent =
+      document.getElementById(
+        "editScriptContent"
+      );
+
+    const editScriptChanges =
+      document.getElementById(
+        "editScriptChanges"
+      );
+
+    const closeEditModal =
+      document.getElementById(
+        "closeEditModal"
+      );
+
+    const cancelEditScript =
+      document.getElementById(
+        "cancelEditScript"
+      );
+
+    const regenerateScriptButton =
+      document.getElementById(
+        "regenerateScriptButton"
+      );
+
+    const regenerateStatus =
+      document.getElementById(
+        "regenerateStatus"
+      );
 
     const useViewerVoiceover =
       document.getElementById(
@@ -1778,6 +1933,233 @@
         ) {
 
           closeScriptViewer();
+
+        }
+
+      }
+    );
+        /* =========================
+       EDIT & REGENERATE
+    ========================= */
+
+    editViewerScript.addEventListener(
+      "click",
+      () => {
+
+        if (
+          !currentScript ||
+          !currentScript.script
+        ) {
+
+          return;
+
+        }
+
+
+        editScriptTitle.value =
+          currentScript.title ||
+          "Untitled Script";
+
+
+        editScriptContent.value =
+          currentScript.script ||
+          "";
+
+
+        editScriptChanges.value =
+          "";
+
+
+        editScriptModal.classList.add(
+          "show"
+        );
+
+
+        document.body.style.overflow =
+          "hidden";
+
+
+        editScriptChanges.focus();
+
+      }
+    );
+        function closeEditScriptModal() {
+
+      editScriptModal.classList.remove(
+        "show"
+      );
+
+      document.body.style.overflow =
+        "";
+
+    }
+
+
+    closeEditModal.addEventListener(
+      "click",
+      closeEditScriptModal
+    );
+
+
+    cancelEditScript.addEventListener(
+      "click",
+      closeEditScriptModal
+    );
+        regenerateScriptButton.addEventListener(
+      "click",
+      async () => {
+
+        if (
+          !currentScript ||
+          !currentScript.script
+        ) {
+
+          regenerateStatus.textContent =
+            "No script is currently selected.";
+
+          return;
+
+        }
+
+
+        const requestedChanges =
+          editScriptChanges.value.trim();
+
+
+        if (!requestedChanges) {
+
+          regenerateStatus.textContent =
+            "Please describe what you want to change.";
+
+          editScriptChanges.focus();
+
+          return;
+
+        }
+
+
+        regenerateScriptButton.disabled =
+          true;
+
+
+        regenerateStatus.textContent =
+          "Regenerating your script...";
+
+
+        try {
+
+          const {
+            data: {
+              session
+            }
+          } =
+            await supabaseClient.auth.getSession();
+
+
+          if (!session) {
+
+            throw new Error(
+              "Please sign in before regenerating a script."
+            );
+
+          }
+
+
+          const response =
+            await fetch(
+              "/api/regenerate-script",
+              {
+
+                method:
+                  "POST",
+
+                headers: {
+
+                  "Content-Type":
+                    "application/json",
+
+                  "Authorization":
+                    `Bearer ${session.access_token}`
+
+                },
+
+                body:
+                  JSON.stringify({
+
+                    originalScript:
+                      editScriptContent.value.trim(),
+
+                    requestedChanges:
+                      requestedChanges,
+
+                    platform:
+                      currentScript.platform ||
+                      "YouTube",
+
+                    contentType:
+                      currentScript.content_type ||
+                      "Educational",
+
+                    tone:
+                      currentScript.tone ||
+                      "Cinematic",
+
+                    duration:
+                      currentScript.duration ||
+                      "2 minutes"
+
+                  })
+
+              }
+            );
+
+
+          const result =
+            await response.json();
+
+
+          if (!response.ok) {
+
+            throw new Error(
+              result.error ||
+              "Script regeneration failed."
+            );
+
+          }
+
+
+          if (!result.script) {
+
+            throw new Error(
+              "No regenerated script was returned."
+            );
+
+          }
+
+
+          editScriptContent.value =
+            result.script;
+
+
+          regenerateStatus.textContent =
+            "✓ Script regenerated successfully.";
+
+        } catch (error) {
+
+          console.error(
+            "Regenerate script error:",
+            error
+          );
+
+
+          regenerateStatus.textContent =
+            error.message ||
+            "Script regeneration failed.";
+
+        } finally {
+
+          regenerateScriptButton.disabled =
+            false;
 
         }
 
