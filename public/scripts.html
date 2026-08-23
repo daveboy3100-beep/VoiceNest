@@ -1,1 +1,2077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
 
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>My Scripts - VoiceNest</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      background:
+        radial-gradient(
+          circle at top,
+          #25134a 0%,
+          #100b1f 38%,
+          #07050d 100%
+        );
+
+      color: #ffffff;
+    }
+
+
+    button,
+    input {
+      font: inherit;
+    }
+
+
+    button {
+      cursor: pointer;
+    }
+
+
+    .page {
+      width: 100%;
+      max-width: 1100px;
+
+      margin: 0 auto;
+
+      padding:
+        24px
+        18px
+        60px;
+    }
+
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    .header {
+      display: flex;
+
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 16px;
+
+      margin-bottom: 48px;
+    }
+
+
+    .brand {
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      color: #ffffff;
+
+      text-decoration: none;
+
+      font-size: 1.15rem;
+
+      font-weight: 800;
+    }
+
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 10px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #a855f7,
+          #7c3aed
+        );
+
+      font-size: 0.9rem;
+
+      box-shadow:
+        0 8px 25px
+        rgba(124, 58, 237, 0.35);
+    }
+
+
+    .header-actions {
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+    }
+
+
+    .header-btn {
+      border: 1px solid
+        rgba(255, 255, 255, 0.12);
+
+      background:
+        rgba(255, 255, 255, 0.05);
+
+      color: #ffffff;
+
+      border-radius: 10px;
+
+      padding:
+        9px
+        14px;
+
+      text-decoration: none;
+
+      font-size: 0.9rem;
+
+      transition:
+        0.2s ease;
+    }
+
+
+    .header-btn:hover {
+      background:
+        rgba(255, 255, 255, 0.1);
+
+      border-color:
+        rgba(168, 85, 247, 0.45);
+    }
+
+
+    /* =========================
+       PAGE TITLE
+    ========================= */
+
+    .hero {
+      margin-bottom: 28px;
+    }
+
+
+    .eyebrow {
+      margin-bottom: 8px;
+
+      color: #a855f7;
+
+      font-size: 0.8rem;
+
+      font-weight: 800;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.12em;
+    }
+
+
+    h1 {
+      margin: 0;
+
+      font-size:
+        clamp(
+          2rem,
+          5vw,
+          3rem
+        );
+
+      line-height: 1.05;
+    }
+
+
+    .subtitle {
+      margin:
+        12px
+        0
+        0;
+
+      max-width: 650px;
+
+      color:
+        rgba(255, 255, 255, 0.62);
+
+      line-height: 1.6;
+    }
+
+
+    /* =========================
+       SEARCH
+    ========================= */
+
+    .search-wrap {
+      position: relative;
+
+      margin-bottom: 30px;
+    }
+
+
+    .search-icon {
+      position: absolute;
+
+      left: 16px;
+
+      top: 50%;
+
+      transform:
+        translateY(-50%);
+
+      color:
+        rgba(255, 255, 255, 0.45);
+
+      pointer-events: none;
+    }
+
+
+    #searchInput {
+      width: 100%;
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.1);
+
+      background:
+        rgba(255, 255, 255, 0.055);
+
+      color: #ffffff;
+
+      border-radius: 14px;
+
+      outline: none;
+
+      padding:
+        15px
+        18px
+        15px
+        45px;
+
+      transition:
+        0.2s ease;
+    }
+
+
+    #searchInput::placeholder {
+      color:
+        rgba(255, 255, 255, 0.4);
+    }
+
+
+    #searchInput:focus {
+      border-color:
+        rgba(168, 85, 247, 0.65);
+
+      background:
+        rgba(255, 255, 255, 0.07);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(168, 85, 247, 0.1);
+    }
+
+
+    /* =========================
+       STATUS
+    ========================= */
+
+    .status {
+      display: none;
+
+      padding:
+        14px
+        16px;
+
+      margin-bottom: 20px;
+
+      border-radius: 12px;
+
+      font-size: 0.92rem;
+    }
+
+
+    .status.show {
+      display: block;
+    }
+
+
+    .status.error {
+      color: #fecaca;
+
+      background:
+        rgba(239, 68, 68, 0.1);
+
+      border:
+        1px solid
+        rgba(239, 68, 68, 0.2);
+    }
+
+
+    .status.success {
+      color: #bbf7d0;
+
+      background:
+        rgba(34, 197, 94, 0.1);
+
+      border:
+        1px solid
+        rgba(34, 197, 94, 0.2);
+    }
+
+
+    /* =========================
+       SCRIPTS GRID
+    ========================= */
+
+    #scriptsList {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(
+            280px,
+            1fr
+          )
+        );
+
+      gap: 16px;
+    }
+
+
+    .script-card {
+      display: flex;
+
+      flex-direction: column;
+
+      min-width: 0;
+
+      padding: 20px;
+
+      border-radius: 18px;
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.09);
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.075),
+          rgba(255, 255, 255, 0.035)
+        );
+
+      box-shadow:
+        0 15px 40px
+        rgba(0, 0, 0, 0.18);
+
+      transition:
+        transform 0.2s ease,
+        border-color 0.2s ease;
+    }
+
+
+    .script-card:hover {
+      transform:
+        translateY(-2px);
+
+      border-color:
+        rgba(168, 85, 247, 0.35);
+    }
+
+
+    .script-title {
+      margin: 0 0 12px;
+
+      font-size: 1.05rem;
+
+      line-height: 1.35;
+
+      word-break: break-word;
+    }
+
+
+    .script-meta {
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 7px;
+
+      margin-bottom: 16px;
+    }
+
+
+    .meta-pill {
+      padding:
+        5px
+        8px;
+
+      border-radius: 999px;
+
+      background:
+        rgba(168, 85, 247, 0.1);
+
+      border:
+        1px solid
+        rgba(168, 85, 247, 0.16);
+
+      color:
+        rgba(255, 255, 255, 0.68);
+
+      font-size: 0.72rem;
+    }
+
+
+    .script-date {
+      margin-top: auto;
+
+      color:
+        rgba(255, 255, 255, 0.42);
+
+      font-size: 0.78rem;
+
+      margin-bottom: 16px;
+    }
+
+
+    .card-actions {
+      display: flex;
+
+      gap: 8px;
+    }
+
+
+    .card-btn {
+      flex: 1;
+
+      border: 1px solid
+        rgba(255, 255, 255, 0.1);
+
+      border-radius: 10px;
+
+      padding:
+        10px
+        12px;
+
+      color: #ffffff;
+
+      background:
+        rgba(255, 255, 255, 0.05);
+
+      transition:
+        0.2s ease;
+    }
+
+
+    .card-btn:hover {
+      background:
+        rgba(255, 255, 255, 0.1);
+    }
+
+
+    .card-btn.primary {
+      border-color:
+        rgba(168, 85, 247, 0.35);
+
+      background:
+        rgba(168, 85, 247, 0.14);
+    }
+
+
+    .card-btn.danger:hover {
+      color: #fecaca;
+
+      border-color:
+        rgba(239, 68, 68, 0.35);
+
+      background:
+        rgba(239, 68, 68, 0.1);
+    }
+
+
+    /* =========================
+       EMPTY STATE
+    ========================= */
+
+    .empty-state {
+      display: none;
+
+      text-align: center;
+
+      padding:
+        70px
+        20px;
+
+      border-radius: 20px;
+
+      border:
+        1px dashed
+        rgba(255, 255, 255, 0.12);
+
+      background:
+        rgba(255, 255, 255, 0.025);
+    }
+
+
+    .empty-state.show {
+      display: block;
+    }
+
+
+    .empty-icon {
+      width: 58px;
+      height: 58px;
+
+      margin:
+        0
+        auto
+        18px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 16px;
+
+      background:
+        rgba(168, 85, 247, 0.12);
+
+      font-size: 1.5rem;
+    }
+
+
+    .empty-state h2 {
+      margin:
+        0
+        0
+        8px;
+    }
+
+
+    .empty-state p {
+      margin:
+        0
+        auto
+        22px;
+
+      max-width: 430px;
+
+      color:
+        rgba(255, 255, 255, 0.55);
+
+      line-height: 1.6;
+    }
+
+
+    .create-btn {
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding:
+        11px
+        18px;
+
+      border-radius: 11px;
+
+      color: #ffffff;
+
+      background:
+        linear-gradient(
+          135deg,
+          #a855f7,
+          #7c3aed
+        );
+
+      text-decoration: none;
+
+      font-weight: 700;
+
+      box-shadow:
+        0 10px 25px
+        rgba(124, 58, 237, 0.25);
+    }
+
+
+    /* =========================
+       LOADING
+    ========================= */
+
+    .loading {
+      display: none;
+
+      text-align: center;
+
+      padding:
+        50px
+        20px;
+
+      color:
+        rgba(255, 255, 255, 0.55);
+    }
+
+
+    .loading.show {
+      display: block;
+    }
+
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+
+      margin:
+        0
+        auto
+        14px;
+
+      border:
+        3px solid
+        rgba(255, 255, 255, 0.12);
+
+      border-top-color:
+        #a855f7;
+
+      border-radius: 50%;
+
+      animation:
+        spin 0.8s linear infinite;
+    }
+
+
+    @keyframes spin {
+
+      to {
+        transform:
+          rotate(360deg);
+      }
+
+    }
+
+
+    /* =========================
+       SCRIPT VIEWER
+    ========================= */
+
+    .viewer-overlay {
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 1000;
+
+      display: none;
+
+      padding:
+        20px;
+
+      background:
+        rgba(0, 0, 0, 0.78);
+
+      backdrop-filter:
+        blur(8px);
+
+      overflow-y: auto;
+    }
+
+
+    .viewer-overlay.show {
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+    }
+
+
+    .viewer {
+      width: 100%;
+
+      max-width: 850px;
+
+      max-height:
+        calc(100vh - 40px);
+
+      display: flex;
+
+      flex-direction: column;
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.1);
+
+      border-radius: 20px;
+
+      background:
+        #100b1f;
+
+      box-shadow:
+        0 30px 80px
+        rgba(0, 0, 0, 0.5);
+
+      overflow: hidden;
+    }
+
+
+    .viewer-header {
+      display: flex;
+
+      align-items: flex-start;
+      justify-content: space-between;
+
+      gap: 15px;
+
+      padding:
+        20px;
+
+      border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.08);
+    }
+
+
+    .viewer-header h2 {
+      margin: 0;
+
+      line-height: 1.3;
+    }
+
+
+    .close-viewer {
+      flex-shrink: 0;
+
+      width: 38px;
+      height: 38px;
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.1);
+
+      border-radius: 10px;
+
+      color: #ffffff;
+
+      background:
+        rgba(255, 255, 255, 0.05);
+
+      font-size: 1.2rem;
+    }
+
+
+    .viewer-content {
+      overflow-y: auto;
+
+      padding:
+        24px;
+
+      white-space: pre-wrap;
+
+      word-break: break-word;
+
+      color:
+        rgba(255, 255, 255, 0.84);
+
+      line-height: 1.75;
+
+      font-size: 0.96rem;
+    }
+
+
+    .viewer-actions {
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 10px;
+
+      padding:
+        16px
+        20px;
+
+      border-top:
+        1px solid
+        rgba(255, 255, 255, 0.08);
+    }
+
+
+    .viewer-actions button,
+    .viewer-actions a {
+      flex: 1;
+
+      min-width: 140px;
+
+      text-align: center;
+
+      padding:
+        11px
+        14px;
+
+      border-radius: 10px;
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.1);
+
+      color: #ffffff;
+
+      background:
+        rgba(255, 255, 255, 0.05);
+
+      text-decoration: none;
+    }
+
+
+    .viewer-actions .primary {
+      border-color:
+        rgba(168, 85, 247, 0.4);
+
+      background:
+        rgba(168, 85, 247, 0.14);
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (
+      max-width: 600px
+    ) {
+
+      .page {
+        padding:
+          18px
+          14px
+          40px;
+      }
+
+
+      .header {
+        margin-bottom: 34px;
+      }
+
+
+      .header-actions {
+        gap: 6px;
+      }
+
+
+      .header-btn {
+        padding:
+          8px
+          10px;
+
+        font-size: 0.8rem;
+      }
+
+
+      #scriptsList {
+        grid-template-columns:
+          1fr;
+      }
+
+
+      .viewer-overlay {
+        padding:
+          10px;
+      }
+
+
+      .viewer {
+        max-height:
+          calc(100vh - 20px);
+
+        border-radius:
+          16px;
+      }
+
+
+      .viewer-content {
+        padding:
+          18px;
+
+        font-size:
+          0.92rem;
+      }
+
+
+      .viewer-actions {
+        padding:
+          12px;
+      }
+
+    }
+
+  </style>
+</head>
+
+
+<body>
+
+  <main class="page">
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <header class="header">
+
+      <a
+        href="/"
+        class="brand"
+      >
+
+        <span class="brand-mark">
+          VN
+        </span>
+
+        <span>
+          VoiceNest
+        </span>
+
+      </a>
+
+
+      <div class="header-actions">
+
+        <a
+          href="/script.html"
+          class="header-btn"
+        >
+          Script Generator
+        </a>
+
+      </div>
+
+    </header>
+
+
+    <!-- =========================
+         HERO
+    ========================= -->
+
+    <section class="hero">
+
+      <div class="eyebrow">
+        Your Library
+      </div>
+
+      <h1>
+        My Scripts
+      </h1>
+
+      <p class="subtitle">
+        Your saved scripts, ready whenever
+        inspiration strikes again.
+      </p>
+
+    </section>
+
+
+    <!-- =========================
+         SEARCH
+    ========================= -->
+
+    <div class="search-wrap">
+
+      <span
+        class="search-icon"
+      >
+        🔍
+      </span>
+
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Search your saved scripts..."
+        autocomplete="off"
+      />
+
+    </div>
+
+
+    <!-- =========================
+         STATUS
+    ========================= -->
+
+    <div
+      id="status"
+      class="status"
+    ></div>
+
+
+    <!-- =========================
+         LOADING
+    ========================= -->
+
+    <div
+      id="loading"
+      class="loading"
+    >
+
+      <div class="spinner"></div>
+
+      Loading your scripts...
+
+    </div>
+
+
+    <!-- =========================
+         SCRIPTS
+    ========================= -->
+
+    <div
+      id="scriptsList"
+    ></div>
+
+
+    <!-- =========================
+         EMPTY
+    ========================= -->
+
+    <section
+      id="emptyState"
+      class="empty-state"
+    >
+
+      <div class="empty-icon">
+        📝
+      </div>
+
+      <h2>
+        No saved scripts yet
+      </h2>
+
+      <p>
+        Generate your first script and
+        save it here so you can come back
+        to it anytime.
+      </p>
+
+      <a
+        href="/script.html"
+        class="create-btn"
+      >
+        Create a Script
+      </a>
+
+    </section>
+
+
+  </main>
+
+
+  <!-- =========================
+       SCRIPT VIEWER
+  ========================= -->
+
+  <div
+    id="viewerOverlay"
+    class="viewer-overlay"
+  >
+
+    <div class="viewer">
+
+      <div class="viewer-header">
+
+        <h2
+          id="viewerTitle"
+        >
+          Saved Script
+        </h2>
+
+        <button
+          type="button"
+          id="closeViewer"
+          class="close-viewer"
+          aria-label="Close script"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div
+        id="viewerContent"
+        class="viewer-content"
+      ></div>
+
+
+      <div class="viewer-actions">
+
+        <button
+          type="button"
+          id="copyViewerScript"
+        >
+          Copy Script
+        </button>
+
+        <a
+          href="#"
+          id="useViewerVoiceover"
+          class="primary"
+        >
+          🎙️ Use in Voiceover
+        </a>
+
+        <button
+          type="button"
+          id="deleteViewerScript"
+        >
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       SUPABASE
+  ========================= -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+  <script>
+
+    /* =========================
+       SUPABASE CONFIG
+    ========================= */
+
+    const SUPABASE_URL =
+      "https://okbipirfsusciztzstka.supabase.co";
+
+
+    const SUPABASE_ANON_KEY =
+      "sb_publishable_wp1MJ7xmnJjseGjFtM9PWQ_xQWRh7hW";
+
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+
+    /* =========================
+       ELEMENTS
+    ========================= */
+
+    const searchInput =
+      document.getElementById(
+        "searchInput"
+      );
+
+
+    const scriptsList =
+      document.getElementById(
+        "scriptsList"
+      );
+
+
+    const emptyState =
+      document.getElementById(
+        "emptyState"
+      );
+
+
+    const loading =
+      document.getElementById(
+        "loading"
+      );
+
+
+    const status =
+      document.getElementById(
+        "status"
+      );
+
+
+    const viewerOverlay =
+      document.getElementById(
+        "viewerOverlay"
+      );
+
+
+    const viewerTitle =
+      document.getElementById(
+        "viewerTitle"
+      );
+
+
+    const viewerContent =
+      document.getElementById(
+        "viewerContent"
+      );
+
+
+    const closeViewer =
+      document.getElementById(
+        "closeViewer"
+      );
+
+
+    const copyViewerScript =
+      document.getElementById(
+        "copyViewerScript"
+      );
+
+
+    const useViewerVoiceover =
+      document.getElementById(
+        "useViewerVoiceover"
+      );
+
+
+    const deleteViewerScript =
+      document.getElementById(
+        "deleteViewerScript"
+      );
+
+
+    let savedScripts = [];
+
+    let currentScript = null;
+
+
+    /* =========================
+       STATUS MESSAGE
+    ========================= */
+
+    function showStatus(
+      message,
+      type = "success"
+    ) {
+
+      status.textContent =
+        message;
+
+      status.className =
+        `status show ${type}`;
+
+    }
+
+
+    function hideStatus() {
+
+      status.textContent =
+        "";
+
+      status.className =
+        "status";
+
+    }
+
+
+    /* =========================
+       AUTH SESSION
+    ========================= */
+
+    async function getSession() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient.auth.getSession();
+
+
+      if (error) {
+
+        throw error;
+
+      }
+
+
+      return data.session;
+
+    }
+
+
+    /* =========================
+       LOAD SAVED SCRIPTS
+    ========================= */
+
+    async function loadScripts() {
+
+      hideStatus();
+
+      loading.classList.add(
+        "show"
+      );
+
+      scriptsList.innerHTML =
+        "";
+
+      emptyState.classList.remove(
+        "show"
+      );
+
+
+      try {
+
+        const session =
+          await getSession();
+
+
+        if (!session) {
+
+          window.location.href =
+            "/";
+
+          return;
+
+        }
+
+
+        const response =
+          await fetch(
+            "/api/saved-scripts",
+            {
+
+              method:
+                "GET",
+
+              headers: {
+
+                "Authorization":
+                  `Bearer ${session.access_token}`
+
+              }
+
+            }
+          );
+
+
+        let data = {};
+
+
+        try {
+
+          data =
+            await response.json();
+
+        } catch {
+
+          throw new Error(
+            "The server returned an invalid response."
+          );
+
+        }
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error ||
+            "Unable to load your saved scripts."
+          );
+
+        }
+
+
+        savedScripts =
+          Array.isArray(
+            data.scripts
+          )
+            ? data.scripts
+            : [];
+
+
+        renderScripts(
+          savedScripts
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Load scripts error:",
+          error
+        );
+
+
+        showStatus(
+          error.message ||
+          "Unable to load your scripts.",
+          "error"
+        );
+
+
+      } finally {
+
+        loading.classList.remove(
+          "show"
+        );
+
+      }
+
+    }
+
+
+    /* =========================
+       RENDER SCRIPTS
+    ========================= */
+
+    function renderScripts(
+      scripts
+    ) {
+
+      scriptsList.innerHTML =
+        "";
+
+      if (
+        !scripts ||
+        scripts.length === 0
+      ) {
+
+                emptyState.classList.add(
+          "show"
+        );
+
+        return;
+
+      }
+
+
+      emptyState.classList.remove(
+        "show"
+      );
+
+
+      scripts.forEach(
+        (script) => {
+
+          const card =
+            document.createElement(
+              "article"
+            );
+
+          card.className =
+            "script-card";
+
+
+          const title =
+            document.createElement(
+              "h2"
+            );
+
+          title.className =
+            "script-title";
+
+          title.textContent =
+            script.title ||
+            "Untitled Script";
+
+
+          const meta =
+            document.createElement(
+              "div"
+            );
+
+          meta.className =
+            "script-meta";
+
+
+          addMeta(
+            meta,
+            script.platform
+          );
+
+
+          addMeta(
+            meta,
+            script.content_type
+          );
+
+
+          addMeta(
+            meta,
+            script.tone
+          );
+
+
+          addMeta(
+            meta,
+            script.duration
+          );
+
+
+          const date =
+            document.createElement(
+              "div"
+            );
+
+          date.className =
+            "script-date";
+
+          date.textContent =
+            formatDate(
+              script.created_at
+            );
+
+
+          const actions =
+            document.createElement(
+              "div"
+            );
+
+          actions.className =
+            "card-actions";
+
+
+          const openBtn =
+            document.createElement(
+              "button"
+            );
+
+          openBtn.type =
+            "button";
+
+          openBtn.className =
+            "card-btn primary";
+
+          openBtn.textContent =
+            "Open";
+
+          openBtn.addEventListener(
+            "click",
+            () => {
+
+              openScript(
+                script
+              );
+
+            }
+          );
+
+
+          const deleteBtn =
+            document.createElement(
+              "button"
+            );
+
+          deleteBtn.type =
+            "button";
+
+          deleteBtn.className =
+            "card-btn danger";
+
+          deleteBtn.textContent =
+            "Delete";
+
+          deleteBtn.addEventListener(
+            "click",
+            () => {
+
+              deleteScript(
+                script
+              );
+
+            }
+          );
+
+
+          actions.appendChild(
+            openBtn
+          );
+
+          actions.appendChild(
+            deleteBtn
+          );
+
+
+          card.appendChild(
+            title
+          );
+
+          card.appendChild(
+            meta
+          );
+
+          card.appendChild(
+            date
+          );
+
+          card.appendChild(
+            actions
+          );
+
+
+          scriptsList.appendChild(
+            card
+          );
+
+        }
+      );
+
+  }
+        function addMeta(
+      container,
+      value
+    ) {
+
+      if (!value) {
+        return;
+      }
+
+      const pill =
+        document.createElement(
+          "span"
+        );
+
+      pill.className =
+        "meta-pill";
+
+      pill.textContent =
+        value;
+
+      container.appendChild(
+        pill
+      );
+
+    }
+
+
+    /* =========================
+       DATE
+    ========================= */
+
+    function formatDate(
+      value
+    ) {
+
+      if (!value) {
+        return "Saved recently";
+      }
+
+      const date =
+        new Date(value);
+
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+        return "Saved recently";
+      }
+
+      return `Saved ${date.toLocaleDateString(
+        undefined,
+        {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        }
+      )}`;
+
+    }
+
+
+    /* =========================
+       OPEN SCRIPT
+    ========================= */
+
+    function openScript(
+      script
+    ) {
+
+      currentScript =
+        script;
+
+      viewerTitle.textContent =
+        script.title ||
+        "Saved Script";
+
+      viewerContent.textContent =
+        script.script ||
+        "";
+
+      viewerOverlay.classList.add(
+        "show"
+      );
+
+      document.body.style.overflow =
+        "hidden";
+
+    }
+
+
+    /* =========================
+       CLOSE VIEWER
+    ========================= */
+
+    function closeScriptViewer() {
+
+      viewerOverlay.classList.remove(
+        "show"
+      );
+
+      document.body.style.overflow =
+        "";
+
+      currentScript =
+        null;
+
+    }
+
+
+    closeViewer.addEventListener(
+      "click",
+      closeScriptViewer
+    );
+
+
+    viewerOverlay.addEventListener(
+      "click",
+      (event) => {
+
+        if (
+          event.target ===
+          viewerOverlay
+        ) {
+
+          closeScriptViewer();
+
+        }
+
+      }
+    );
+
+
+    document.addEventListener(
+      "keydown",
+      (event) => {
+
+        if (
+          event.key ===
+          "Escape"
+        ) {
+
+          closeScriptViewer();
+
+        }
+
+      }
+    );
+        /* =========================
+       COPY
+    ========================= */
+
+    copyViewerScript.addEventListener(
+      "click",
+      async () => {
+
+        if (
+          !currentScript ||
+          !currentScript.script
+        ) {
+
+          return;
+
+        }
+
+        try {
+
+          await navigator.clipboard.writeText(
+            currentScript.script
+          );
+
+          showStatus(
+            "Script copied to clipboard.",
+            "success"
+          );
+
+        } catch (error) {
+
+          console.error(
+            "Copy script error:",
+            error
+          );
+
+          showStatus(
+            "Unable to copy the script.",
+            "error"
+          );
+
+        }
+
+      }
+    );
+
+
+    /* =========================
+       USE IN VOICEOVER
+    ========================= */
+
+    useViewerVoiceover.addEventListener(
+      "click",
+      (event) => {
+
+        event.preventDefault();
+
+        if (
+          !currentScript ||
+          !currentScript.script
+        ) {
+
+          return;
+
+        }
+
+        const encodedScript =
+          encodeURIComponent(
+            currentScript.script
+          );
+
+        window.location.href =
+          `/index.html?script=${encodedScript}`;
+
+      }
+    );
+
+
+    /* =========================
+       DELETE
+    ========================= */
+
+    async function deleteScript(
+      script
+    ) {
+
+      if (
+        !script ||
+        !script.id
+      ) {
+
+        return;
+
+      }
+
+      const confirmed =
+        window.confirm(
+          "Delete this saved script? This cannot be undone."
+        );
+
+      if (!confirmed) {
+
+        return;
+
+      }
+
+      try {
+
+        const session =
+          await getSession();
+
+        if (!session) {
+
+          window.location.href =
+            "/";
+
+          return;
+
+        }
+
+        const response =
+          await fetch(
+            `/api/saved-scripts/${encodeURIComponent(
+              script.id
+            )}`,
+            {
+
+              method:
+                "DELETE",
+
+              headers: {
+
+                "Authorization":
+                  `Bearer ${session.access_token}`
+
+              }
+
+            }
+          );
+
+        let data = {};
+
+        try {
+
+          data =
+            await response.json();
+
+        } catch {
+
+          throw new Error(
+            "The server returned an invalid response."
+          );
+
+        }
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error ||
+            "Unable to delete this script."
+          );
+
+        }
+
+        savedScripts =
+          savedScripts.filter(
+            (item) =>
+              item.id !==
+              script.id
+          );
+
+        renderScripts(
+          getFilteredScripts()
+        );
+
+        if (
+          currentScript &&
+          currentScript.id ===
+            script.id
+        ) {
+
+          closeScriptViewer();
+
+        }
+
+        showStatus(
+          "Script deleted successfully.",
+          "success"
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Delete script error:",
+          error
+        );
+
+        showStatus(
+          error.message ||
+          "Unable to delete this script.",
+          "error"
+        );
+
+      }
+
+    }
+
+
+    deleteViewerScript.addEventListener(
+      "click",
+      () => {
+
+        if (
+          currentScript
+        ) {
+
+          deleteScript(
+            currentScript
+          );
+
+        }
+
+      }
+    );
+        /* =========================
+       SEARCH
+    ========================= */
+
+    function getFilteredScripts() {
+
+      const query =
+        searchInput.value
+          .trim()
+          .toLowerCase();
+
+
+      if (!query) {
+
+        return savedScripts;
+
+      }
+
+
+      return savedScripts.filter(
+        (script) => {
+
+          const searchableText =
+            [
+              script.title,
+              script.script,
+              script.topic,
+              script.platform,
+              script.content_type,
+              script.tone,
+              script.duration
+            ]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+
+
+          return searchableText.includes(
+            query
+          );
+
+        }
+      );
+
+    }
+
+
+    searchInput.addEventListener(
+      "input",
+      () => {
+
+        renderScripts(
+          getFilteredScripts()
+        );
+
+      }
+    );
+
+
+    /* =========================
+       START
+    ========================= */
+
+    loadScripts();
+
+  </script>
+
+</body>
+</html>
