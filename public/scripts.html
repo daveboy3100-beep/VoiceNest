@@ -2415,7 +2415,99 @@ const viewerNarrationTime =
       )}`;
 
     }
+/* =========================
+   SCRIPT STATISTICS
+========================= */
 
+function updateScriptStats(
+  scriptText
+) {
+
+  const text =
+    (scriptText || "").trim();
+
+
+  if (!text) {
+
+    viewerWordCount.textContent =
+      "0";
+
+    viewerCharacterCount.textContent =
+      "0";
+
+    viewerNarrationTime.textContent =
+      "~0 min";
+
+    return;
+
+  }
+
+
+  const words =
+    text.split(/\s+/).filter(
+      Boolean
+    ).length;
+
+
+  const characters =
+    text.length;
+
+
+  const WORDS_PER_MINUTE =
+    150;
+
+
+  const totalSeconds =
+    Math.round(
+      (words /
+        WORDS_PER_MINUTE) *
+        60
+    );
+
+
+  const minutes =
+    Math.floor(
+      totalSeconds / 60
+    );
+
+
+  const seconds =
+    totalSeconds % 60;
+
+
+  let narrationText;
+
+
+  if (minutes === 0) {
+
+    narrationText =
+      `~${seconds} sec`;
+
+  } else if (seconds === 0) {
+
+    narrationText =
+      `~${minutes} min`;
+
+  } else {
+
+    narrationText =
+      `~${minutes} min ${seconds} sec`;
+
+  }
+
+
+  viewerWordCount.textContent =
+    words.toLocaleString();
+
+
+  viewerCharacterCount.textContent =
+    characters.toLocaleString();
+
+
+  viewerNarrationTime.textContent =
+    narrationText;
+
+    }
 
     /* =========================
        OPEN SCRIPT
@@ -2435,7 +2527,10 @@ const viewerNarrationTime =
       viewerContent.textContent =
         script.script ||
         "";
-
+       updateScriptStats(
+  script.script ||
+  ""
+);
       viewerOverlay.classList.add(
         "show"
       );
