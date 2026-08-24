@@ -673,6 +673,131 @@
       }
 
     }
+    /* =========================
+   SCRIPT STATISTICS
+========================= */
+
+.viewer-script-stats {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 10px;
+
+  margin-top: 18px;
+
+  padding-top: 18px;
+
+  border-top:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+}
+
+
+.script-stat {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 72px;
+
+  padding:
+    12px 8px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+
+  border-radius: 12px;
+
+  background:
+    rgba(255, 255, 255, 0.04);
+
+  text-align: center;
+}
+
+
+.script-stat-value {
+  color:
+    #ffffff;
+
+  font-size:
+    1rem;
+
+  font-weight:
+    800;
+
+  line-height:
+    1.3;
+}
+
+
+.script-stat-label {
+  margin-top: 4px;
+
+  color:
+    rgba(255, 255, 255, 0.5);
+
+  font-size:
+    0.72rem;
+
+  font-weight:
+    600;
+
+  text-transform:
+    uppercase;
+
+  letter-spacing:
+    0.06em;
+}
+
+
+/* =========================
+   SCRIPT STATISTICS MOBILE
+========================= */
+
+@media (
+  max-width: 600px
+) {
+
+  .viewer-script-stats {
+    gap:
+      8px;
+
+    margin-top:
+      14px;
+
+    padding-top:
+      14px;
+  }
+
+
+  .script-stat {
+    min-height:
+      66px;
+
+    padding:
+      10px 5px;
+  }
+
+
+  .script-stat-value {
+    font-size:
+      0.9rem;
+  }
+
+
+  .script-stat-label {
+    font-size:
+      0.65rem;
+  }
+
+      }
   /* =========================
    EDIT & REGENERATE MODAL
 ========================= */
