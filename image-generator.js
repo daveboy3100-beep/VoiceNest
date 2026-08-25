@@ -25,7 +25,57 @@ const ALLOWED_ASPECT_RATIOS = [
 
 
 // ============================================================
-// IMAGE GENERATION ROUTE
+// DEPENDENCIES PROVIDED BY index.js
+// ============================================================
+
+let ai = null;
+
+let getAuthenticatedUser = null;
+
+
+// ============================================================
+// INITIALIZE IMAGE GENERATOR
+// ============================================================
+
+function initializeImageGenerator(
+  dependencies
+) {
+
+  ai =
+    dependencies.ai;
+
+  getAuthenticatedUser =
+    dependencies.getAuthenticatedUser;
+
+
+  if (!ai) {
+
+    throw new Error(
+      "Image Generator: Gemini client was not provided."
+    );
+
+  }
+
+
+  if (
+    typeof getAuthenticatedUser !==
+    "function"
+  ) {
+
+    throw new Error(
+      "Image Generator: authentication helper was not provided."
+    );
+
+  }
+
+
+  return router;
+
+}
+
+
+// ============================================================
+// GENERATE IMAGE
 // ============================================================
 
 router.post(
@@ -40,6 +90,7 @@ router.post(
 
       const auth =
         await getAuthenticatedUser(req);
+
 
       if (!auth.user) {
 
@@ -59,13 +110,14 @@ router.post(
 
       const prompt =
         String(
-          req.body.prompt || ""
+          req.body?.prompt || ""
         ).trim();
 
 
       const aspectRatio =
         String(
-          req.body.aspectRatio || "1:1"
+          req.body?.aspectRatio ||
+          "1:1"
         ).trim();
 
 
@@ -117,15 +169,13 @@ router.post(
 
 
       // --------------------------------------------------------
-      // API KEY CHECK
+      // GEMINI CHECK
       // --------------------------------------------------------
 
-      if (
-        !process.env.GEMINI_API_KEY
-      ) {
+      if (!ai) {
 
         console.error(
-          "Image Generator: GEMINI_API_KEY is missing."
+          "Image Generator: Gemini client is unavailable."
         );
 
         return res
@@ -159,7 +209,7 @@ router.post(
           config: {
 
             responseModalities: [
-              "IMAGE"
+              "Image"
             ],
 
             responseFormat: {
@@ -179,7 +229,7 @@ router.post(
 
 
       // --------------------------------------------------------
-      // FIND GENERATED IMAGE
+      // FIND IMAGE DATA
       // --------------------------------------------------------
 
       const parts =
@@ -191,21 +241,22 @@ router.post(
       const imagePart =
         parts.find(
           (part) =>
-            part.inlineData?.data
+            part.inlineData &&
+            part.inlineData.data
         );
 
 
       if (!imagePart) {
 
         console.error(
-          "Image Generator: Gemini returned no image."
+          "Image Generator: Gemini returned no image data."
         );
 
         return res
           .status(502)
           .json({
             error:
-              "VoiceNest could not get an image from the image model. Please try again."
+              "VoiceNest could not generate the image. Please try again."
           });
 
       }
@@ -275,59 +326,8 @@ router.post(
 
 
 // ============================================================
-// DEPENDENCIES
+// EXPORT
 // ============================================================
-//
-// These are supplied by index.js.
-//
-// We intentionally do NOT create another Gemini client,
-// Supabase client, or Express server here.
-// ============================================================
-
-let ai;
-let getAuthenticatedUser;
-
-
-// ============================================================
-// INITIALIZE IMAGE GENERATOR
-// ============================================================
-
-function initializeImageGenerator(
-  dependencies
-) {
-
-  ai =
-    dependencies.ai;
-
-  getAuthenticatedUser =
-    dependencies.getAuthenticatedUser;
-
-
-  if (!ai) {
-
-    throw new Error(
-      "Image Generator: Gemini client was not provided."
-    );
-
-  }
-
-
-  if (
-    typeof getAuthenticatedUser !==
-    "function"
-  ) {
-
-    throw new Error(
-      "Image Generator: authentication helper was not provided."
-    );
-
-  }
-
-
-  return router;
-
-}
-
 
 module.exports =
   initializeImageGenerator;
