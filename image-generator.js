@@ -32,7 +32,53 @@ const ALLOWED_ASPECT_RATIOS = [
   "3:2",
   "2:3"
 ];
+function getImageDimensions(aspectRatio) {
 
+  const dimensions = {
+
+    "1:1": {
+      width: 1024,
+      height: 1024
+    },
+
+    "16:9": {
+      width: 1024,
+      height: 576
+    },
+
+    "9:16": {
+      width: 576,
+      height: 1024
+    },
+
+    "4:3": {
+      width: 1024,
+      height: 768
+    },
+
+    "3:4": {
+      width: 768,
+      height: 1024
+    },
+
+    "3:2": {
+      width: 1024,
+      height: 683
+    },
+
+    "2:3": {
+      width: 683,
+      height: 1024
+    }
+
+  };
+
+  return (
+    dimensions[aspectRatio] ||
+    dimensions["1:1"]
+  );
+
+}
 
 
 // ============================================================
@@ -284,11 +330,17 @@ if (
     );
 
 
-  const pollinationsUrl =
-    `https://gen.pollinations.ai/image/${encodedPrompt}` +
-    `?model=${encodeURIComponent(modelUsed)}` +
-    `&width=1024` +
-    `&height=1024`;
+  const dimensions =
+  getImageDimensions(
+    aspectRatio
+  );
+
+
+const pollinationsUrl =
+  `https://gen.pollinations.ai/image/${encodedPrompt}` +
+  `?model=${encodeURIComponent(modelUsed)}` +
+  `&width=${dimensions.width}` +
+  `&height=${dimensions.height}`;
 
 
   console.log(
@@ -339,21 +391,17 @@ if (
       errorText
     );
 
+return res
+  .status(
+    pollinationsResponse.status
+  )
+  .json({
 
-    return res
-      .status(
-        pollinationsResponse.status
-      )
-      .json({
+    error:
+      "Image generation is temporarily unavailable. Please try again."
 
-        error:
-          "Pollinations image generation failed.",
-
-        details:
-          errorText
-
-      });
-
+  });
+    
   }
 
 
@@ -443,7 +491,7 @@ if (
   // ----------------------------------------------------------
 
   modelUsed =
-    "gemini-2.5-flash-image";
+  GEMINI_IMAGE_MODEL;
 
 
   console.log(
