@@ -7,7 +7,8 @@ const { GoogleGenAI } = require("@google/genai");
 const { createClient } = require("@supabase/supabase-js");
 const { spawn } = require("child_process");
 const ffmpegPath = require("ffmpeg-static");
-
+const initializeImageGenerator =
+  require("./image-generator");
 // ============================================================
 // ENVIRONMENT
 // ============================================================
