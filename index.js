@@ -276,7 +276,20 @@ async function getAuthenticatedUser(req) {
 
 }
 
+// ============================================================
+// IMAGE GENERATOR
+// ============================================================
 
+const imageGeneratorRouter =
+  initializeImageGenerator({
+    ai,
+    getAuthenticatedUser
+  });
+
+app.use(
+  "/api",
+  imageGeneratorRouter
+);
 // ============================================================
 // HELPER: USER-SCOPED SUPABASE CLIENT
 // ============================================================
