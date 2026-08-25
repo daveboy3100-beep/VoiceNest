@@ -2,18 +2,25 @@ const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
 const crypto = require("crypto");
-
 const { GoogleGenAI } = require("@google/genai");
 const { createClient } = require("@supabase/supabase-js");
 const { spawn } = require("child_process");
 const ffmpegPath = require("ffmpeg-static");
-const initializeImageGenerator =
-  require("./image-generator");
+
+
 // ============================================================
 // ENVIRONMENT
 // ============================================================
 
 dotenv.config();
+
+
+// ============================================================
+// IMAGE GENERATOR
+// ============================================================
+
+const initializeImageGenerator =
+  require("./image-generator");
 
 
 // ============================================================
