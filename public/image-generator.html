@@ -1,1 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>VoiceNest — Image Generator</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+
+    body {
+      min-height: 100vh;
+
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      background:
+        #0b0b0f;
+
+      color:
+        #ffffff;
+    }
+
+
+    .page {
+      width: 100%;
+      max-width: 1100px;
+
+      margin: 0 auto;
+
+      padding:
+        24px 18px 60px;
+    }
+
+
+    .header {
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 16px;
+
+      margin-bottom: 28px;
+    }
+
+
+    .brand {
+      font-size: 1.4rem;
+
+      font-weight: 800;
+
+      letter-spacing: -0.03em;
+    }
+
+
+    .back-link {
+      color:
+        rgba(255,255,255,0.7);
+
+      text-decoration: none;
+
+      font-size: 0.9rem;
+    }
+
+
+    .back-link:hover {
+      color: #ffffff;
+    }
+
+
+    .hero {
+      margin-bottom: 28px;
+    }
+
+
+    .hero h1 {
+      font-size:
+        clamp(
+          2rem,
+          5vw,
+          3rem
+        );
+
+      line-height: 1.05;
+
+      letter-spacing:
+        -0.04em;
+
+      margin-bottom: 10px;
+    }
+
+
+    .hero p {
+      max-width: 650px;
+
+      color:
+        rgba(255,255,255,0.65);
+
+      line-height: 1.6;
+    }
+
+
+    .generator-layout {
+      display: grid;
+
+      grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+
+      gap: 20px;
+    }
+
+
+    .panel {
+      padding: 20px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.08);
+
+      border-radius: 18px;
+
+      background:
+        rgba(255,255,255,0.035);
+    }
+
+
+    .panel-title {
+      font-size: 1rem;
+
+      font-weight: 750;
+
+      margin-bottom: 14px;
+    }
+
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+
+    .field label {
+      display: block;
+
+      margin-bottom: 8px;
+
+      font-size: 0.85rem;
+
+      font-weight: 650;
+
+      color:
+        rgba(255,255,255,0.85);
+    }
+
+
+    textarea {
+      width: 100%;
+
+      min-height: 190px;
+
+      resize: vertical;
+
+      padding: 14px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.1);
+
+      border-radius: 12px;
+
+      outline: none;
+
+      background:
+        rgba(0,0,0,0.25);
+
+      color: #ffffff;
+
+      font: inherit;
+
+      line-height: 1.5;
+    }
+
+
+    textarea:focus {
+      border-color:
+        rgba(255,255,255,0.3);
+    }
+
+
+    .prompt-hint {
+      margin-top: 7px;
+
+      color:
+        rgba(255,255,255,0.45);
+
+      font-size: 0.75rem;
+
+      line-height: 1.4;
+    }
+
+
+    .generate-button {
+      width: 100%;
+
+      min-height: 50px;
+
+      border: none;
+
+      border-radius: 12px;
+
+      cursor: pointer;
+
+      background:
+        #ffffff;
+
+      color:
+        #000000;
+
+      font: inherit;
+
+      font-weight: 800;
+    }
+
+
+    .generate-button:hover {
+      opacity: 0.9;
+    }
+
+
+    .generate-button:disabled {
+      opacity: 0.5;
+
+      cursor: not-allowed;
+    }
+
+
+    .status {
+      min-height: 22px;
+
+      margin-top: 12px;
+
+      color:
+        rgba(255,255,255,0.65);
+
+      font-size: 0.85rem;
+
+      line-height: 1.4;
+    }
+
+
+    .image-result {
+      min-height: 360px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      overflow: hidden;
+
+      border-radius: 14px;
+
+      background:
+        rgba(0,0,0,0.25);
+
+      border:
+        1px solid
+        rgba(255,255,255,0.06);
+    }
+
+
+    .image-result-placeholder {
+      padding: 30px;
+
+      text-align: center;
+
+      color:
+        rgba(255,255,255,0.45);
+
+      line-height: 1.5;
+    }
+
+
+    .generated-image {
+      display: block;
+
+      width: 100%;
+
+      height: auto;
+
+      max-height: 650px;
+
+      object-fit: contain;
+    }
+
+
+    .result-actions {
+      display: none;
+
+      gap: 10px;
+
+      margin-top: 14px;
+    }
+
+
+    .result-actions.show {
+      display: flex;
+    }
+
+
+    .secondary-button {
+      flex: 1;
+
+      min-height: 46px;
+
+      padding:
+        10px 14px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.1);
+
+      border-radius: 10px;
+
+      background:
+        rgba(255,255,255,0.05);
+
+      color: #ffffff;
+
+      font: inherit;
+
+      font-weight: 650;
+
+      cursor: pointer;
+
+      text-decoration: none;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+    }
+
+
+    .secondary-button:hover {
+      background:
+        rgba(255,255,255,0.09);
+    }
+
+
+    @media (
+      max-width: 760px
+    ) {
+
+      .page {
+        padding:
+          18px 14px 40px;
+      }
+
+
+      .generator-layout {
+        grid-template-columns:
+          1fr;
+      }
+
+
+      .header {
+        margin-bottom:
+          22px;
+      }
+
+
+      .hero h1 {
+        font-size:
+          2.2rem;
+      }
+
+
+      .panel {
+        padding:
+          16px;
+      }
+
+
+      .image-result {
+        min-height:
+          280px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <main class="page">
+
+    <header class="header">
+
+      <div class="brand">
+        VoiceNest
+      </div>
+
+      <a
+        class="back-link"
+        href="/"
+      >
+        ← Back
+      </a>
+
+    </header>
+
+
+    <section class="hero">
+
+      <h1>
+        AI Image Generator
+      </h1>
+
+      <p>
+        Turn your ideas into images with
+        VoiceNest. Create a single image
+        from a simple text prompt.
+      </p>
+
+    </section>
+
+
+    <section class="generator-layout">
+
+
+      <div class="panel">
+
+        <div class="panel-title">
+          Create an image
+        </div>
+
+
+        <div class="field">
+
+          <label
+            for="imagePrompt"
+          >
+            Describe your image
+          </label>
+
+          <textarea
+            id="imagePrompt"
+            placeholder="Example: A cinematic shot of a futuristic city at night, rain falling on neon-lit streets, realistic photography..."
+          ></textarea>
+
+          <div class="prompt-hint">
+            Be specific about the subject,
+            style, lighting, environment,
+            camera angle, and mood.
+          </div>
+
+        </div>
+
+
+        <button
+          id="generateImageButton"
+          class="generate-button"
+          type="button"
+        >
+          Generate Image
+        </button>
+
+
+        <div
+          id="generationStatus"
+          class="status"
+          aria-live="polite"
+        ></div>
+
+      </div>
+
+
+      <div class="panel">
+
+        <div class="panel-title">
+          Result
+        </div>
+
+
+        <div
+          id="imageResult"
+          class="image-result"
+        >
+
+          <div
+            id="imagePlaceholder"
+            class="image-result-placeholder"
+          >
+            Your generated image will
+            appear here.
+          </div>
+
+        </div>
+
+
+        <div
+          id="resultActions"
+          class="result-actions"
+        >
+
+          <a
+            id="downloadImageButton"
+            class="secondary-button"
+            href="#"
+            download="voicenest-image.png"
+          >
+            Download
+          </a>
+
+
+          <button
+            id="regenerateImageButton"
+            class="secondary-button"
+            type="button"
+          >
+            Regenerate
+          </button>
+
+        </div>
+
+      </div>
+
+
+    </section>
+
+  </main>
+
+
+  <script>
+
+    const imagePrompt =
+      document.getElementById(
+        "imagePrompt"
+      );
+
+
+    const generateImageButton =
+      document.getElementById(
+        "generateImageButton"
+      );
+
+
+    const generationStatus =
+      document.getElementById(
+        "generationStatus"
+      );
+
+
+    const imageResult =
+      document.getElementById(
+        "imageResult"
+      );
+
+
+    const imagePlaceholder =
+      document.getElementById(
+        "imagePlaceholder"
+      );
+
+
+    const resultActions =
+      document.getElementById(
+        "resultActions"
+      );
+
+
+    const downloadImageButton =
+      document.getElementById(
+        "downloadImageButton"
+      );
+
+
+    const regenerateImageButton =
+      document.getElementById(
+        "regenerateImageButton"
+      );
+
+
+    generateImageButton.addEventListener(
+      "click",
+      () => {
+
+        const prompt =
+          imagePrompt.value.trim();
+
+
+        if (!prompt) {
+
+          generationStatus.textContent =
+            "Please describe the image you want to create.";
+
+          imagePrompt.focus();
+
+          return;
+
+        }
+
+
+        generationStatus.textContent =
+          "Image generation will be connected next.";
+
+      }
+    );
+
+
+    regenerateImageButton.addEventListener(
+      "click",
+      () => {
+
+        generateImageButton.click();
+
+      }
+    );
+
+  </script>
+
+</body>
+
+  </html>
