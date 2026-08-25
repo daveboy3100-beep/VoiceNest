@@ -2,13 +2,23 @@ const express = require("express");
 
 const router = express.Router();
 
-
 // ============================================================
 // IMAGE GENERATOR SETTINGS
 // ============================================================
 
-const IMAGE_MODEL =
+const IMAGE_PROVIDER =
+  (
+    process.env.IMAGE_PROVIDER ||
+    "pollinations"
+  )
+    .trim()
+    .toLowerCase();
+
+const GEMINI_IMAGE_MODEL =
   "gemini-2.5-flash-image";
+
+const POLLINATIONS_IMAGE_MODEL =
+  "flux";
 
 const MAX_IMAGE_PROMPT_CHARACTERS =
   4000;
@@ -22,6 +32,7 @@ const ALLOWED_ASPECT_RATIOS = [
   "3:2",
   "2:3"
 ];
+
 
 
 // ============================================================
@@ -48,11 +59,14 @@ function initializeImageGenerator(
     dependencies.getAuthenticatedUser;
 
 
-  if (!ai) {
+  if (
+  IMAGE_PROVIDER === "gemini" &&
+  !ai
+) {
 
-    throw new Error(
-      "Image Generator: Gemini client was not provided."
-    );
+  throw new Error(
+    "Image Generator: Gemini client was not provided."
+  );
 
   }
 
@@ -167,149 +181,424 @@ router.post(
 
       }
 
+// ============================================================
+// IMAGE GENERATION PROVIDER
+// ============================================================
 
-      // --------------------------------------------------------
-      // GEMINI CHECK
-      // --------------------------------------------------------
+if (
+  IMAGE_PROVIDER !== "gemini" &&
+  IMAGE_PROVIDER !== "pollinations"
+) {
 
-      if (!ai) {
+  console.error(
+    "Invalid image generation provider:",
+    IMAGE_PROVIDER
+  );
 
-        console.error(
-          "Image Generator: Gemini client is unavailable."
-        );
+  return res
+    .status(500)
+    .json({
 
-        return res
-  .status(500)
-  .json({
-    error:
-      error?.message ||
-      "Image generation is temporarily unavailable."
-  });
+      error:
+        "Image generation provider is not configured correctly."
 
-      }
+    });
 
-
-      // --------------------------------------------------------
-      // GENERATE IMAGE
-      // --------------------------------------------------------
-
-      console.log(
-        `Image generation started for user ${auth.user.id}`
-      );
+}
 
 
-      const response =
-        await ai.models.generateContent({
+// ------------------------------------------------------------
+// GENERATION VARIABLES
+// ------------------------------------------------------------
 
-          model:
-            IMAGE_MODEL,
+let imageData = null;
 
-          contents:
-            prompt,
+let mimeType =
+  "image/png";
 
-          config: {
-
-            responseModalities: [
-              "Image"
-            ],
-
-            responseFormat: {
-
-              image: {
-
-                aspectRatio:
-                  aspectRatio
-
-              }
-
-            }
-
-          }
-
-        });
+let modelUsed = null;
 
 
-      // --------------------------------------------------------
-      // FIND IMAGE DATA
-      // --------------------------------------------------------
+// ------------------------------------------------------------
+// GENERATION START
+// ------------------------------------------------------------
 
-      const parts =
-        response
-          ?.candidates?.[0]
-          ?.content?.parts || [];
+console.log(
+  `Image generation started for user ${auth.user.id}`
+);
 
-
-      const imagePart =
-        parts.find(
-          (part) =>
-            part.inlineData &&
-            part.inlineData.data
-        );
+console.log(
+  `Image provider: ${IMAGE_PROVIDER}`
+);
 
 
-      if (!imagePart) {
+// ============================================================
+// POLLINATIONS IMAGE GENERATION
+// ============================================================
 
-        console.error(
-          "Image Generator: Gemini returned no image data."
-        );
+if (
+  IMAGE_PROVIDER === "pollinations"
+) {
 
-        return res
-          .status(502)
-          .json({
-            error:
-              "VoiceNest could not generate the image. Please try again."
-          });
-
-      }
+  const pollinationsApiKey =
+    process.env.POLLINATIONS_API_KEY;
 
 
-      const imageData =
-        imagePart.inlineData.data;
+  // ----------------------------------------------------------
+  // POLLINATIONS API KEY CHECK
+  // ----------------------------------------------------------
 
+  if (!pollinationsApiKey) {
 
-      const mimeType =
-        imagePart.inlineData.mimeType ||
-        "image/png";
+    console.error(
+      "Image Generator: Pollinations API key is missing."
+    );
 
+    return res
+      .status(500)
+      .json({
 
-      // --------------------------------------------------------
-      // SUCCESS
-      // --------------------------------------------------------
-
-      console.log(
-        `Image generation completed for user ${auth.user.id}`
-      );
-
-
-      return res.json({
-
-        success:
-          true,
-
-        image: {
-
-          data:
-            imageData,
-
-          mimeType:
-            mimeType
-
-        },
-
-        model:
-          IMAGE_MODEL,
-
-        aspectRatio:
-          aspectRatio
+        error:
+          "Pollinations image generation is not configured."
 
       });
 
+  }
+
+
+  // ----------------------------------------------------------
+  // MODEL
+  // ----------------------------------------------------------
+
+  modelUsed =
+  POLLINATIONS_IMAGE_MODEL;
+
+
+  // ----------------------------------------------------------
+  // BUILD POLLINATIONS URL
+  // ----------------------------------------------------------
+
+  const encodedPrompt =
+    encodeURIComponent(
+      prompt
+    );
+
+
+  const pollinationsUrl =
+    `https://gen.pollinations.ai/image/${encodedPrompt}` +
+    `?model=${encodeURIComponent(modelUsed)}` +
+    `&width=1024` +
+    `&height=1024`;
+
+
+  console.log(
+    "Sending image generation request to Pollinations..."
+  );
+
+
+  // ----------------------------------------------------------
+  // REQUEST
+  // ----------------------------------------------------------
+
+  const pollinationsResponse =
+    await fetch(
+      pollinationsUrl,
+      {
+
+        method:
+          "GET",
+
+        headers: {
+
+          "Authorization":
+            `Bearer ${pollinationsApiKey}`,
+
+          "Accept":
+            "image/*"
+
+        }
+
+      }
+    );
+
+
+  // ----------------------------------------------------------
+  // HANDLE POLLINATIONS ERROR
+  // ----------------------------------------------------------
+
+  if (
+    !pollinationsResponse.ok
+  ) {
+
+    const errorText =
+      await pollinationsResponse.text();
+
+
+    console.error(
+      "Pollinations image generation error:",
+      errorText
+    );
+
+
+    return res
+      .status(
+        pollinationsResponse.status
+      )
+      .json({
+
+        error:
+          "Pollinations image generation failed.",
+
+        details:
+          errorText
+
+      });
+
+  }
+
+
+  // ----------------------------------------------------------
+  // READ IMAGE
+  // ----------------------------------------------------------
+
+  const imageBuffer =
+    Buffer.from(
+      await pollinationsResponse.arrayBuffer()
+    );
+
+
+  if (
+    !imageBuffer.length
+  ) {
+
+    console.error(
+      "Pollinations returned an empty image."
+    );
+
+    return res
+      .status(502)
+      .json({
+
+        error:
+          "Pollinations returned an empty image."
+
+      });
+
+  }
+
+
+  // ----------------------------------------------------------
+  // CONVERT IMAGE TO BASE64
+  // ----------------------------------------------------------
+
+  imageData =
+    imageBuffer.toString(
+      "base64"
+    );
+
+
+  mimeType =
+    pollinationsResponse.headers.get(
+      "content-type"
+    ) ||
+    "image/png";
+
+
+}
+
+
+// ============================================================
+// GEMINI IMAGE GENERATION
+// ============================================================
+
+if (
+  IMAGE_PROVIDER === "gemini"
+) {
+
+
+  // ----------------------------------------------------------
+  // GEMINI CLIENT CHECK
+  // ----------------------------------------------------------
+
+  if (!ai) {
+
+    console.error(
+      "Image Generator: Gemini client is unavailable."
+    );
+
+    return res
+      .status(500)
+      .json({
+
+        error:
+          "Gemini image generation is temporarily unavailable."
+
+      });
+
+  }
+
+
+  // ----------------------------------------------------------
+  // GEMINI MODEL
+  // ----------------------------------------------------------
+
+  modelUsed =
+    "gemini-2.5-flash-image";
+
+
+  console.log(
+    "Sending image generation request to Gemini..."
+  );
+
+
+  // ----------------------------------------------------------
+  // GENERATE IMAGE
+  // ----------------------------------------------------------
+
+  const response =
+    await ai.models.generateContent({
+
+      model:
+        modelUsed,
+
+      contents:
+        prompt,
+
+      config: {
+
+        responseModalities: [
+          "Image"
+        ],
+
+        responseFormat: {
+
+          image: {
+
+            aspectRatio:
+              aspectRatio
+
+          }
+
+        }
+
+      }
+
+    });
+
+
+  // ----------------------------------------------------------
+  // FIND IMAGE DATA
+  // ----------------------------------------------------------
+
+  const parts =
+    response
+      ?.candidates?.[0]
+      ?.content?.parts ||
+    [];
+
+
+  const imagePart =
+    parts.find(
+      (part) =>
+        part.inlineData &&
+        part.inlineData.data
+    );
+
+
+  if (!imagePart) {
+
+    console.error(
+      "Image Generator: Gemini returned no image data."
+    );
+
+    return res
+      .status(502)
+      .json({
+
+        error:
+          "VoiceNest could not generate the image. Please try again."
+
+      });
+
+  }
+
+
+  // ----------------------------------------------------------
+  // EXTRACT IMAGE
+  // ----------------------------------------------------------
+
+  imageData =
+    imagePart
+      .inlineData
+      .data;
+
+
+  mimeType =
+    imagePart
+      .inlineData
+      .mimeType ||
+    "image/png";
+
+}
+
+
+// ============================================================
+// SUCCESS
+// ============================================================
+
+console.log(
+  `Image generation completed for user ${auth.user.id}`
+);
+
+
+console.log(
+  `Provider used: ${IMAGE_PROVIDER}`
+);
+
+
+console.log(
+  `Model used: ${modelUsed}`
+);
+
+
+return res.json({
+
+  success:
+    true,
+
+  image: {
+
+    data:
+      imageData,
+
+    mimeType:
+      mimeType
+
+  },
+
+  model:
+    modelUsed,
+
+  provider:
+    IMAGE_PROVIDER,
+
+  aspectRatio:
+    aspectRatio
+
+});
+
+
 } catch (error) {
+
+  // ==========================================================
+  // GLOBAL IMAGE GENERATION ERROR
+  // ==========================================================
 
   console.error(
     "Image generation error:",
     error
   );
+
 
   return res
     .status(500)
@@ -321,12 +610,13 @@ router.post(
 
     });
 
-            }
-    
-
   }
-);
+      
 
+
+      
+
+      
 
 // ============================================================
 // EXPORT
