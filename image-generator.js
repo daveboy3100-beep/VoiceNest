@@ -183,7 +183,7 @@ router.post(
   .json({
     error:
       error?.message ||
-      "Image generation failed. Please try again."
+      "Image generation is temporarily unavailable."
   });
 
       }
@@ -304,23 +304,25 @@ router.post(
 
       });
 
+} catch (error) {
 
-    } catch (error) {
+  console.error(
+    "Image generation error:",
+    error
+  );
 
-      console.error(
-        "Image generation error:",
-        error
-      );
+  return res
+    .status(500)
+    .json({
 
+      error:
+        error?.message ||
+        "Image generation failed. Please try again."
 
-      return res
-        .status(500)
-        .json({
-          error:
-            "Image generation failed. Please try again."
-        });
+    });
 
-    }
+            }
+    
 
   }
 );
