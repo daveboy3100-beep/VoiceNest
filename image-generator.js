@@ -179,11 +179,12 @@ router.post(
         );
 
         return res
-          .status(500)
-          .json({
-            error:
-              "Image generation is temporarily unavailable."
-          });
+  .status(500)
+  .json({
+    error:
+      error?.message ||
+      "Image generation failed. Please try again."
+  });
 
       }
 
