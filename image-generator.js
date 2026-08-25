@@ -636,35 +636,34 @@ return res.json({
 });
 
 
-} catch (error) {
+  } catch (error) {
 
-  // ==========================================================
-  // GLOBAL IMAGE GENERATION ERROR
-  // ==========================================================
+    // ==========================================================
+    // GLOBAL IMAGE GENERATION ERROR
+    // ==========================================================
 
-  console.error(
-    "Image generation error:",
-    error
-  );
+    console.error(
+      "Image generation error:",
+      error
+    );
 
 
-  return res
-    .status(500)
-    .json({
+    return res
+      .status(500)
+      .json({
 
-      error:
-        error?.message ||
-        "Image generation failed. Please try again."
+        error:
+          error?.message ||
+          "Image generation failed. Please try again."
 
-    });
+      });
 
   }
-      
 
+  }
 
-      
+);
 
-      
 
 // ============================================================
 // EXPORT
