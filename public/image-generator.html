@@ -556,92 +556,457 @@
 
   </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script>
+<script>
 
-    const imagePrompt =
-      document.getElementById(
-        "imagePrompt"
-      );
+  // ============================================================
+  // SUPABASE
+  // ============================================================
 
+  const SUPABASE_URL =
+    "https://okbipirfsusciztzstka.supabase.co";
 
-    const generateImageButton =
-      document.getElementById(
-        "generateImageButton"
-      );
-
-
-    const generationStatus =
-      document.getElementById(
-        "generationStatus"
-      );
+  const SUPABASE_ANON_KEY =
+    "sb_publishable_wp1MJ7xmnJjseGjFtM9PWQ_xQWRh7hW";
 
 
-    const imageResult =
-      document.getElementById(
-        "imageResult"
-      );
-
-
-    const imagePlaceholder =
-      document.getElementById(
-        "imagePlaceholder"
-      );
-
-
-    const resultActions =
-      document.getElementById(
-        "resultActions"
-      );
-
-
-    const downloadImageButton =
-      document.getElementById(
-        "downloadImageButton"
-      );
-
-
-    const regenerateImageButton =
-      document.getElementById(
-        "regenerateImageButton"
-      );
-
-
-    generateImageButton.addEventListener(
-      "click",
-      () => {
-
-        const prompt =
-          imagePrompt.value.trim();
-
-
-        if (!prompt) {
-
-          generationStatus.textContent =
-            "Please describe the image you want to create.";
-
-          imagePrompt.focus();
-
-          return;
-
-        }
-
-
-        generationStatus.textContent =
-          "Image generation will be connected next.";
-
-      }
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
     );
 
 
-    regenerateImageButton.addEventListener(
-      "click",
-      () => {
+  // ============================================================
+  // ELEMENTS
+  // ============================================================
 
-        generateImageButton.click();
+  const imagePrompt =
+    document.getElementById(
+      "imagePrompt"
+    );
 
+
+  const generateImageButton =
+    document.getElementById(
+      "generateImageButton"
+    );
+
+
+  const generationStatus =
+    document.getElementById(
+      "generationStatus"
+    );
+
+
+  const imageResult =
+    document.getElementById(
+      "imageResult"
+    );
+
+
+  const imagePlaceholder =
+    document.getElementById(
+      "imagePlaceholder"
+    );
+
+
+  const resultActions =
+    document.getElementById(
+      "resultActions"
+    );
+
+
+  const downloadImageButton =
+    document.getElementById(
+      "downloadImageButton"
+    );
+
+
+  const regenerateImageButton =
+    document.getElementById(
+      "regenerateImageButton"
+    );
+
+
+  // ============================================================
+  // GENERATION STATE
+  // ============================================================
+
+  let lastPrompt = "";
+
+  let lastImageUrl = null;
+
+
+  // ============================================================
+  // GET SESSION
+  // ============================================================
+
+  async function getSession() {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth.getSession();
+
+
+    if (error) {
+
+      throw error;
+
+    }
+
+
+    return data.session;
+
+  }
+
+
+  // ============================================================
+  // SHOW GENERATED IMAGE
+  // ============================================================
+
+  function displayGeneratedImage(
+    imageData,
+    mimeType
+  ) {
+
+    if (!imageData) {
+
+      throw new Error(
+        "No image was returned."
+      );
+
+    }
+
+
+    if (lastImageUrl) {
+
+      URL.revokeObjectURL(
+        lastImageUrl
+      );
+
+      lastImageUrl =
+        null;
+
+    }
+
+
+    const imageBlob =
+      base64ToBlob(
+        imageData,
+        mimeType ||
+          "image/png"
+      );
+
+
+    lastImageUrl =
+      URL.createObjectURL(
+        imageBlob
+      );
+
+
+    imageResult.innerHTML = "";
+
+
+    const image =
+      document.createElement(
+        "img"
+      );
+
+
+    image.className =
+      "generated-image";
+
+
+    image.alt =
+      "Generated image";
+
+
+    image.src =
+      lastImageUrl;
+
+
+    imageResult.appendChild(
+      image
+    );
+
+
+    downloadImageButton.href =
+      lastImageUrl;
+
+
+    downloadImageButton.download =
+      "voicenest-image.png";
+
+
+    resultActions.classList.add(
+      "show"
+    );
+
+  }
+
+
+  // ============================================================
+  // BASE64 → BLOB
+  // ============================================================
+
+  function base64ToBlob(
+    base64,
+    mimeType
+  ) {
+
+    const binaryString =
+      window.atob(
+        base64
+      );
+
+
+    const length =
+      binaryString.length;
+
+
+    const bytes =
+      new Uint8Array(
+        length
+      );
+
+
+    for (
+      let i = 0;
+      i < length;
+      i++
+    ) {
+
+      bytes[i] =
+        binaryString.charCodeAt(
+          i
+        );
+
+    }
+
+
+    return new Blob(
+      [bytes],
+      {
+        type:
+          mimeType
       }
     );
+
+  }
+
+
+  // ============================================================
+  // GENERATE IMAGE
+  // ============================================================
+
+  async function generateImage() {
+
+    const prompt =
+      imagePrompt.value.trim();
+
+
+    if (!prompt) {
+
+      generationStatus.textContent =
+        "Please describe the image you want to create.";
+
+      imagePrompt.focus();
+
+      return;
+
+    }
+
+
+    generateImageButton.disabled =
+      true;
+
+
+    regenerateImageButton.disabled =
+      true;
+
+
+    generationStatus.textContent =
+      "Creating your image...";
+
+
+    try {
+
+      // --------------------------------------------------------
+      // AUTHENTICATION
+      // --------------------------------------------------------
+
+      const session =
+        await getSession();
+
+
+      if (!session) {
+
+        throw new Error(
+          "Please sign in before generating an image."
+        );
+
+      }
+
+
+      // --------------------------------------------------------
+      // SEND REQUEST
+      // --------------------------------------------------------
+
+      const response =
+        await fetch(
+          "/api/generate-image",
+          {
+
+            method:
+              "POST",
+
+            headers: {
+
+              "Content-Type":
+                "application/json",
+
+              "Authorization":
+                `Bearer ${session.access_token}`
+
+            },
+
+            body:
+              JSON.stringify({
+
+                prompt:
+                  prompt,
+
+                aspectRatio:
+                  "1:1"
+
+              })
+
+          }
+        );
+
+
+      // --------------------------------------------------------
+      // READ RESPONSE
+      // --------------------------------------------------------
+
+      let result = {};
+
+
+      try {
+
+        result =
+          await response.json();
+
+      } catch {
+
+        throw new Error(
+          "The server returned an invalid response."
+        );
+
+      }
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          result.error ||
+          "Image generation failed."
+        );
+
+      }
+
+
+      if (
+        !result.image ||
+        !result.image.data
+      ) {
+
+        throw new Error(
+          "No image was returned by VoiceNest."
+        );
+
+      }
+
+
+      // --------------------------------------------------------
+      // DISPLAY IMAGE
+      // --------------------------------------------------------
+
+      displayGeneratedImage(
+        result.image.data,
+        result.image.mimeType
+      );
+
+
+      lastPrompt =
+        prompt;
+
+
+      generationStatus.textContent =
+        "✓ Image generated successfully.";
+
+
+    } catch (error) {
+
+      console.error(
+        "Image generation error:",
+        error
+      );
+
+
+      generationStatus.textContent =
+        error.message ||
+        "Image generation failed. Please try again.";
+
+    } finally {
+
+      generateImageButton.disabled =
+        false;
+
+
+      regenerateImageButton.disabled =
+        false;
+
+    }
+
+  }
+
+
+  // ============================================================
+  // GENERATE BUTTON
+  // ============================================================
+
+  generateImageButton.addEventListener(
+    "click",
+    generateImage
+  );
+
+
+  // ============================================================
+  // REGENERATE
+  // ============================================================
+
+  regenerateImageButton.addEventListener(
+    "click",
+    async () => {
+
+      if (lastPrompt) {
+
+        imagePrompt.value =
+          lastPrompt;
+
+      }
+
+
+      await generateImage();
+
+    }
+  );
+
 
   </script>
 
