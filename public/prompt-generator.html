@@ -1,1 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
+  <title>Prompt Generator — VoiceNest</title>
+
+  <style>
+    /* =========================================================
+       VOICENEST PROMPT GENERATOR
+       V1 — LOCAL / NO AI API
+       ========================================================= */
+
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0b0b0f;
+      --panel: #121219;
+      --panel-2: #171720;
+      --border: #292934;
+      --text: #f5f5f7;
+      --muted: #9a9aa7;
+      --accent: #8b5cf6;
+      --accent-hover: #7c3aed;
+      --danger: #ef4444;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    button,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* =========================================================
+       PAGE
+       ========================================================= */
+
+    .page {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+      padding: 24px 18px 60px;
+    }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      font-size: 20px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-subtitle {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .back-button {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 14px;
+      transition: 0.2s ease;
+    }
+
+    .back-button:hover {
+      background: var(--panel-2);
+    }
+
+    /* =========================================================
+       HERO
+       ========================================================= */
+
+    .hero {
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 5vw, 42px);
+      line-height: 1.1;
+      letter-spacing: -1px;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 720px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    /* =========================================================
+       MAIN GRID
+       ========================================================= */
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .card-title {
+      margin: 0 0 6px;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .card-description {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* =========================================================
+       PROMPT INPUT
+       ========================================================= */
+
+    .input-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 170px;
+      resize: vertical;
+
+      padding: 14px;
+
+      border: 1px solid var(--border);
+      border-radius: 12px;
+
+      background: #0f0f15;
+      color: var(--text);
+
+      outline: none;
+
+      line-height: 1.6;
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+    }
+
+    textarea::placeholder {
+      color: #666674;
+    }
+
+    .character-count {
+      margin-top: 7px;
+      text-align: right;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* =========================================================
+       CONTROLS
+       ========================================================= */
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .control-group label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+
+      border-radius: 10px;
+      border: 1px solid var(--border);
+
+      background: #0f0f15;
+      color: var(--text);
+
+      outline: none;
+    }
+
+    select:focus {
+      border-color: var(--accent);
+    }
+
+    /* =========================================================
+       GENERATE BUTTON
+       ========================================================= */
+
+    .generate-button {
+      width: 100%;
+      margin-top: 18px;
+
+      padding: 13px 16px;
+
+      border: 0;
+      border-radius: 11px;
+
+      background: var(--accent);
+      color: white;
+
+      font-weight: 700;
+
+      transition:
+        background 0.2s ease,
+        transform 0.1s ease;
+    }
+
+    .generate-button:hover {
+      background: var(--accent-hover);
+    }
+
+    .generate-button:active {
+      transform: scale(0.99);
+    }
+
+    /* =========================================================
+       RESULT
+       ========================================================= */
+
+    .result-card {
+      display: none;
+    }
+
+    .result-card.visible {
+      display: block;
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+
+      margin-bottom: 12px;
+    }
+
+    .result-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .status {
+      color: #86efac;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .generated-prompt {
+      min-height: 180px;
+
+      padding: 15px;
+
+      background: #0f0f15;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+
+      color: #e7e7ed;
+
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* =========================================================
+       RESULT ACTIONS
+       ========================================================= */
+
+    .result-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+
+      margin-top: 14px;
+    }
+
+    .secondary-button,
+    .primary-button {
+      padding: 12px 14px;
+
+      border-radius: 10px;
+
+      font-weight: 600;
+
+      transition: 0.2s ease;
+    }
+
+    .secondary-button {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .secondary-button:hover {
+      background: #1d1d28;
+    }
+
+    .primary-button {
+      background: var(--accent);
+      color: white;
+      border: 1px solid var(--accent);
+    }
+
+    .primary-button:hover {
+      background: var(--accent-hover);
+    }
+
+    /* =========================================================
+       INFO
+       ========================================================= */
+
+    .info-box {
+      margin-top: 18px;
+      padding: 13px 14px;
+
+      border: 1px solid var(--border);
+      border-radius: 11px;
+
+      background: #0f0f15;
+
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .info-box strong {
+      color: var(--text);
+    }
+
+    /* =========================================================
+       TOAST
+       ========================================================= */
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+
+      transform:
+        translate(-50%, 20px);
+
+      opacity: 0;
+      pointer-events: none;
+
+      background: #1b1b25;
+      border: 1px solid var(--border);
+
+      color: var(--text);
+
+      padding: 11px 15px;
+      border-radius: 10px;
+
+      font-size: 13px;
+
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+
+      z-index: 999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform:
+        translate(-50%, 0);
+    }
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 650px) {
+
+      .page {
+        padding:
+          18px
+          14px
+          45px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .back-button {
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .result-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 30px;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="page">
+
+    <!-- =======================================================
+         HEADER
+         ======================================================= -->
+
+    <header class="topbar">
+
+      <div class="brand">
+
+        <div class="brand-icon">
+          ✨
+        </div>
+
+        <div>
+
+          <h2 class="brand-title">
+            VoiceNest
+          </h2>
+
+          <p class="brand-subtitle">
+            Prompt Generator
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <button
+        class="back-button"
+        type="button"
+        id="backButton"
+      >
+        ← Image Generator
+      </button>
+
+    </header>
+
+
+    <!-- =======================================================
+         HERO
+         ======================================================= -->
+
+    <section class="hero">
+
+      <h1>
+        Create better image prompts.
+      </h1>
+
+      <p>
+        Describe your idea and VoiceNest will turn it into
+        a structured image-generation prompt using your
+        selected creative direction.
+      </p>
+
+    </section>
+
+
+    <!-- =======================================================
+         WORKSPACE
+         ======================================================= -->
+
+    <section class="workspace">
+
+
+      <!-- =====================================================
+           IDEA CARD
+           ===================================================== -->
+
+      <div class="card">
+
+        <h2 class="card-title">
+          Your Idea
+        </h2>
+
+        <p class="card-description">
+          Start with a simple description. You don't need to
+          know prompt engineering.
+        </p>
+
+
+        <label
+          class="input-label"
+          for="ideaInput"
+        >
+          Describe what you want to create
+        </label>
+
+
+        <textarea
+          id="ideaInput"
+          maxlength="4000"
+          placeholder="Example: A stickman walking through Lagos at night..."
+        ></textarea>
+
+
+        <div
+          class="character-count"
+          id="characterCount"
+        >
+          0 / 4000
+        </div>
+
+
+        <!-- =================================================
+             CONTROLS
+             ================================================= -->
+
+        <div class="controls">
+
+
+          <div class="control-group">
+
+            <label for="styleSelect">
+              🎨 Style
+            </label>
+
+            <select id="styleSelect">
+
+              <option value="cinematic">
+                Cinematic
+              </option>
+
+              <option value="realistic">
+                Realistic
+              </option>
+
+              <option value="3D">
+                3D
+              </option>
+
+              <option value="anime">
+                Anime
+              </option>
+
+              <option value="cartoon">
+                Cartoon
+              </option>
+
+              <option value="stickman">
+                Stickman
+              </option>
+
+              <option value="illustration">
+                Illustration
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="control-group">
+
+            <label for="lightingSelect">
+              💡 Lighting
+            </label>
+
+            <select id="lightingSelect">
+
+              <option value="natural lighting">
+                Natural
+              </option>
+
+              <option value="soft studio lighting">
+                Studio
+              </option>
+
+              <option value="warm golden-hour lighting">
+                Golden Hour
+              </option>
+
+              <option value="vibrant neon lighting">
+                Neon
+              </option>
+
+              <option value="dramatic cinematic lighting">
+                Dramatic
+              </option>
+
+              <option value="dark atmospheric lighting">
+                Dark
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="control-group">
+
+            <label for="cameraSelect">
+              📷 Camera
+            </label>
+
+            <select id="cameraSelect">
+
+              <option value="medium shot">
+                Medium Shot
+              </option>
+
+              <option value="close-up shot">
+                Close-up
+              </option>
+
+              <option value="wide cinematic shot">
+                Wide Shot
+              </option>
+
+              <option value="low-angle shot">
+                Low Angle
+              </option>
+
+              <option value="high-angle shot">
+                High Angle
+              </option>
+
+              <option value="overhead shot">
+                Overhead
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="control-group">
+
+            <label for="moodSelect">
+              🎭 Mood
+            </label>
+
+            <select id="moodSelect">
+
+              <option value="calm and peaceful">
+                Calm
+              </option>
+
+              <option value="joyful and energetic">
+                Happy
+              </option>
+
+              <option value="dark and mysterious">
+                Mysterious
+              </option>
+
+              <option value="epic and powerful">
+                Epic
+              </option>
+
+              <option value="dramatic and emotional">
+                Dramatic
+              </option>
+
+              <option value="tense and suspenseful">
+                Tense
+              </option>
+
+            </select>
+
+          </div>
+
+
+        </div>
+
+
+        <!-- =================================================
+             GENERATE
+             ================================================= -->
+
+        <button
+          class="generate-button"
+          type="button"
+          id="generatePromptButton"
+        >
+          ✨ Create Prompt
+        </button>
+
+
+        <div class="info-box">
+
+          <strong>Free Prompt Generator</strong>
+
+          <br />
+
+          This version runs directly in your browser.
+          No Gemini request or image-generation API is used.
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+           RESULT CARD
+           ===================================================== -->
+
+      <div
+        class="card result-card"
+        id="resultCard"
+      >
+
+        <div class="result-header">
+
+          <h2 class="result-title">
+            Generated Prompt
+          </h2>
+
+          <span
+            class="status"
+            id="statusText"
+          >
+            Ready
+          </span>
+
+        </div>
+
+
+        <div
+          class="generated-prompt"
+          id="generatedPrompt"
+        ></div>
+
+
+        <div class="result-actions">
+
+          <button
+            class="secondary-button"
+            type="button"
+            id="copyPromptButton"
+          >
+            📋 Copy Prompt
+          </button>
+
+
+          <button
+            class="primary-button"
+            type="button"
+            id="useInImageButton"
+          >
+            🖼️ Use in Image Generator
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================================================
+       TOAST
+       ========================================================= -->
+
+  <div
+    class="toast"
+    id="toast"
+  ></div>
+
+
+  <script>
+
+    // =========================================================
+    // ELEMENTS
+    // =========================================================
+
+    const ideaInput =
+      document.getElementById(
+        "ideaInput"
+      );
+
+    const characterCount =
+      document.getElementById(
+        "characterCount"
+      );
+
+    const styleSelect =
+      document.getElementById(
+        "styleSelect"
+      );
+
+    const lightingSelect =
+      document.getElementById(
+        "lightingSelect"
+      );
+
+    const cameraSelect =
+      document.getElementById(
+        "cameraSelect"
+      );
+
+    const moodSelect =
+      document.getElementById(
+        "moodSelect"
+      );
+
+    const generatePromptButton =
+      document.getElementById(
+        "generatePromptButton"
+      );
+
+    const resultCard =
+      document.getElementById(
+        "resultCard"
+      );
+
+    const generatedPrompt =
+      document.getElementById(
+        "generatedPrompt"
+      );
+
+    const copyPromptButton =
+      document.getElementById(
+        "copyPromptButton"
+      );
+
+    const useInImageButton =
+      document.getElementById(
+        "useInImageButton"
+      );
+
+    const backButton =
+      document.getElementById(
+        "backButton"
+      );
+
+    const toast =
+      document.getElementById(
+        "toast"
+      );
+
+    const statusText =
+      document.getElementById(
+        "statusText"
+      );
+
+
+    // =========================================================
+    // STATE
+    // =========================================================
+
+    let currentPrompt = "";
+
+
+    // =========================================================
+    // CHARACTER COUNT
+    // =========================================================
+
+    function updateCharacterCount() {
+
+      characterCount.textContent =
+        `${ideaInput.value.length} / 4000`;
+
+    }
+
+    ideaInput.addEventListener(
+      "input",
+      updateCharacterCount
+    );
+
+
+    // =========================================================
+    // TOAST
+    // =========================================================
+
+    function showToast(message) {
+
+      toast.textContent =
+        message;
+
+      toast.classList.add(
+        "show"
+      );
+
+      setTimeout(
+        () => {
+
+          toast.classList.remove(
+            "show"
+          );
+
+        },
+        2200
+      );
+
+    }
+
+
+    // =========================================================
+    // BUILD PROMPT
+    // =========================================================
+
+    function buildPrompt() {
+
+      const idea =
+        ideaInput.value.trim();
+
+      if (!idea) {
+
+        showToast(
+          "Describe your image idea first."
+        );
+
+        ideaInput.focus();
+
+        return null;
+
+      }
+
+
+      const style =
+        styleSelect.value;
+
+      const lighting =
+        lightingSelect.value;
+
+      const camera =
+        cameraSelect.value;
+
+      const mood =
+        moodSelect.value;
+
+
+      const styleDescription = {
+
+        cinematic:
+          "cinematic visual style with polished storytelling aesthetics",
+
+        realistic:
+          "highly realistic visual style with natural details",
+
+        "3D":
+          "high-quality 3D rendered visual style",
+
+        anime:
+          "stylized anime visual aesthetic",
+
+        cartoon:
+          "clean expressive cartoon visual style",
+
+        stickman:
+          "creative stickman visual style with simple expressive character design",
+
+        illustration:
+          "detailed artistic illustration style"
+
+      }[style];
+
+
+      const prompt =
+
+        `${idea}. ` +
+
+        `Visual style: ${styleDescription}. ` +
+
+        `Lighting: ${lighting}. ` +
+
+        `Camera: ${camera}. ` +
+
+        `Mood: ${mood}. ` +
+
+        `Strong composition, clear subject, cohesive visual storytelling, ` +
+
+        `high-quality details, visually appealing image.`;
+
+
+      return prompt;
+    } 
+    // =========================================================
+// GENERATE PROMPT
+// =========================================================
+
+generatePromptButton.addEventListener(
+  "click",
+  () => {
+
+    const prompt =
+      buildPrompt();
+
+    if (!prompt) {
+      return;
+    }
+
+    currentPrompt =
+      prompt;
+
+    generatedPrompt.textContent =
+      currentPrompt;
+
+    resultCard.classList.add(
+      "visible"
+    );
+
+    statusText.textContent =
+      "Created";
+
+    showToast(
+      "Prompt created successfully."
+    );
+
+    resultCard.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
+  }
+);
+
+
+// =========================================================
+// COPY PROMPT
+// =========================================================
+
+copyPromptButton.addEventListener(
+  "click",
+  async () => {
+
+    if (!currentPrompt) {
+
+      showToast(
+        "Create a prompt first."
+      );
+
+      return;
+
+    }
+
+    try {
+
+      await navigator.clipboard.writeText(
+        currentPrompt
+      );
+
+      showToast(
+        "Prompt copied."
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Copy error:",
+        error
+      );
+
+      showToast(
+        "Could not copy the prompt."
+      );
+
+    }
+
+  }
+);
+
+
+// =========================================================
+// USE IN IMAGE GENERATOR
+// =========================================================
+
+useInImageButton.addEventListener(
+  "click",
+  () => {
+
+    if (!currentPrompt) {
+
+      showToast(
+        "Create a prompt first."
+      );
+
+      return;
+
+    }
+
+    const encodedPrompt =
+      encodeURIComponent(
+        currentPrompt
+      );
+
+    window.location.href =
+      `image-generator.html?prompt=${encodedPrompt}`;
+
+  }
+);
+
+
+// =========================================================
+// BACK TO IMAGE GENERATOR
+// =========================================================
+
+backButton.addEventListener(
+  "click",
+  () => {
+
+    window.location.href =
+      "image-generator.html";
+
+  }
+);
+
+
+// =========================================================
+// INITIALIZATION
+// =========================================================
+
+updateCharacterCount();
+    </script>
+
+</body>
+</html>
