@@ -964,88 +964,370 @@
       );
 
     }
+// =========================================================
+// BUILD PROMPT
+// =========================================================
+
+function buildPrompt() {
+
+  const idea =
+    ideaInput.value.trim();
+
+  if (!idea) {
+
+    showToast(
+      "Describe your image idea first."
+    );
+
+    ideaInput.focus();
+
+    return null;
+
+  }
 
 
-    // =========================================================
-    // BUILD PROMPT
-    // =========================================================
+  const style =
+    styleSelect.value;
 
-    function buildPrompt() {
+  const lighting =
+    lightingSelect.value;
 
-      const idea =
-        ideaInput.value.trim();
+  const camera =
+    cameraSelect.value;
 
-      if (!idea) {
-
-        showToast(
-          "Describe your image idea first."
-        );
-
-        ideaInput.focus();
-
-        return null;
-
-      }
+  const mood =
+    moodSelect.value;
 
 
-      const style =
-        styleSelect.value;
+  // =========================================================
+  // STYLE DESCRIPTIONS
+  // =========================================================
 
-      const lighting =
-        lightingSelect.value;
+  const styleDescriptions = {
 
-      const camera =
-        cameraSelect.value;
+    cinematic:
+      "cinematic visual storytelling with polished composition, depth, and strong visual hierarchy",
 
-      const mood =
-        moodSelect.value;
+    realistic:
+      "realistic visual treatment with believable proportions, natural textures, and lifelike environmental detail",
 
+    "3D":
+      "stylized 3D visual treatment with dimensional forms, polished surfaces, and clear depth",
 
-      const styleDescription = {
+    anime:
+      "stylized anime-inspired visual treatment with expressive features, clean shapes, and dynamic composition",
 
-        cinematic:
-          "cinematic visual style with polished storytelling aesthetics",
+    cartoon:
+      "expressive cartoon visual treatment with clear shapes, exaggerated expressions, and playful visual design",
 
-        realistic:
-          "highly realistic visual style with natural details",
+    stickman:
+      "creative stickman visual treatment with simple expressive character construction, readable poses, and intentionally minimal character forms",
 
-        "3D":
-          "high-quality 3D rendered visual style",
+    illustration:
+      "detailed artistic illustration with deliberate shapes, textures, composition, and visual storytelling"
 
-        anime:
-          "stylized anime visual aesthetic",
-
-        cartoon:
-          "clean expressive cartoon visual style",
-
-        stickman:
-          "creative stickman visual style with simple expressive character design",
-
-        illustration:
-          "detailed artistic illustration style"
-
-      }[style];
+  };
 
 
-      const prompt =
+  // =========================================================
+  // LIGHTING DESCRIPTIONS
+  // =========================================================
 
-        `${idea}. ` +
+  const lightingDescriptions = {
 
-        `Visual style: ${styleDescription}. ` +
+    "natural lighting":
+      "natural-looking illumination with balanced highlights and shadows",
 
-        `Lighting: ${lighting}. ` +
+    "soft studio lighting":
+      "soft controlled illumination with gentle highlights and smooth shadows",
 
-        `Camera: ${camera}. ` +
+    "warm golden-hour lighting":
+      "warm golden-hour illumination with soft highlights and long atmospheric shadows",
 
-        `Mood: ${mood}. ` +
+    "vibrant neon lighting":
+      "vibrant colored neon illumination with glowing highlights and reflective accents",
 
-        `Strong composition, clear subject, cohesive visual storytelling, ` +
+    "dramatic cinematic lighting":
+      "dramatic cinematic lighting with strong contrast, directional highlights, and deeper shadows",
 
-        `high-quality details, visually appealing image.`;
+    "dark atmospheric lighting":
+      "dark atmospheric illumination with restrained highlights, deep shadows, and a moody environment"
+
+  };
 
 
-      return prompt;
-    } 
+  // =========================================================
+  // CAMERA DESCRIPTIONS
+  // =========================================================
+
+  const cameraDescriptions = {
+
+    "medium shot":
+      "medium framing that clearly shows the main subject and enough surrounding environment to establish the scene",
+
+    "close-up shot":
+      "close-up framing that emphasizes the subject's expression, face, or important visual details",
+
+    "wide cinematic shot":
+      "wide cinematic framing that establishes the environment while keeping the main subject visually readable",
+
+    "low-angle shot":
+      "low-angle composition that gives the subject a stronger and more imposing visual presence",
+
+    "high-angle shot":
+      "high-angle composition that reveals more of the surrounding environment and gives the scene a distinct perspective",
+
+    "overhead shot":
+      "overhead composition that clearly shows the spatial relationship between the subject and surrounding elements"
+
+  };
+
+
+  // =========================================================
+  // MOOD DESCRIPTIONS
+  // =========================================================
+
+  const moodDescriptions = {
+
+    "calm and peaceful":
+      "a calm and peaceful atmosphere with relaxed visual energy",
+
+    "joyful and energetic":
+      "a joyful and energetic atmosphere with lively visual energy",
+
+    "dark and mysterious":
+      "a dark and mysterious atmosphere with subtle tension and an intriguing visual tone",
+
+    "epic and powerful":
+      "an epic and powerful atmosphere with strong visual impact",
+
+    "dramatic and emotional":
+      "a dramatic and emotional atmosphere with expressive visual storytelling",
+
+    "tense and suspenseful":
+      "a tense and suspenseful atmosphere with visual anticipation and controlled intensity"
+
+  };
+
+
+  // =========================================================
+  // CONTEXTUAL VISUAL ENHANCEMENTS
+  // =========================================================
+
+  const lowerIdea =
+    idea.toLowerCase();
+
+
+  const enhancements = [];
+
+
+  // ---------------------------------------------------------
+  // CHARACTER / PERSON DETECTION
+  // ---------------------------------------------------------
+
+  if (
+    /\b(character|person|man|woman|boy|girl|child|kid|person|hero|villain|stickman)\b/
+      .test(lowerIdea)
+  ) {
+
+    enhancements.push(
+      "Keep the main character visually clear and immediately readable."
+    );
+
+  }
+
+
+  // ---------------------------------------------------------
+  // STICKMAN DETECTION
+  // ---------------------------------------------------------
+
+  if (
+    /\bstickman\b/.test(lowerIdea) ||
+    style === "stickman"
+  ) {
+
+    enhancements.push(
+      "Use simple stick-like limbs, expressive body language, readable poses, and clear silhouette design."
+    );
+
+  }
+
+
+  // ---------------------------------------------------------
+  // UNDERWATER DETECTION
+  // ---------------------------------------------------------
+
+  if (
+    /\bunderwater\b|\bocean\b|\bsea\b|\bmarine\b|\baquatic\b/
+      .test(lowerIdea)
+  ) {
+
+    enhancements.push(
+      "Add believable underwater atmosphere, subtle water haze, suspended particles, and environmental depth while keeping the main subject clearly visible."
+    );
+
+  }
+
+
+  // ---------------------------------------------------------
+  // CITY / URBAN DETECTION
+  // ---------------------------------------------------------
+
+  if (
+    /\bcity\b|\bstreet\b|\burban\b|\btown\b|\blagos\b|\broad\b/
+      .test(lowerIdea)
+  ) {
+
+    enhancements.push(
+      "Use layered environmental details, depth between foreground and background, and recognizable urban surroundings."
+    );
+
+  }
+
+
+  // ---------------------------------------------------------
+  // HOUSE / INTERIOR DETECTION
+  // ---------------------------------------------------------
+
+  if (
+    /\bhouse\b|\bhome\b|\broom\b|\bbedroom\b|\bkitchen\b|\binterior\b/
+      .test(lowerIdea)
+  ) {
+
+    enhancements.push(
+      "Make the interior environment visually coherent with appropriate spatial depth, furniture or surrounding objects, and clear separation between foreground and background."
+    );
+
+  }
+
+
+  // ---------------------------------------------------------
+  // NATURE DETECTION
+  // ---------------------------------------------------------
+
+  if (
+    /\bforest\b|\bforest\b|\bmountain\b|\bbeach\b|\bdesert\b|\bjungle\b|\bnature\b|\bpark\b/
+      .test(lowerIdea)
+  ) {
+
+    enhancements.push(
+      "Create layered environmental depth with natural foreground, middle-ground, and background elements."
+    );
+
+  }
+
+
+  // ---------------------------------------------------------
+  // NIGHT / DARK ENVIRONMENT
+  // ---------------------------------------------------------
+
+  if (
+    /\bnight\b|\bmidnight\b|\bdark\b|\bevening\b/
+      .test(lowerIdea)
+  ) {
+
+    enhancements.push(
+      "Preserve clear subject visibility while allowing the environment to communicate the darker time of day."
+    );
+
+  }
+
+
+  // ---------------------------------------------------------
+  // MUSIC / INSTRUMENT DETECTION
+  // ---------------------------------------------------------
+
+  if (
+    /\bclarinet\b|\bguitar\b|\bpiano\b|\bdrums?\b|\bviolin\b|\bmusic\b|\binstrument\b/
+      .test(lowerIdea)
+  ) {
+
+    enhancements.push(
+      "Keep the musical instrument clearly recognizable and visually connected to the character's action."
+    );
+
+  }
+
+
+  // ---------------------------------------------------------
+  // ACTION DETECTION
+  // ---------------------------------------------------------
+
+  if (
+    /\bplaying\b|\bwalking\b|\brunning\b|\bsitting\b|\bstanding\b|\bjumping\b|\bdancing\b|\bfighting\b|\bholding\b|\blooking\b|\bdriving\b|\beating\b|\btalking\b/
+      .test(lowerIdea)
+  ) {
+
+    enhancements.push(
+      "Use clear body positioning and readable gestures so the primary action is immediately understandable."
+    );
+
+  }
+
+
+  // ---------------------------------------------------------
+  // MULTIPLE SUBJECTS / BACKGROUND ACTIVITY
+  // ---------------------------------------------------------
+
+  if (
+    /\bparty\b|\bcrowd\b|\bpeople\b|\bneighbors?\b|\baudience\b|\bgroup\b/
+      .test(lowerIdea)
+  ) {
+
+    enhancements.push(
+      "Maintain clear separation between the main subject and background activity so secondary elements support rather than overpower the main scene."
+    );
+
+  }
+
+
+  // =========================================================
+  // FALLBACK
+  // =========================================================
+
+  if (
+    enhancements.length === 0
+  ) {
+
+    enhancements.push(
+      "Use clear subject separation, coherent environmental details, readable visual relationships, and strong foreground-to-background depth."
+    );
+
+  }
+
+
+  // =========================================================
+  // BUILD FINAL PROMPT
+  // =========================================================
+
+  const finalPrompt = [
+
+    `Create an image based on this concept: ${idea}.`,
+
+    `Visual direction: ${styleDescriptions[style]}.`,
+
+    `Scene lighting: ${lightingDescriptions[lighting]}.`,
+
+    `Camera and composition: ${cameraDescriptions[camera]}.`,
+
+    `Atmosphere and mood: ${moodDescriptions[mood]}.`,
+
+    `Visual development: ${enhancements.join(" ")}`,
+
+    `Preserve the user's original subject, action, environment, and story intent. Do not introduce major characters, objects, events, or story elements that were not requested.`,
+
+    `Prioritize clear composition, readable subjects, cohesive visual storytelling, appropriate depth, strong visual hierarchy, and detailed supporting elements.`
+
+  ].join(" ");
+
+
+  return finalPrompt;
+
+  }
+
+    
+
+
     // =========================================================
 // GENERATE PROMPT
 // =========================================================
