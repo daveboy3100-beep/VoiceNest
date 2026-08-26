@@ -964,6 +964,9 @@
       );
 
     }
+
+  
+
 // =========================================================
 // BUILD PROMPT
 // =========================================================
@@ -1000,145 +1003,144 @@ function buildPrompt() {
 
 
   // =========================================================
-  // STYLE DESCRIPTIONS
+  // STYLE
   // =========================================================
 
   const styleDescriptions = {
 
     cinematic:
-      "cinematic visual storytelling with polished composition, depth, and strong visual hierarchy",
+      "cinematic visual storytelling with polished composition and strong depth",
 
     realistic:
-      "realistic visual treatment with believable proportions, natural textures, and lifelike environmental detail",
+      "realistic visual treatment with believable textures and natural detail",
 
     "3D":
-      "stylized 3D visual treatment with dimensional forms, polished surfaces, and clear depth",
+      "high-quality 3D visual style with dimensional forms and polished detail",
 
     anime:
-      "stylized anime-inspired visual treatment with expressive features, clean shapes, and dynamic composition",
+      "stylized anime visual treatment with expressive features and clean shapes",
 
     cartoon:
-      "expressive cartoon visual treatment with clear shapes, exaggerated expressions, and playful visual design",
+      "expressive cartoon visual style with clear shapes and exaggerated expressions",
 
     stickman:
-      "creative stickman visual treatment with simple expressive character construction, readable poses, and intentionally minimal character forms",
+      "creative stickman style with simple expressive character construction and readable poses",
 
     illustration:
-      "detailed artistic illustration with deliberate shapes, textures, composition, and visual storytelling"
+      "detailed artistic illustration with strong visual composition and rich detail"
 
   };
 
 
   // =========================================================
-  // LIGHTING DESCRIPTIONS
+  // LIGHTING
   // =========================================================
 
   const lightingDescriptions = {
 
     "natural lighting":
-      "natural-looking illumination with balanced highlights and shadows",
+      "balanced natural-looking lighting with realistic highlights and shadows",
 
     "soft studio lighting":
-      "soft controlled illumination with gentle highlights and smooth shadows",
+      "soft controlled lighting with gentle highlights and smooth shadows",
 
     "warm golden-hour lighting":
-      "warm golden-hour illumination with soft highlights and long atmospheric shadows",
+      "warm golden-hour lighting with soft highlights and atmospheric shadows",
 
     "vibrant neon lighting":
-      "vibrant colored neon illumination with glowing highlights and reflective accents",
+      "vibrant neon lighting with colorful glowing highlights and reflections",
 
     "dramatic cinematic lighting":
-      "dramatic cinematic lighting with strong contrast, directional highlights, and deeper shadows",
+      "dramatic cinematic lighting with strong contrast and directional highlights",
 
     "dark atmospheric lighting":
-      "dark atmospheric illumination with restrained highlights, deep shadows, and a moody environment"
+      "dark atmospheric lighting with deep shadows and restrained highlights"
 
   };
 
 
   // =========================================================
-  // CAMERA DESCRIPTIONS
+  // CAMERA
   // =========================================================
 
   const cameraDescriptions = {
 
     "medium shot":
-      "medium framing that clearly shows the main subject and enough surrounding environment to establish the scene",
+      "medium shot showing the main subject clearly along with enough surrounding environment",
 
     "close-up shot":
-      "close-up framing that emphasizes the subject's expression, face, or important visual details",
+      "close-up framing emphasizing the subject's expression and important details",
 
     "wide cinematic shot":
-      "wide cinematic framing that establishes the environment while keeping the main subject visually readable",
+      "wide cinematic framing that establishes the environment around the main subject",
 
     "low-angle shot":
-      "low-angle composition that gives the subject a stronger and more imposing visual presence",
+      "low-angle framing that gives the subject a stronger visual presence",
 
     "high-angle shot":
-      "high-angle composition that reveals more of the surrounding environment and gives the scene a distinct perspective",
+      "high-angle framing that reveals more of the surrounding environment",
 
     "overhead shot":
-      "overhead composition that clearly shows the spatial relationship between the subject and surrounding elements"
+      "overhead composition showing the spatial relationship between the subject and environment"
 
   };
 
 
   // =========================================================
-  // MOOD DESCRIPTIONS
+  // MOOD
   // =========================================================
 
   const moodDescriptions = {
 
     "calm and peaceful":
-      "a calm and peaceful atmosphere with relaxed visual energy",
+      "a calm and peaceful atmosphere",
 
     "joyful and energetic":
-      "a joyful and energetic atmosphere with lively visual energy",
+      "a joyful and energetic atmosphere",
 
     "dark and mysterious":
-      "a dark and mysterious atmosphere with subtle tension and an intriguing visual tone",
+      "a dark and mysterious atmosphere",
 
     "epic and powerful":
-      "an epic and powerful atmosphere with strong visual impact",
+      "an epic and powerful atmosphere",
 
     "dramatic and emotional":
-      "a dramatic and emotional atmosphere with expressive visual storytelling",
+      "a dramatic and emotional atmosphere",
 
     "tense and suspenseful":
-      "a tense and suspenseful atmosphere with visual anticipation and controlled intensity"
+      "a tense and suspenseful atmosphere"
 
   };
 
 
   // =========================================================
-  // CONTEXTUAL VISUAL ENHANCEMENTS
+  // DETECT VISUAL ELEMENTS
   // =========================================================
 
   const lowerIdea =
     idea.toLowerCase();
 
-
-  const enhancements = [];
+  const visualDetails = [];
 
 
   // ---------------------------------------------------------
-  // CHARACTER / PERSON DETECTION
+  // CHARACTER
   // ---------------------------------------------------------
 
   if (
-    /\b(character|person|man|woman|boy|girl|child|kid|person|hero|villain|stickman)\b/
+    /\b(character|person|man|woman|boy|girl|child|kid|hero|villain|stickman)\b/
       .test(lowerIdea)
   ) {
 
-    enhancements.push(
-      "Keep the main character visually clear and immediately readable."
+    visualDetails.push(
+      "The main character remains clearly visible with readable body language and a distinct silhouette."
     );
 
   }
 
 
   // ---------------------------------------------------------
-  // STICKMAN DETECTION
+  // STICKMAN
   // ---------------------------------------------------------
 
   if (
@@ -1146,15 +1148,15 @@ function buildPrompt() {
     style === "stickman"
   ) {
 
-    enhancements.push(
-      "Use simple stick-like limbs, expressive body language, readable poses, and clear silhouette design."
+    visualDetails.push(
+      "Simple stick-like limbs and expressive poses give the character a clean, recognizable appearance."
     );
 
   }
 
 
   // ---------------------------------------------------------
-  // UNDERWATER DETECTION
+  // UNDERWATER
   // ---------------------------------------------------------
 
   if (
@@ -1162,15 +1164,15 @@ function buildPrompt() {
       .test(lowerIdea)
   ) {
 
-    enhancements.push(
-      "Add believable underwater atmosphere, subtle water haze, suspended particles, and environmental depth while keeping the main subject clearly visible."
+    visualDetails.push(
+      "Subtle underwater haze, suspended particles, and soft environmental depth create a convincing underwater setting."
     );
 
   }
 
 
   // ---------------------------------------------------------
-  // CITY / URBAN DETECTION
+  // CITY
   // ---------------------------------------------------------
 
   if (
@@ -1178,15 +1180,15 @@ function buildPrompt() {
       .test(lowerIdea)
   ) {
 
-    enhancements.push(
-      "Use layered environmental details, depth between foreground and background, and recognizable urban surroundings."
+    visualDetails.push(
+      "Layered surroundings and background depth establish the urban environment."
     );
 
   }
 
 
   // ---------------------------------------------------------
-  // HOUSE / INTERIOR DETECTION
+  // INTERIOR
   // ---------------------------------------------------------
 
   if (
@@ -1194,47 +1196,31 @@ function buildPrompt() {
       .test(lowerIdea)
   ) {
 
-    enhancements.push(
-      "Make the interior environment visually coherent with appropriate spatial depth, furniture or surrounding objects, and clear separation between foreground and background."
+    visualDetails.push(
+      "The interior contains coherent environmental details and clear foreground-to-background depth."
     );
 
   }
 
 
   // ---------------------------------------------------------
-  // NATURE DETECTION
+  // NATURE
   // ---------------------------------------------------------
 
   if (
-    /\bforest\b|\bforest\b|\bmountain\b|\bbeach\b|\bdesert\b|\bjungle\b|\bnature\b|\bpark\b/
+    /\bforest\b|\bmountain\b|\bbeach\b|\bdesert\b|\bjungle\b|\bnature\b|\bpark\b/
       .test(lowerIdea)
   ) {
 
-    enhancements.push(
-      "Create layered environmental depth with natural foreground, middle-ground, and background elements."
+    visualDetails.push(
+      "Layered natural elements create depth between the foreground, middle ground, and background."
     );
 
   }
 
 
   // ---------------------------------------------------------
-  // NIGHT / DARK ENVIRONMENT
-  // ---------------------------------------------------------
-
-  if (
-    /\bnight\b|\bmidnight\b|\bdark\b|\bevening\b/
-      .test(lowerIdea)
-  ) {
-
-    enhancements.push(
-      "Preserve clear subject visibility while allowing the environment to communicate the darker time of day."
-    );
-
-  }
-
-
-  // ---------------------------------------------------------
-  // MUSIC / INSTRUMENT DETECTION
+  // MUSIC / INSTRUMENT
   // ---------------------------------------------------------
 
   if (
@@ -1242,15 +1228,15 @@ function buildPrompt() {
       .test(lowerIdea)
   ) {
 
-    enhancements.push(
-      "Keep the musical instrument clearly recognizable and visually connected to the character's action."
+    visualDetails.push(
+      "The musical instrument is clearly visible and naturally connected to the character's action."
     );
 
   }
 
 
   // ---------------------------------------------------------
-  // ACTION DETECTION
+  // ACTION
   // ---------------------------------------------------------
 
   if (
@@ -1258,72 +1244,76 @@ function buildPrompt() {
       .test(lowerIdea)
   ) {
 
-    enhancements.push(
-      "Use clear body positioning and readable gestures so the primary action is immediately understandable."
+    visualDetails.push(
+      "The character's pose and gestures clearly communicate the primary action."
     );
 
   }
 
 
   // ---------------------------------------------------------
-  // MULTIPLE SUBJECTS / BACKGROUND ACTIVITY
+  // BACKGROUND ACTIVITY
   // ---------------------------------------------------------
 
   if (
-    /\bparty\b|\bcrowd\b|\bpeople\b|\bneighbors?\b|\baudience\b|\bgroup\b/
+    /\bparty\b|\bcrowd\b|\bpeople\b|\bneighbors?\b|\baudienc(e|es)\b|\bgroup\b/
       .test(lowerIdea)
   ) {
 
-    enhancements.push(
-      "Maintain clear separation between the main subject and background activity so secondary elements support rather than overpower the main scene."
+    visualDetails.push(
+      "Background activity remains visually present but secondary to the main subject."
     );
 
   }
 
 
-  // =========================================================
+  // ---------------------------------------------------------
   // FALLBACK
-  // =========================================================
+  // ---------------------------------------------------------
 
   if (
-    enhancements.length === 0
+    visualDetails.length === 0
   ) {
 
-    enhancements.push(
-      "Use clear subject separation, coherent environmental details, readable visual relationships, and strong foreground-to-background depth."
+    visualDetails.push(
+      "Clear subject separation, balanced visual depth, and cohesive environmental detail."
     );
 
   }
 
 
   // =========================================================
-  // BUILD FINAL PROMPT
+  // CLEAN VISUAL DETAILS
   // =========================================================
 
-  const finalPrompt = [
+  const detailText =
+    visualDetails.join(" ");
 
-    `Create an image based on this concept: ${idea}.`,
 
-    `Visual direction: ${styleDescriptions[style]}.`,
+  // =========================================================
+  // FINAL PROMPT
+  // =========================================================
 
-    `Scene lighting: ${lightingDescriptions[lighting]}.`,
+  const finalPrompt =
 
-    `Camera and composition: ${cameraDescriptions[camera]}.`,
+    `${idea}. ` +
 
-    `Atmosphere and mood: ${moodDescriptions[mood]}.`,
+    `${styleDescriptions[style]}. ` +
 
-    `Visual development: ${enhancements.join(" ")}`,
+    `${detailText} ` +
 
-    `Preserve the user's original subject, action, environment, and story intent. Do not introduce major characters, objects, events, or story elements that were not requested.`,
+    `${cameraDescriptions[camera]}, ` +
 
-    `Prioritize clear composition, readable subjects, cohesive visual storytelling, appropriate depth, strong visual hierarchy, and detailed supporting elements.`
+    `${lightingDescriptions[lighting]}, ` +
 
-  ].join(" ");
+    `creating ${moodDescriptions[mood]}. ` +
+
+    `Cohesive composition, strong subject focus, natural visual depth, and polished supporting details.`;
 
 
   return finalPrompt;
 
-  }
+    }
 
     
 
