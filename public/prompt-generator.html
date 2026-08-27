@@ -966,9 +966,7 @@
     }
 
   
-
-
-      function buildPrompt() {
+function buildPrompt() {
   const idea = ideaInput.value.trim();
 
   if (!idea) {
@@ -976,7 +974,7 @@
   }
 
   // =========================================================
-  // PROMPT ENGINE V1.3 — NATURAL COMPOSITION
+  // PROMPT ENGINE V1.3 — NATURAL VISUAL PROMPT COMPOSITION
   // =========================================================
 
   const vocabulary = {
@@ -1085,7 +1083,7 @@
   }
 
   // =========================================================
-  // DETECTION
+  // DETECT VISUAL COMPONENTS
   // =========================================================
 
   const characters = findMatches(vocabulary.characters);
@@ -1186,27 +1184,44 @@
   }
 
   // =========================================================
-  // NATURAL STORY DESCRIPTION
+  // NATURALIZE THE USER'S CORE IDEA
   // =========================================================
 
   let story = idea;
 
   /*
-   * Preserve the user's original story.
+   * Turn common sentence fragments into a visual description.
    *
-   * The engine adds visual information around it instead
-   * of rewriting the user's meaning.
+   * Example:
+   * "the robot cooking breakfast while the cat watches"
+   *
+   * becomes:
+   * "The robot is cooking breakfast while the cat watches"
+   *
+   * Only common action patterns are adjusted so we don't
+   * accidentally change the user's intended meaning.
    */
 
-  if (characters.length >= 2 && normalizedActions.length > 0) {
-    story = idea;
-
-    if (relationship === "while") {
-      story = idea.replace(
-        /\s+while\s+/i,
-        " while "
+  if (
+    characters.length > 0 &&
+    normalizedActions.length > 0
+  ) {
+    story = story
+      .replace(
+        /^the\s+([^,]+?)\s+(cooking|eating|watching|running|walking|flying|swimming|reading|holding|talking|fighting|dancing|playing|writing|driving|riding|sleeping|standing|sitting|looking|climbing|building|painting|singing|working|studying|exploring|smiling|laughing|crying|jumping)\b/i,
+        (match, subject, action) => {
+          return `The ${subject} is ${action.toLowerCase()}`;
+        }
+      )
+      .replace(
+        /^the\s+/i,
+        "The "
       );
-    }
+  } else {
+    story = story
+      .charAt(0)
+      .toUpperCase() +
+      story.slice(1);
   }
 
   // =========================================================
@@ -1290,7 +1305,7 @@
       : "";
 
   // =========================================================
-  // NATURAL SETTING PHRASES
+  // SETTINGS PHRASES
   // =========================================================
 
   const settingParts = [];
@@ -1320,15 +1335,15 @@
   }
 
   // =========================================================
-  // BUILD NATURAL PROMPT
+  // BUILD THE PROMPT
   // =========================================================
 
   const sentences = [];
 
-  // Core visual story.
+  // Core story.
   sentences.push(story);
 
-  // Environment and details belong together.
+  // Environment and supporting details.
   if (environmentPhrase && detailParts.length > 0) {
     sentences.push(
       `${environmentPhrase}, ${detailParts.join(", ")}`
@@ -1343,8 +1358,7 @@
     );
   }
 
-  // Creative settings are grouped together rather than
-  // appearing as isolated fragments.
+  // Creative settings.
   if (settingParts.length > 0) {
     sentences.push(
       settingParts.join(", ")
@@ -1388,14 +1402,14 @@
 
   prompt = uniqueSentences.join(". ");
 
-  // Capitalize the beginning.
+  // Capitalize first character.
   if (prompt) {
     prompt =
       prompt.charAt(0).toUpperCase() +
       prompt.slice(1);
   }
 
-  // Clean ending.
+  // Clean final punctuation.
   if (
     prompt &&
     !/[.!?]$/.test(prompt)
@@ -1404,7 +1418,14 @@
   }
 
   return prompt;
-  }
+    }
+
+
+  
+
+
+
+
 
       
     
