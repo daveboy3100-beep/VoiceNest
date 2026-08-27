@@ -974,7 +974,8 @@ function buildPrompt() {
   }
 
   // =========================================================
-  // PROMPT ENGINE V1.3 — NATURAL VISUAL PROMPT COMPOSITION
+  // PROMPT ENGINE V1.3
+  // Natural composition + semantic deduplication
   // =========================================================
 
   const vocabulary = {
@@ -1082,6 +1083,15 @@ function buildPrompt() {
     return [...new Set(list.filter(containsTerm))];
   }
 
+  function hasConcept(words) {
+    return words.some(word =>
+      new RegExp(
+        `\\b${escapeRegex(word)}\\b`,
+        "i"
+      ).test(lowerIdea)
+    );
+  }
+
   // =========================================================
   // DETECT VISUAL COMPONENTS
   // =========================================================
@@ -1184,91 +1194,86 @@ function buildPrompt() {
   }
 
   // =========================================================
-  // NATURALIZE THE USER'S CORE IDEA
+  // NATURALIZE COMMON ACTION FRAGMENTS
   // =========================================================
 
   let story = idea;
-
-  /*
-   * Turn common sentence fragments into a visual description.
-   *
-   * Example:
-   * "the robot cooking breakfast while the cat watches"
-   *
-   * becomes:
-   * "The robot is cooking breakfast while the cat watches"
-   *
-   * Only common action patterns are adjusted so we don't
-   * accidentally change the user's intended meaning.
-   */
 
   if (
     characters.length > 0 &&
     normalizedActions.length > 0
   ) {
-    story = story
-      .replace(
-        /^the\s+([^,]+?)\s+(cooking|eating|watching|running|walking|flying|swimming|reading|holding|talking|fighting|dancing|playing|writing|driving|riding|sleeping|standing|sitting|looking|climbing|building|painting|singing|working|studying|exploring|smiling|laughing|crying|jumping)\b/i,
-        (match, subject, action) => {
-          return `The ${subject} is ${action.toLowerCase()}`;
-        }
-      )
-      .replace(
-        /^the\s+/i,
-        "The "
-      );
-  } else {
-    story = story
-      .charAt(0)
-      .toUpperCase() +
-      story.slice(1);
+    story = story.replace(
+      /^the\s+([^,]+?)\s+(cooking|eating|watching|running|walking|flying|swimming|reading|holding|talking|fighting|dancing|playing|writing|driving|riding|sleeping|standing|sitting|looking|climbing|building|painting|singing|working|studying|exploring|smiling|laughing|crying|jumping)\b/i,
+      (match, subject, action) => {
+        return `The ${subject} is ${action.toLowerCase()}`;
+      }
+    );
   }
 
+  story =
+    story.charAt(0).toUpperCase() +
+    story.slice(1);
+
   // =========================================================
-  // ENVIRONMENT
+  // ENVIRONMENT ENHANCEMENT
+  //
+  // Only add an environment if the user has not already
+  // described one.
   // =========================================================
 
   let environmentPhrase = "";
 
-  if (environments.length === 1) {
-    environmentPhrase =
-      `set within a detailed ${environments[0]} environment`;
-  } else if (environments.length > 1) {
-    environmentPhrase =
-      `set within a detailed environment featuring ${environments
-        .slice(0, 3)
-        .join(", ")}`;
+  if (environments.length === 0) {
+    if (characters.length > 0) {
+      environmentPhrase =
+        "set in a visually rich environment";
+    }
   }
 
   // =========================================================
-  // VISUAL DETAILS
+  // SUPPORTING DETAILS
+  //
+  // Don't repeat objects/concepts already mentioned in the
+  // user's idea.
   // =========================================================
 
   const detailParts = [];
 
-  if (objects.length > 0) {
-    const objectList = objects.slice(0, 5);
+  const usefulObjects = objects.filter(
+    object => !containsTerm(object)
+  );
 
+  if (usefulObjects.length > 0) {
     detailParts.push(
-      `with ${objectList.join(", ")} visible in the scene`
+      `with ${usefulObjects
+        .slice(0, 4)
+        .join(", ")} visible in the scene`
     );
   }
 
-  if (visualConcepts.length > 0) {
-    const concepts = visualConcepts.slice(0, 4);
+  // Only add visual concepts that are NOT already in the idea.
+  const missingVisualConcepts =
+    visualConcepts.filter(
+      concept => !containsTerm(concept)
+    );
 
+  if (missingVisualConcepts.length > 0) {
     detailParts.push(
-      `${concepts.join(", ")} visual details`
+      `${missingVisualConcepts
+        .slice(0, 3)
+        .join(", ")} visual details`
     );
   }
 
+  // Composition guidance is useful, but only once.
   if (characters.length >= 2) {
     detailParts.push(
-      "clear separation between the characters"
+      "both characters clearly visible with natural separation"
     );
   } else if (characters.length === 1) {
     detailParts.push(
-      "clear focus on the main subject"
+      "clear visual focus on the main subject"
     );
   }
 
@@ -1305,7 +1310,7 @@ function buildPrompt() {
       : "";
 
   // =========================================================
-  // SETTINGS PHRASES
+  // SETTINGS
   // =========================================================
 
   const settingParts = [];
@@ -1335,27 +1340,23 @@ function buildPrompt() {
   }
 
   // =========================================================
-  // BUILD THE PROMPT
+  // BUILD NATURAL PROMPT
   // =========================================================
 
   const sentences = [];
 
-  // Core story.
+  // Core user story.
   sentences.push(story);
 
-  // Environment and supporting details.
+  // Environment + supporting details.
   if (environmentPhrase && detailParts.length > 0) {
     sentences.push(
       `${environmentPhrase}, ${detailParts.join(", ")}`
     );
   } else if (environmentPhrase) {
-    sentences.push(
-      environmentPhrase
-    );
+    sentences.push(environmentPhrase);
   } else if (detailParts.length > 0) {
-    sentences.push(
-      detailParts.join(", ")
-    );
+    sentences.push(detailParts.join(", "));
   }
 
   // Creative settings.
@@ -1366,7 +1367,7 @@ function buildPrompt() {
   }
 
   // =========================================================
-  // CLEAN OUTPUT
+  // FINAL CLEANUP
   // =========================================================
 
   let prompt = sentences
@@ -1380,7 +1381,20 @@ function buildPrompt() {
     .replace(/\s+\./g, ".")
     .trim();
 
-  // Remove duplicate sentences.
+  // Capitalize every sentence.
+  prompt = prompt
+    .split(". ")
+    .map(sentence => {
+      if (!sentence) return sentence;
+
+      return (
+        sentence.charAt(0).toUpperCase() +
+        sentence.slice(1)
+      );
+    })
+    .join(". ");
+
+  // Remove exact duplicate sentences.
   const uniqueSentences = [];
 
   prompt
@@ -1388,7 +1402,8 @@ function buildPrompt() {
     .map(sentence => sentence.trim())
     .filter(Boolean)
     .forEach(sentence => {
-      const normalized = sentence.toLowerCase();
+      const normalized =
+        sentence.toLowerCase();
 
       if (
         !uniqueSentences.some(
@@ -1402,14 +1417,6 @@ function buildPrompt() {
 
   prompt = uniqueSentences.join(". ");
 
-  // Capitalize first character.
-  if (prompt) {
-    prompt =
-      prompt.charAt(0).toUpperCase() +
-      prompt.slice(1);
-  }
-
-  // Clean final punctuation.
   if (
     prompt &&
     !/[.!?]$/.test(prompt)
@@ -1418,8 +1425,12 @@ function buildPrompt() {
   }
 
   return prompt;
-    }
+  }
 
+    
+    
+
+     
 
   
 
