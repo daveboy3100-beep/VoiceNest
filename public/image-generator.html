@@ -974,7 +974,37 @@
     }
 
   }
+// ============================================================
+// LOAD PROMPT FROM PROMPT GENERATOR
+// ============================================================
 
+function loadPromptFromUrl() {
+  const params = new URLSearchParams(
+    window.location.search
+  );
+
+  const prompt =
+    params.get("prompt");
+
+  if (!prompt) {
+    return;
+  }
+
+  imagePrompt.value =
+    prompt.trim();
+
+  imagePrompt.focus();
+
+  generationStatus.textContent =
+    "Prompt loaded from Prompt Generator.";
+}
+
+loadPromptFromUrl();
+
+
+// ============================================================
+// GENERATE BUTTON
+// ============================================================
 
   // ============================================================
   // GENERATE BUTTON
