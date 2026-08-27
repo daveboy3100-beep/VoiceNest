@@ -967,7 +967,8 @@
 
   
 
-function buildPrompt() {
+
+      function buildPrompt() {
   const idea = ideaInput.value.trim();
 
   if (!idea) {
@@ -975,8 +976,7 @@ function buildPrompt() {
   }
 
   // =========================================================
-  // PROMPT ENGINE V1.3
-  // Local visual vocabulary — no API required
+  // PROMPT ENGINE V1.3 — NATURAL COMPOSITION
   // =========================================================
 
   const vocabulary = {
@@ -1021,8 +1021,7 @@ function buildPrompt() {
       "smiling", "smile",
       "laughing", "laugh",
       "crying", "cry",
-      "jumping", "jump",
-      "running", "run"
+      "jumping", "jump"
     ],
 
     objects: [
@@ -1075,48 +1074,28 @@ function buildPrompt() {
   }
 
   function containsTerm(term) {
-    const regex = new RegExp(
+    return new RegExp(
       `\\b${escapeRegex(term)}\\b`,
       "i"
-    );
-
-    return regex.test(lowerIdea);
+    ).test(lowerIdea);
   }
 
   function findMatches(list) {
-    return list.filter(containsTerm);
-  }
-
-  function unique(list) {
-    return [...new Set(list)];
+    return [...new Set(list.filter(containsTerm))];
   }
 
   // =========================================================
-  // DETECT VISUAL COMPONENTS
+  // DETECTION
   // =========================================================
 
-  const characters = unique(
-    findMatches(vocabulary.characters)
-  );
-
-  const actions = unique(
-    findMatches(vocabulary.actions)
-  );
-
-  const objects = unique(
-    findMatches(vocabulary.objects)
-  );
-
-  const environments = unique(
-    findMatches(vocabulary.environments)
-  );
-
-  const visualConcepts = unique(
-    findMatches(vocabulary.visualConcepts)
-  );
+  const characters = findMatches(vocabulary.characters);
+  const actions = findMatches(vocabulary.actions);
+  const objects = findMatches(vocabulary.objects);
+  const environments = findMatches(vocabulary.environments);
+  const visualConcepts = findMatches(vocabulary.visualConcepts);
 
   // =========================================================
-  // ACTION NORMALIZATION
+  // NORMALIZE ACTIONS
   // =========================================================
 
   const actionMap = {
@@ -1207,73 +1186,79 @@ function buildPrompt() {
   }
 
   // =========================================================
-  // SUBJECT STRUCTURE
+  // NATURAL STORY DESCRIPTION
   // =========================================================
 
-  let subjectDescription = idea;
+  let story = idea;
 
   /*
-   * The user's original idea is intentionally preserved.
+   * Preserve the user's original story.
    *
-   * This is important:
-   * A local rule-based engine should improve the prompt
-   * without inventing or changing the user's story.
+   * The engine adds visual information around it instead
+   * of rewriting the user's meaning.
    */
 
-  if (characters.length >= 2 && normalizedActions.length >= 1) {
-    subjectDescription = idea;
+  if (characters.length >= 2 && normalizedActions.length > 0) {
+    story = idea;
+
+    if (relationship === "while") {
+      story = idea.replace(
+        /\s+while\s+/i,
+        " while "
+      );
+    }
   }
 
   // =========================================================
-  // ENVIRONMENT DETAILS
-  // =========================================================
-
-  const supportingDetails = [];
-
-  if (objects.length > 0) {
-    supportingDetails.push(
-      `visible details such as ${objects.slice(0, 5).join(", ")}`
-    );
-  }
-
-  if (visualConcepts.length > 0) {
-    supportingDetails.push(
-      `${visualConcepts.slice(0, 5).join(", ")} visual elements`
-    );
-  }
-
-  // =========================================================
-  // CHARACTER COMPOSITION
-  // =========================================================
-
-  if (characters.length >= 2) {
-    supportingDetails.push(
-      "clear separation between the characters"
-    );
-  } else if (characters.length === 1) {
-    supportingDetails.push(
-      "clear focus on the main subject"
-    );
-  }
-
-  // =========================================================
-  // ENVIRONMENT PHRASE
+  // ENVIRONMENT
   // =========================================================
 
   let environmentPhrase = "";
 
   if (environments.length === 1) {
     environmentPhrase =
-      `a detailed ${environments[0]} environment`;
+      `set within a detailed ${environments[0]} environment`;
   } else if (environments.length > 1) {
     environmentPhrase =
-      `a detailed environment featuring ${environments
+      `set within a detailed environment featuring ${environments
         .slice(0, 3)
-        .join(", ")}`
+        .join(", ")}`;
   }
 
   // =========================================================
-  // USER CREATIVE SETTINGS
+  // VISUAL DETAILS
+  // =========================================================
+
+  const detailParts = [];
+
+  if (objects.length > 0) {
+    const objectList = objects.slice(0, 5);
+
+    detailParts.push(
+      `with ${objectList.join(", ")} visible in the scene`
+    );
+  }
+
+  if (visualConcepts.length > 0) {
+    const concepts = visualConcepts.slice(0, 4);
+
+    detailParts.push(
+      `${concepts.join(", ")} visual details`
+    );
+  }
+
+  if (characters.length >= 2) {
+    detailParts.push(
+      "clear separation between the characters"
+    );
+  } else if (characters.length === 1) {
+    detailParts.push(
+      "clear focus on the main subject"
+    );
+  }
+
+  // =========================================================
+  // CREATIVE SETTINGS
   // =========================================================
 
   const style =
@@ -1305,100 +1290,72 @@ function buildPrompt() {
       : "";
 
   // =========================================================
-  // NATURAL LIGHTING + MOOD COMBINATIONS
+  // NATURAL SETTING PHRASES
   // =========================================================
 
-  let lightingPhrase = lighting;
-  let moodPhrase = mood;
+  const settingParts = [];
 
-  /*
-   * Prevent awkward combinations such as:
-   *
-   * "dark atmospheric lighting"
-   * +
-   * "calm and peaceful atmosphere"
-   *
-   * The user's selections are still respected,
-   * but the wording becomes more natural.
-   */
-
-  if (
-    lighting === "Dark" &&
-    mood === "Calm"
-  ) {
-    moodPhrase = "quiet and atmospheric mood";
-  }
-
-  if (
-    lighting === "Neon" &&
-    mood === "Calm"
-  ) {
-    moodPhrase = "cool and atmospheric mood";
-  }
-
-  if (
-    lighting === "Dramatic" &&
-    mood === "Happy"
-  ) {
-    moodPhrase = "energetic and lively mood";
-  }
-
-  // =========================================================
-  // BUILD PROMPT
-  // =========================================================
-
-  const parts = [];
-
-  // 1. Core story
-  parts.push(subjectDescription);
-
-  // 2. Environment
-  if (environmentPhrase) {
-    parts.push(
-      `set in ${environmentPhrase}`
-    );
-  }
-
-  // 3. Supporting visual information
-  if (supportingDetails.length > 0) {
-    parts.push(
-      supportingDetails.join(", ")
-    );
-  }
-
-  // 4. Style
   if (style) {
-    parts.push(
+    settingParts.push(
       `${style} visual style`
     );
   }
 
-  // 5. Lighting
-  if (lightingPhrase) {
-    parts.push(
-      `${lightingPhrase.toLowerCase()}`
+  if (lighting) {
+    settingParts.push(
+      `${lighting.toLowerCase()} lighting`
     );
   }
 
-  // 6. Camera
   if (camera) {
-    parts.push(
-      `${camera.toLowerCase()} composition`
+    settingParts.push(
+      `${camera.toLowerCase()} camera composition`
     );
   }
 
-  // 7. Mood
-  if (moodPhrase) {
-    parts.push(
-      `${moodPhrase.toLowerCase()}`
+  if (mood) {
+    settingParts.push(
+      `${mood.toLowerCase()} atmosphere`
     );
   }
 
   // =========================================================
-  // CLEAN + DEDUPLICATE
+  // BUILD NATURAL PROMPT
   // =========================================================
 
-  let prompt = parts
+  const sentences = [];
+
+  // Core visual story.
+  sentences.push(story);
+
+  // Environment and details belong together.
+  if (environmentPhrase && detailParts.length > 0) {
+    sentences.push(
+      `${environmentPhrase}, ${detailParts.join(", ")}`
+    );
+  } else if (environmentPhrase) {
+    sentences.push(
+      environmentPhrase
+    );
+  } else if (detailParts.length > 0) {
+    sentences.push(
+      detailParts.join(", ")
+    );
+  }
+
+  // Creative settings are grouped together rather than
+  // appearing as isolated fragments.
+  if (settingParts.length > 0) {
+    sentences.push(
+      settingParts.join(", ")
+    );
+  }
+
+  // =========================================================
+  // CLEAN OUTPUT
+  // =========================================================
+
+  let prompt = sentences
     .filter(Boolean)
     .join(". ");
 
@@ -1409,29 +1366,36 @@ function buildPrompt() {
     .replace(/\s+\./g, ".")
     .trim();
 
-  // Remove exact duplicate sentences.
-  const sentences = prompt
+  // Remove duplicate sentences.
+  const uniqueSentences = [];
+
+  prompt
     .split(".")
     .map(sentence => sentence.trim())
-    .filter(Boolean);
+    .filter(Boolean)
+    .forEach(sentence => {
+      const normalized = sentence.toLowerCase();
 
-  const cleanedSentences = [];
+      if (
+        !uniqueSentences.some(
+          existing =>
+            existing.toLowerCase() === normalized
+        )
+      ) {
+        uniqueSentences.push(sentence);
+      }
+    });
 
-  for (const sentence of sentences) {
-    const normalized = sentence.toLowerCase();
+  prompt = uniqueSentences.join(". ");
 
-    if (
-      !cleanedSentences.some(
-        existing =>
-          existing.toLowerCase() === normalized
-      )
-    ) {
-      cleanedSentences.push(sentence);
-    }
+  // Capitalize the beginning.
+  if (prompt) {
+    prompt =
+      prompt.charAt(0).toUpperCase() +
+      prompt.slice(1);
   }
 
-  prompt = cleanedSentences.join(". ");
-
+  // Clean ending.
   if (
     prompt &&
     !/[.!?]$/.test(prompt)
@@ -1441,9 +1405,12 @@ function buildPrompt() {
 
   return prompt;
   }
+
+      
+    
     
 
-    
+
 
                 
             
