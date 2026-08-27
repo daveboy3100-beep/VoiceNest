@@ -997,15 +997,16 @@ function loadPromptFromUrl() {
 
   generationStatus.textContent =
     "Prompt loaded from Prompt Generator.";
+
+  // Remove the prompt from the URL after loading it.
+  window.history.replaceState(
+    {},
+    document.title,
+    window.location.pathname
+  );
 }
 
 loadPromptFromUrl();
-
-
-// ============================================================
-// GENERATE BUTTON
-// ============================================================
-
   // ============================================================
   // GENERATE BUTTON
   // ============================================================
