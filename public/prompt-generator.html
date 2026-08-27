@@ -799,28 +799,32 @@
           id="generatedPrompt"
         ></div>
 
+<div class="result-actions">
+  <button
+    class="secondary-button"
+    type="button"
+    id="copyPromptButton"
+  >
+    📋 Copy Prompt
+  </button>
 
-        <div class="result-actions">
+  <button
+    class="secondary-button"
+    type="button"
+    id="clearPromptButton"
+  >
+    🗑️ Clear
+  </button>
 
-          <button
-            class="secondary-button"
-            type="button"
-            id="copyPromptButton"
-          >
-            📋 Copy Prompt
-          </button>
-
-
-          <button
-            class="primary-button"
-            type="button"
-            id="useInImageButton"
-          >
-            🖼️ Use in Image Generator
-          </button>
-
-        </div>
-
+  <button
+    class="primary-button"
+    type="button"
+    id="useInImageButton"
+  >
+    🖼️ Use in Image Generator
+  </button>
+</div>
+        
       </div>
 
     </section>
@@ -893,7 +897,10 @@
       document.getElementById(
         "copyPromptButton"
       );
-
+const clearPromptButton =
+  document.getElementById(
+    "clearPromptButton"
+  );
     const useInImageButton =
       document.getElementById(
         "useInImageButton"
@@ -1536,7 +1543,37 @@ copyPromptButton.addEventListener(
 
   }
 );
+// =========================================================
+// CLEAR PROMPT GENERATOR
+// =========================================================
 
+clearPromptButton.addEventListener(
+  "click",
+  () => {
+
+    ideaInput.value = "";
+
+    currentPrompt = "";
+
+    generatedPrompt.textContent = "";
+
+    resultCard.classList.remove(
+      "visible"
+    );
+
+    statusText.textContent =
+      "Ready";
+
+    updateCharacterCount();
+
+    ideaInput.focus();
+
+    showToast(
+      "Prompt workspace cleared."
+    );
+
+  }
+);
 
 // =========================================================
 // USE IN IMAGE GENERATOR
