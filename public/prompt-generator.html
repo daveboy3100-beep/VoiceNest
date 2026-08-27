@@ -966,355 +966,364 @@
     }
 
   
-
-// =========================================================
-// BUILD PROMPT
-// =========================================================
-
 function buildPrompt() {
+    const idea = userIdeaInput.value.trim();
 
-  const idea =
-    ideaInput.value.trim();
-
-  if (!idea) {
-
-    showToast(
-      "Describe your image idea first."
-    );
-
-    ideaInput.focus();
-
-    return null;
-
-  }
-
-
-  const style =
-    styleSelect.value;
-
-  const lighting =
-    lightingSelect.value;
-
-  const camera =
-    cameraSelect.value;
-
-  const mood =
-    moodSelect.value;
-
-
-  // =========================================================
-  // STYLE
-  // =========================================================
-
-  const styleDescriptions = {
-
-    cinematic:
-      "cinematic visual storytelling with polished composition and strong depth",
-
-    realistic:
-      "realistic visual treatment with believable textures and natural detail",
-
-    "3D":
-      "high-quality 3D visual style with dimensional forms and polished detail",
-
-    anime:
-      "stylized anime visual treatment with expressive features and clean shapes",
-
-    cartoon:
-      "expressive cartoon visual style with clear shapes and exaggerated expressions",
-
-    stickman:
-      "creative stickman style with simple expressive character construction and readable poses",
-
-    illustration:
-      "detailed artistic illustration with strong visual composition and rich detail"
-
-  };
-
-
-  // =========================================================
-  // LIGHTING
-  // =========================================================
-
-  const lightingDescriptions = {
-
-    "natural lighting":
-      "balanced natural-looking lighting with realistic highlights and shadows",
-
-    "soft studio lighting":
-      "soft controlled lighting with gentle highlights and smooth shadows",
-
-    "warm golden-hour lighting":
-      "warm golden-hour lighting with soft highlights and atmospheric shadows",
-
-    "vibrant neon lighting":
-      "vibrant neon lighting with colorful glowing highlights and reflections",
-
-    "dramatic cinematic lighting":
-      "dramatic cinematic lighting with strong contrast and directional highlights",
-
-    "dark atmospheric lighting":
-      "dark atmospheric lighting with deep shadows and restrained highlights"
-
-  };
-
-
-  // =========================================================
-  // CAMERA
-  // =========================================================
-
-  const cameraDescriptions = {
-
-    "medium shot":
-      "medium shot showing the main subject clearly along with enough surrounding environment",
-
-    "close-up shot":
-      "close-up framing emphasizing the subject's expression and important details",
-
-    "wide cinematic shot":
-      "wide cinematic framing that establishes the environment around the main subject",
-
-    "low-angle shot":
-      "low-angle framing that gives the subject a stronger visual presence",
-
-    "high-angle shot":
-      "high-angle framing that reveals more of the surrounding environment",
-
-    "overhead shot":
-      "overhead composition showing the spatial relationship between the subject and environment"
-
-  };
-
-
-  // =========================================================
-  // MOOD
-  // =========================================================
-
-  const moodDescriptions = {
-
-    "calm and peaceful":
-      "a calm and peaceful atmosphere",
-
-    "joyful and energetic":
-      "a joyful and energetic atmosphere",
-
-    "dark and mysterious":
-      "a dark and mysterious atmosphere",
-
-    "epic and powerful":
-      "an epic and powerful atmosphere",
-
-    "dramatic and emotional":
-      "a dramatic and emotional atmosphere",
-
-    "tense and suspenseful":
-      "a tense and suspenseful atmosphere"
-
-  };
-
-
-  // =========================================================
-  // DETECT VISUAL ELEMENTS
-  // =========================================================
-
-  const lowerIdea =
-    idea.toLowerCase();
-
-  const visualDetails = [];
-
-
-  // ---------------------------------------------------------
-  // CHARACTER
-  // ---------------------------------------------------------
-
-  if (
-    /\b(character|person|man|woman|boy|girl|child|kid|hero|villain|stickman)\b/
-      .test(lowerIdea)
-  ) {
-
-    visualDetails.push(
-      "The main character remains clearly visible with readable body language and a distinct silhouette."
-    );
-
-  }
-
-
-  // ---------------------------------------------------------
-  // STICKMAN
-  // ---------------------------------------------------------
-
-  if (
-    /\bstickman\b/.test(lowerIdea) ||
-    style === "stickman"
-  ) {
-
-    visualDetails.push(
-      "Simple stick-like limbs and expressive poses give the character a clean, recognizable appearance."
-    );
-
-  }
-
-
-  // ---------------------------------------------------------
-  // UNDERWATER
-  // ---------------------------------------------------------
-
-  if (
-    /\bunderwater\b|\bocean\b|\bsea\b|\bmarine\b|\baquatic\b/
-      .test(lowerIdea)
-  ) {
-
-    visualDetails.push(
-      "Subtle underwater haze, suspended particles, and soft environmental depth create a convincing underwater setting."
-    );
-
-  }
-
-
-  // ---------------------------------------------------------
-  // CITY
-  // ---------------------------------------------------------
-
-  if (
-    /\bcity\b|\bstreet\b|\burban\b|\btown\b|\blagos\b|\broad\b/
-      .test(lowerIdea)
-  ) {
-
-    visualDetails.push(
-      "Layered surroundings and background depth establish the urban environment."
-    );
-
-  }
-
-
-  // ---------------------------------------------------------
-  // INTERIOR
-  // ---------------------------------------------------------
-
-  if (
-    /\bhouse\b|\bhome\b|\broom\b|\bbedroom\b|\bkitchen\b|\binterior\b/
-      .test(lowerIdea)
-  ) {
-
-    visualDetails.push(
-      "The interior contains coherent environmental details and clear foreground-to-background depth."
-    );
-
-  }
-
-
-  // ---------------------------------------------------------
-  // NATURE
-  // ---------------------------------------------------------
-
-  if (
-    /\bforest\b|\bmountain\b|\bbeach\b|\bdesert\b|\bjungle\b|\bnature\b|\bpark\b/
-      .test(lowerIdea)
-  ) {
-
-    visualDetails.push(
-      "Layered natural elements create depth between the foreground, middle ground, and background."
-    );
-
-  }
-
-
-  // ---------------------------------------------------------
-  // MUSIC / INSTRUMENT
-  // ---------------------------------------------------------
-
-  if (
-    /\bclarinet\b|\bguitar\b|\bpiano\b|\bdrums?\b|\bviolin\b|\bmusic\b|\binstrument\b/
-      .test(lowerIdea)
-  ) {
-
-    visualDetails.push(
-      "The musical instrument is clearly visible and naturally connected to the character's action."
-    );
-
-  }
-
-
-  // ---------------------------------------------------------
-  // ACTION
-  // ---------------------------------------------------------
-
-  if (
-    /\bplaying\b|\bwalking\b|\brunning\b|\bsitting\b|\bstanding\b|\bjumping\b|\bdancing\b|\bfighting\b|\bholding\b|\blooking\b|\bdriving\b|\beating\b|\btalking\b/
-      .test(lowerIdea)
-  ) {
-
-    visualDetails.push(
-      "The character's pose and gestures clearly communicate the primary action."
-    );
-
-  }
-
-
-  // ---------------------------------------------------------
-  // BACKGROUND ACTIVITY
-  // ---------------------------------------------------------
-
-  if (
-    /\bparty\b|\bcrowd\b|\bpeople\b|\bneighbors?\b|\baudienc(e|es)\b|\bgroup\b/
-      .test(lowerIdea)
-  ) {
-
-    visualDetails.push(
-      "Background activity remains visually present but secondary to the main subject."
-    );
-
-  }
-
-
-  // ---------------------------------------------------------
-  // FALLBACK
-  // ---------------------------------------------------------
-
-  if (
-    visualDetails.length === 0
-  ) {
-
-    visualDetails.push(
-      "Clear subject separation, balanced visual depth, and cohesive environmental detail."
-    );
-
-  }
-
-
-  // =========================================================
-  // CLEAN VISUAL DETAILS
-  // =========================================================
-
-  const detailText =
-    visualDetails.join(" ");
-
-
-  // =========================================================
-  // FINAL PROMPT
-  // =========================================================
-
-  const finalPrompt =
-
-    `${idea}. ` +
-
-    `${styleDescriptions[style]}. ` +
-
-    `${detailText} ` +
-
-    `${cameraDescriptions[camera]}, ` +
-
-    `${lightingDescriptions[lighting]}, ` +
-
-    `creating ${moodDescriptions[mood]}. ` +
-
-    `Cohesive composition, strong subject focus, natural visual depth, and polished supporting details.`;
-
-
-  return finalPrompt;
-
+    if (!idea) {
+        return "";
     }
 
+    // ---------- V1.3 VISUAL VOCABULARY ----------
+
+    const vocabulary = {
+        characters: [
+            "robot", "android", "cyborg", "cat", "dog", "horse", "bird",
+            "child", "boy", "girl", "man", "woman", "person", "people",
+            "explorer", "astronaut", "warrior", "wizard", "knight",
+            "princess", "king", "queen", "scientist", "chef", "detective",
+            "soldier", "pilot", "musician", "artist", "farmer", "pirate",
+            "superhero", "villain", "alien", "monster", "dragon"
+        ],
+
+        actions: [
+            "cooking", "cook", "eating", "eat", "watching", "watch",
+            "running", "run", "walking", "walk", "flying", "fly",
+            "swimming", "swim", "reading", "read", "holding", "hold",
+            "talking", "talk", "fighting", "fight", "dancing", "dance",
+            "playing", "play", "writing", "write", "driving", "drive",
+            "riding", "ride", "sleeping", "sleep", "standing", "stand",
+            "sitting", "sit", "looking", "look", "climbing", "climb",
+            "building", "build", "painting", "paint", "singing", "sing",
+            "working", "work", "studying", "study", "exploring", "explore"
+        ],
+
+        objects: [
+            "map", "phone", "book", "guitar", "clarinet", "piano",
+            "camera", "laptop", "computer", "car", "truck", "motorcycle",
+            "bicycle", "food", "breakfast", "dinner", "table", "chair",
+            "sword", "shield", "backpack", "umbrella", "flower", "tree",
+            "ball", "boat", "airplane", "house", "building", "sign",
+            "lamp", "television", "microphone", "instrument"
+        ],
+
+        environments: [
+            "kitchen", "bedroom", "living room", "office", "classroom",
+            "restaurant", "cafe", "house", "apartment", "mountain",
+            "forest", "beach", "desert", "city", "street", "road",
+            "village", "garden", "park", "farm", "castle", "school",
+            "hospital", "market", "underwater", "ocean", "space",
+            "laboratory", "studio", "warehouse", "airport", "train station"
+        ],
+
+        visualConcepts: [
+            "night", "day", "sunset", "sunrise", "rain", "snow", "fog",
+            "fire", "smoke", "water", "clouds", "stars", "neon",
+            "glowing", "futuristic", "ancient", "modern", "crowded",
+            "empty", "dark", "bright", "colorful", "cinematic"
+        ]
+    };
+
+    const lowerIdea = idea.toLowerCase();
+
+    // ---------- HELPERS ----------
+
+    const containsTerm = (term) => {
+        const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        return new RegExp(`\\b${escaped}\\b`, "i").test(lowerIdea);
+    };
+
+    const findMatches = (list) => {
+        return list.filter(item => containsTerm(item));
+    };
+
+    const characters = findMatches(vocabulary.characters);
+    const actions = findMatches(vocabulary.actions);
+    const objects = findMatches(vocabulary.objects);
+    const environments = findMatches(vocabulary.environments);
+    const visualConcepts = findMatches(vocabulary.visualConcepts);
+
+    // ---------- RELATIONSHIP DETECTION ----------
+
+    const relationshipPatterns = [
+        {
+            regex: /(.+?)\s+(?:while|as)\s+(.+)/i,
+            type: "while"
+        },
+        {
+            regex: /(.+?)\s+(?:and)\s+(.+)/i,
+            type: "and"
+        },
+        {
+            regex: /(.+?)\s+(?:next to|beside)\s+(.+)/i,
+            type: "beside"
+        },
+        {
+            regex: /(.+?)\s+(?:in front of|behind)\s+(.+)/i,
+            type: "position"
+        }
+    ];
+
+    let relationshipText = "";
+
+    for (const pattern of relationshipPatterns) {
+        const match = idea.match(pattern.regex);
+
+        if (match) {
+            const firstPart = match[1].trim();
+            const secondPart = match[2].trim();
+
+            if (firstPart && secondPart) {
+                if (pattern.type === "while") {
+                    relationshipText = `with ${secondPart} happening in the background`;
+                } else if (pattern.type === "and") {
+                    relationshipText = `interacting naturally with ${secondPart}`;
+                } else if (pattern.type === "beside") {
+                    relationshipText = `positioned beside ${secondPart}`;
+                } else {
+                    relationshipText = `${pattern.type} ${secondPart}`;
+                }
+
+                break;
+            }
+        }
+    }
+
+    // ---------- SUBJECT PRIORITY ----------
+
+    let primarySubject = "";
+
+    if (characters.length > 0) {
+        primarySubject = characters[0];
+    } else if (objects.length > 0) {
+        primarySubject = objects[0];
+    } else if (environments.length > 0) {
+        primarySubject = environments[0];
+    }
+
+    // ---------- ACTION PHRASE ----------
+
+    let actionPhrase = "";
+
+    if (actions.length > 0) {
+        const mainAction = actions[0];
+
+        const actionMap = {
+            cooking: "cooking",
+            cook: "cooking",
+            eating: "eating",
+            eat: "eating",
+            watching: "watching",
+            watch: "watching",
+            running: "running",
+            run: "running",
+            walking: "walking",
+            walk: "walking",
+            flying: "flying",
+            fly: "flying",
+            swimming: "swimming",
+            swim: "swimming",
+            reading: "reading",
+            read: "reading",
+            holding: "holding",
+            hold: "holding",
+            talking: "talking",
+            talk: "talking",
+            fighting: "fighting",
+            fight: "fighting",
+            dancing: "dancing",
+            dance: "dancing",
+            playing: "playing",
+            play: "playing",
+            writing: "writing",
+            write: "writing",
+            driving: "driving",
+            drive: "driving",
+            riding: "riding",
+            ride: "riding",
+            sleeping: "sleeping",
+            sleep: "sleeping",
+            standing: "standing",
+            stand: "standing",
+            sitting: "sitting",
+            sit: "sitting",
+            looking: "looking",
+            look: "looking",
+            climbing: "climbing",
+            climb: "climbing",
+            building: "building",
+            build: "building",
+            painting: "painting",
+            paint: "painting",
+            singing: "singing",
+            sing: "singing",
+            working: "working",
+            work: "working",
+            studying: "studying",
+            study: "studying",
+            exploring: "exploring",
+            explore: "exploring"
+        };
+
+        actionPhrase = actionMap[mainAction] || mainAction;
+    }
+
+    // ---------- NATURAL SUBJECT DESCRIPTION ----------
+
+    let subjectDescription = idea;
+
+    // Specific relationship pattern:
+    // "robot cooking breakfast while cat watches"
+    // Keep the user's original idea as the core story rather than
+    // attempting to rewrite every possible sentence.
+    if (relationshipText) {
+        subjectDescription = idea;
+    } else if (primarySubject && actionPhrase) {
+        subjectDescription = idea;
+    }
+
+    // ---------- ENVIRONMENT CONTEXT ----------
+
+    let environmentPhrase = "";
+
+    if (environments.length > 0) {
+        const uniqueEnvironments = [...new Set(environments)];
+
+        if (uniqueEnvironments.length === 1) {
+            environmentPhrase = `Set in a detailed ${uniqueEnvironments[0]} environment`;
+        } else {
+            environmentPhrase = `Set in a detailed environment featuring ${uniqueEnvironments.join(", ")}`;
+        }
+    }
+
+    // ---------- VISUAL DETAIL ----------
+
+    const visualDetails = [];
+
+    if (characters.length > 0) {
+        visualDetails.push(
+            `clearly defined ${characters.length === 1 ? "main character" : "characters"}`
+        );
+    }
+
+    if (objects.length > 0) {
+        const uniqueObjects = [...new Set(objects)];
+
+        visualDetails.push(
+            `natural supporting details such as ${uniqueObjects.slice(0, 4).join(", ")}`
+        );
+    }
+
+    if (visualConcepts.length > 0) {
+        const uniqueConcepts = [...new Set(visualConcepts)];
+
+        visualDetails.push(
+            `${uniqueConcepts.slice(0, 4).join(", ")} visual elements`
+        );
+    }
+
+    if (relationshipText) {
+        visualDetails.push(relationshipText);
+    }
+
+    // ---------- USER SETTINGS ----------
+
+    const style =
+        styleSelect?.value
+            ? styleSelect.options[styleSelect.selectedIndex]?.text
+            : "";
+
+    const lighting =
+        lightingSelect?.value
+            ? lightingSelect.options[lightingSelect.selectedIndex]?.text
+            : "";
+
+    const camera =
+        cameraSelect?.value
+            ? cameraSelect.options[cameraSelect.selectedIndex]?.text
+            : "";
+
+    const mood =
+        moodSelect?.value
+            ? moodSelect.options[moodSelect.selectedIndex]?.text
+            : "";
+
+    // ---------- BUILD NATURAL PROMPT ----------
+
+    const parts = [];
+
+    // User idea remains the foundation.
+    parts.push(idea);
+
+    if (environmentPhrase) {
+        parts.push(environmentPhrase);
+    }
+
+    if (visualDetails.length > 0) {
+        parts.push(visualDetails.join(", "));
+    }
+
+    if (style) {
+        parts.push(`${style} visual style`);
+    }
+
+    if (lighting) {
+        parts.push(`${lighting} lighting`);
+    }
+
+    if (camera) {
+        parts.push(`${camera} camera composition`);
+    }
+
+    if (mood) {
+        parts.push(`${mood} atmosphere`);
+    }
+
+    // ---------- REMOVE REPETITION ----------
+
+    let prompt = parts.join(". ");
+
+    prompt = prompt
+        .replace(/\s+/g, " ")
+        .replace(/\.\s*\./g, ".")
+        .replace(/,\s*,/g, ",")
+        .trim();
+
+    // Prevent accidental duplicated phrases.
+    const sentences = prompt
+        .split(".")
+        .map(sentence => sentence.trim())
+        .filter(Boolean);
+
+    const uniqueSentences = [];
+
+    for (const sentence of sentences) {
+        const normalized = sentence.toLowerCase();
+
+        if (
+            !uniqueSentences.some(
+                existing =>
+                    existing.toLowerCase() === normalized
+            )
+        ) {
+            uniqueSentences.push(sentence);
+        }
+    }
+
+    prompt = uniqueSentences.join(". ");
+
+    // Ensure clean ending.
+    if (prompt && !/[.!?]$/.test(prompt)) {
+        prompt += ".";
+    }
+
+    return prompt;
+    }
+
+    
+   
+
+    
+  
     
 
 
