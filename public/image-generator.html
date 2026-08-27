@@ -483,13 +483,23 @@
         </div>
 
 
-        <button
-          id="generateImageButton"
-          class="generate-button"
-          type="button"
-        >
-          Generate Image
-        </button>
+        <div class="prompt-actions">
+  <button
+    id="generateImageButton"
+    class="generate-button"
+    type="button"
+  >
+    Generate Image
+  </button>
+
+  <button
+    id="clearPromptButton"
+    class="secondary-button"
+    type="button"
+  >
+    🗑️ Clear Prompt
+  </button>
+        </div>
 
 
         <div
@@ -592,7 +602,10 @@
     document.getElementById(
       "generateImageButton"
     );
-
+const clearPromptButton =
+  document.getElementById(
+    "clearPromptButton"
+  );
 
   const generationStatus =
     document.getElementById(
@@ -974,6 +987,25 @@
     }
 
   }
+  // ============================================================
+// CLEAR IMAGE PROMPT
+// ============================================================
+
+clearPromptButton.addEventListener(
+  "click",
+  () => {
+
+    imagePrompt.value = "";
+
+    lastPrompt = "";
+
+    generationStatus.textContent =
+      "Ready";
+
+    imagePrompt.focus();
+
+  }
+);
 // ============================================================
 // LOAD PROMPT FROM PROMPT GENERATOR
 // ============================================================
