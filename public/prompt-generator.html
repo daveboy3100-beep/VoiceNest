@@ -966,363 +966,489 @@
     }
 
   
+
 function buildPrompt() {
-    const idea = userIdeaInput.value.trim();
+  const idea = ideaInput.value.trim();
 
-    if (!idea) {
-        return "";
+  if (!idea) {
+    return "";
+  }
+
+  // =========================================================
+  // PROMPT ENGINE V1.3
+  // Local visual vocabulary — no API required
+  // =========================================================
+
+  const vocabulary = {
+    characters: [
+      "robot", "android", "cyborg",
+      "cat", "dog", "horse", "bird", "lion", "tiger", "wolf",
+      "child", "boy", "girl", "man", "woman", "person", "people",
+      "explorer", "astronaut", "warrior", "wizard", "knight",
+      "princess", "king", "queen", "scientist", "chef", "detective",
+      "soldier", "pilot", "musician", "artist", "farmer", "pirate",
+      "superhero", "villain", "alien", "monster", "dragon"
+    ],
+
+    actions: [
+      "cooking", "cook",
+      "eating", "eat",
+      "watching", "watch",
+      "running", "run",
+      "walking", "walk",
+      "flying", "fly",
+      "swimming", "swim",
+      "reading", "read",
+      "holding", "hold",
+      "talking", "talk",
+      "fighting", "fight",
+      "dancing", "dance",
+      "playing", "play",
+      "writing", "write",
+      "driving", "drive",
+      "riding", "ride",
+      "sleeping", "sleep",
+      "standing", "stand",
+      "sitting", "sit",
+      "looking", "look",
+      "climbing", "climb",
+      "building", "build",
+      "painting", "paint",
+      "singing", "sing",
+      "working", "work",
+      "studying", "study",
+      "exploring", "explore",
+      "smiling", "smile",
+      "laughing", "laugh",
+      "crying", "cry",
+      "jumping", "jump",
+      "running", "run"
+    ],
+
+    objects: [
+      "map", "phone", "book",
+      "guitar", "clarinet", "piano",
+      "camera", "laptop", "computer",
+      "car", "truck", "motorcycle", "bicycle",
+      "food", "breakfast", "lunch", "dinner",
+      "table", "chair",
+      "sword", "shield", "backpack", "umbrella",
+      "flower", "tree", "ball", "boat", "airplane",
+      "house", "building", "sign", "lamp",
+      "television", "microphone", "instrument",
+      "cup", "plate", "bowl", "bottle",
+      "key", "watch", "bag", "hat", "clothes"
+    ],
+
+    environments: [
+      "kitchen", "bedroom", "living room", "office",
+      "classroom", "restaurant", "cafe", "house",
+      "apartment", "mountain", "forest", "beach",
+      "desert", "city", "street", "road",
+      "village", "garden", "park", "farm",
+      "castle", "school", "hospital", "market",
+      "underwater", "ocean", "space",
+      "laboratory", "studio", "warehouse",
+      "airport", "train station", "river", "lake"
+    ],
+
+    visualConcepts: [
+      "night", "day", "sunset", "sunrise",
+      "rain", "snow", "fog",
+      "fire", "smoke", "water",
+      "clouds", "stars", "neon",
+      "glowing", "futuristic", "ancient",
+      "modern", "crowded", "empty",
+      "dark", "bright", "colorful",
+      "luxury", "rustic", "magical"
+    ]
+  };
+
+  const lowerIdea = idea.toLowerCase();
+
+  // =========================================================
+  // HELPERS
+  // =========================================================
+
+  function escapeRegex(text) {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function containsTerm(term) {
+    const regex = new RegExp(
+      `\\b${escapeRegex(term)}\\b`,
+      "i"
+    );
+
+    return regex.test(lowerIdea);
+  }
+
+  function findMatches(list) {
+    return list.filter(containsTerm);
+  }
+
+  function unique(list) {
+    return [...new Set(list)];
+  }
+
+  // =========================================================
+  // DETECT VISUAL COMPONENTS
+  // =========================================================
+
+  const characters = unique(
+    findMatches(vocabulary.characters)
+  );
+
+  const actions = unique(
+    findMatches(vocabulary.actions)
+  );
+
+  const objects = unique(
+    findMatches(vocabulary.objects)
+  );
+
+  const environments = unique(
+    findMatches(vocabulary.environments)
+  );
+
+  const visualConcepts = unique(
+    findMatches(vocabulary.visualConcepts)
+  );
+
+  // =========================================================
+  // ACTION NORMALIZATION
+  // =========================================================
+
+  const actionMap = {
+    cook: "cooking",
+    cooking: "cooking",
+    eat: "eating",
+    eating: "eating",
+    watch: "watching",
+    watching: "watching",
+    run: "running",
+    running: "running",
+    walk: "walking",
+    walking: "walking",
+    fly: "flying",
+    flying: "flying",
+    swim: "swimming",
+    swimming: "swimming",
+    read: "reading",
+    reading: "reading",
+    hold: "holding",
+    holding: "holding",
+    talk: "talking",
+    talking: "talking",
+    fight: "fighting",
+    fighting: "fighting",
+    dance: "dancing",
+    dancing: "dancing",
+    play: "playing",
+    playing: "playing",
+    write: "writing",
+    writing: "writing",
+    drive: "driving",
+    driving: "driving",
+    ride: "riding",
+    riding: "riding",
+    sleep: "sleeping",
+    sleeping: "sleeping",
+    stand: "standing",
+    standing: "standing",
+    sit: "sitting",
+    sitting: "sitting",
+    look: "looking",
+    looking: "looking",
+    climb: "climbing",
+    climbing: "climbing",
+    build: "building",
+    building: "building",
+    paint: "painting",
+    painting: "painting",
+    sing: "singing",
+    singing: "singing",
+    work: "working",
+    working: "working",
+    study: "studying",
+    studying: "studying",
+    explore: "exploring",
+    exploring: "exploring",
+    smile: "smiling",
+    smiling: "smiling",
+    laugh: "laughing",
+    laughing: "laughing",
+    cry: "crying",
+    crying: "crying",
+    jump: "jumping",
+    jumping: "jumping"
+  };
+
+  const normalizedActions = actions.map(
+    action => actionMap[action] || action
+  );
+
+  // =========================================================
+  // RELATIONSHIP DETECTION
+  // =========================================================
+
+  let relationship = "";
+
+  if (/\bwhile\b/i.test(idea)) {
+    relationship = "while";
+  } else if (/\bas\b/i.test(idea)) {
+    relationship = "as";
+  } else if (/\bnext to\b|\bbeside\b/i.test(idea)) {
+    relationship = "beside";
+  } else if (/\bin front of\b|\bbehind\b/i.test(idea)) {
+    relationship = "position";
+  } else if (/\bwith\b/i.test(idea)) {
+    relationship = "with";
+  }
+
+  // =========================================================
+  // SUBJECT STRUCTURE
+  // =========================================================
+
+  let subjectDescription = idea;
+
+  /*
+   * The user's original idea is intentionally preserved.
+   *
+   * This is important:
+   * A local rule-based engine should improve the prompt
+   * without inventing or changing the user's story.
+   */
+
+  if (characters.length >= 2 && normalizedActions.length >= 1) {
+    subjectDescription = idea;
+  }
+
+  // =========================================================
+  // ENVIRONMENT DETAILS
+  // =========================================================
+
+  const supportingDetails = [];
+
+  if (objects.length > 0) {
+    supportingDetails.push(
+      `visible details such as ${objects.slice(0, 5).join(", ")}`
+    );
+  }
+
+  if (visualConcepts.length > 0) {
+    supportingDetails.push(
+      `${visualConcepts.slice(0, 5).join(", ")} visual elements`
+    );
+  }
+
+  // =========================================================
+  // CHARACTER COMPOSITION
+  // =========================================================
+
+  if (characters.length >= 2) {
+    supportingDetails.push(
+      "clear separation between the characters"
+    );
+  } else if (characters.length === 1) {
+    supportingDetails.push(
+      "clear focus on the main subject"
+    );
+  }
+
+  // =========================================================
+  // ENVIRONMENT PHRASE
+  // =========================================================
+
+  let environmentPhrase = "";
+
+  if (environments.length === 1) {
+    environmentPhrase =
+      `a detailed ${environments[0]} environment`;
+  } else if (environments.length > 1) {
+    environmentPhrase =
+      `a detailed environment featuring ${environments
+        .slice(0, 3)
+        .join(", ")}`
+  }
+
+  // =========================================================
+  // USER CREATIVE SETTINGS
+  // =========================================================
+
+  const style =
+    styleSelect.value
+      ? styleSelect.options[
+          styleSelect.selectedIndex
+        ].text
+      : "";
+
+  const lighting =
+    lightingSelect.value
+      ? lightingSelect.options[
+          lightingSelect.selectedIndex
+        ].text
+      : "";
+
+  const camera =
+    cameraSelect.value
+      ? cameraSelect.options[
+          cameraSelect.selectedIndex
+        ].text
+      : "";
+
+  const mood =
+    moodSelect.value
+      ? moodSelect.options[
+          moodSelect.selectedIndex
+        ].text
+      : "";
+
+  // =========================================================
+  // NATURAL LIGHTING + MOOD COMBINATIONS
+  // =========================================================
+
+  let lightingPhrase = lighting;
+  let moodPhrase = mood;
+
+  /*
+   * Prevent awkward combinations such as:
+   *
+   * "dark atmospheric lighting"
+   * +
+   * "calm and peaceful atmosphere"
+   *
+   * The user's selections are still respected,
+   * but the wording becomes more natural.
+   */
+
+  if (
+    lighting === "Dark" &&
+    mood === "Calm"
+  ) {
+    moodPhrase = "quiet and atmospheric mood";
+  }
+
+  if (
+    lighting === "Neon" &&
+    mood === "Calm"
+  ) {
+    moodPhrase = "cool and atmospheric mood";
+  }
+
+  if (
+    lighting === "Dramatic" &&
+    mood === "Happy"
+  ) {
+    moodPhrase = "energetic and lively mood";
+  }
+
+  // =========================================================
+  // BUILD PROMPT
+  // =========================================================
+
+  const parts = [];
+
+  // 1. Core story
+  parts.push(subjectDescription);
+
+  // 2. Environment
+  if (environmentPhrase) {
+    parts.push(
+      `set in ${environmentPhrase}`
+    );
+  }
+
+  // 3. Supporting visual information
+  if (supportingDetails.length > 0) {
+    parts.push(
+      supportingDetails.join(", ")
+    );
+  }
+
+  // 4. Style
+  if (style) {
+    parts.push(
+      `${style} visual style`
+    );
+  }
+
+  // 5. Lighting
+  if (lightingPhrase) {
+    parts.push(
+      `${lightingPhrase.toLowerCase()}`
+    );
+  }
+
+  // 6. Camera
+  if (camera) {
+    parts.push(
+      `${camera.toLowerCase()} composition`
+    );
+  }
+
+  // 7. Mood
+  if (moodPhrase) {
+    parts.push(
+      `${moodPhrase.toLowerCase()}`
+    );
+  }
+
+  // =========================================================
+  // CLEAN + DEDUPLICATE
+  // =========================================================
+
+  let prompt = parts
+    .filter(Boolean)
+    .join(". ");
+
+  prompt = prompt
+    .replace(/\s+/g, " ")
+    .replace(/\.\s*\./g, ".")
+    .replace(/,\s*,/g, ",")
+    .replace(/\s+\./g, ".")
+    .trim();
+
+  // Remove exact duplicate sentences.
+  const sentences = prompt
+    .split(".")
+    .map(sentence => sentence.trim())
+    .filter(Boolean);
+
+  const cleanedSentences = [];
+
+  for (const sentence of sentences) {
+    const normalized = sentence.toLowerCase();
+
+    if (
+      !cleanedSentences.some(
+        existing =>
+          existing.toLowerCase() === normalized
+      )
+    ) {
+      cleanedSentences.push(sentence);
     }
-
-    // ---------- V1.3 VISUAL VOCABULARY ----------
-
-    const vocabulary = {
-        characters: [
-            "robot", "android", "cyborg", "cat", "dog", "horse", "bird",
-            "child", "boy", "girl", "man", "woman", "person", "people",
-            "explorer", "astronaut", "warrior", "wizard", "knight",
-            "princess", "king", "queen", "scientist", "chef", "detective",
-            "soldier", "pilot", "musician", "artist", "farmer", "pirate",
-            "superhero", "villain", "alien", "monster", "dragon"
-        ],
-
-        actions: [
-            "cooking", "cook", "eating", "eat", "watching", "watch",
-            "running", "run", "walking", "walk", "flying", "fly",
-            "swimming", "swim", "reading", "read", "holding", "hold",
-            "talking", "talk", "fighting", "fight", "dancing", "dance",
-            "playing", "play", "writing", "write", "driving", "drive",
-            "riding", "ride", "sleeping", "sleep", "standing", "stand",
-            "sitting", "sit", "looking", "look", "climbing", "climb",
-            "building", "build", "painting", "paint", "singing", "sing",
-            "working", "work", "studying", "study", "exploring", "explore"
-        ],
-
-        objects: [
-            "map", "phone", "book", "guitar", "clarinet", "piano",
-            "camera", "laptop", "computer", "car", "truck", "motorcycle",
-            "bicycle", "food", "breakfast", "dinner", "table", "chair",
-            "sword", "shield", "backpack", "umbrella", "flower", "tree",
-            "ball", "boat", "airplane", "house", "building", "sign",
-            "lamp", "television", "microphone", "instrument"
-        ],
-
-        environments: [
-            "kitchen", "bedroom", "living room", "office", "classroom",
-            "restaurant", "cafe", "house", "apartment", "mountain",
-            "forest", "beach", "desert", "city", "street", "road",
-            "village", "garden", "park", "farm", "castle", "school",
-            "hospital", "market", "underwater", "ocean", "space",
-            "laboratory", "studio", "warehouse", "airport", "train station"
-        ],
-
-        visualConcepts: [
-            "night", "day", "sunset", "sunrise", "rain", "snow", "fog",
-            "fire", "smoke", "water", "clouds", "stars", "neon",
-            "glowing", "futuristic", "ancient", "modern", "crowded",
-            "empty", "dark", "bright", "colorful", "cinematic"
-        ]
-    };
-
-    const lowerIdea = idea.toLowerCase();
-
-    // ---------- HELPERS ----------
-
-    const containsTerm = (term) => {
-        const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        return new RegExp(`\\b${escaped}\\b`, "i").test(lowerIdea);
-    };
-
-    const findMatches = (list) => {
-        return list.filter(item => containsTerm(item));
-    };
-
-    const characters = findMatches(vocabulary.characters);
-    const actions = findMatches(vocabulary.actions);
-    const objects = findMatches(vocabulary.objects);
-    const environments = findMatches(vocabulary.environments);
-    const visualConcepts = findMatches(vocabulary.visualConcepts);
-
-    // ---------- RELATIONSHIP DETECTION ----------
-
-    const relationshipPatterns = [
-        {
-            regex: /(.+?)\s+(?:while|as)\s+(.+)/i,
-            type: "while"
-        },
-        {
-            regex: /(.+?)\s+(?:and)\s+(.+)/i,
-            type: "and"
-        },
-        {
-            regex: /(.+?)\s+(?:next to|beside)\s+(.+)/i,
-            type: "beside"
-        },
-        {
-            regex: /(.+?)\s+(?:in front of|behind)\s+(.+)/i,
-            type: "position"
-        }
-    ];
-
-    let relationshipText = "";
-
-    for (const pattern of relationshipPatterns) {
-        const match = idea.match(pattern.regex);
-
-        if (match) {
-            const firstPart = match[1].trim();
-            const secondPart = match[2].trim();
-
-            if (firstPart && secondPart) {
-                if (pattern.type === "while") {
-                    relationshipText = `with ${secondPart} happening in the background`;
-                } else if (pattern.type === "and") {
-                    relationshipText = `interacting naturally with ${secondPart}`;
-                } else if (pattern.type === "beside") {
-                    relationshipText = `positioned beside ${secondPart}`;
-                } else {
-                    relationshipText = `${pattern.type} ${secondPart}`;
-                }
-
-                break;
-            }
-        }
-    }
-
-    // ---------- SUBJECT PRIORITY ----------
-
-    let primarySubject = "";
-
-    if (characters.length > 0) {
-        primarySubject = characters[0];
-    } else if (objects.length > 0) {
-        primarySubject = objects[0];
-    } else if (environments.length > 0) {
-        primarySubject = environments[0];
-    }
-
-    // ---------- ACTION PHRASE ----------
-
-    let actionPhrase = "";
-
-    if (actions.length > 0) {
-        const mainAction = actions[0];
-
-        const actionMap = {
-            cooking: "cooking",
-            cook: "cooking",
-            eating: "eating",
-            eat: "eating",
-            watching: "watching",
-            watch: "watching",
-            running: "running",
-            run: "running",
-            walking: "walking",
-            walk: "walking",
-            flying: "flying",
-            fly: "flying",
-            swimming: "swimming",
-            swim: "swimming",
-            reading: "reading",
-            read: "reading",
-            holding: "holding",
-            hold: "holding",
-            talking: "talking",
-            talk: "talking",
-            fighting: "fighting",
-            fight: "fighting",
-            dancing: "dancing",
-            dance: "dancing",
-            playing: "playing",
-            play: "playing",
-            writing: "writing",
-            write: "writing",
-            driving: "driving",
-            drive: "driving",
-            riding: "riding",
-            ride: "riding",
-            sleeping: "sleeping",
-            sleep: "sleeping",
-            standing: "standing",
-            stand: "standing",
-            sitting: "sitting",
-            sit: "sitting",
-            looking: "looking",
-            look: "looking",
-            climbing: "climbing",
-            climb: "climbing",
-            building: "building",
-            build: "building",
-            painting: "painting",
-            paint: "painting",
-            singing: "singing",
-            sing: "singing",
-            working: "working",
-            work: "working",
-            studying: "studying",
-            study: "studying",
-            exploring: "exploring",
-            explore: "exploring"
-        };
-
-        actionPhrase = actionMap[mainAction] || mainAction;
-    }
-
-    // ---------- NATURAL SUBJECT DESCRIPTION ----------
-
-    let subjectDescription = idea;
-
-    // Specific relationship pattern:
-    // "robot cooking breakfast while cat watches"
-    // Keep the user's original idea as the core story rather than
-    // attempting to rewrite every possible sentence.
-    if (relationshipText) {
-        subjectDescription = idea;
-    } else if (primarySubject && actionPhrase) {
-        subjectDescription = idea;
-    }
-
-    // ---------- ENVIRONMENT CONTEXT ----------
-
-    let environmentPhrase = "";
-
-    if (environments.length > 0) {
-        const uniqueEnvironments = [...new Set(environments)];
-
-        if (uniqueEnvironments.length === 1) {
-            environmentPhrase = `Set in a detailed ${uniqueEnvironments[0]} environment`;
-        } else {
-            environmentPhrase = `Set in a detailed environment featuring ${uniqueEnvironments.join(", ")}`;
-        }
-    }
-
-    // ---------- VISUAL DETAIL ----------
-
-    const visualDetails = [];
-
-    if (characters.length > 0) {
-        visualDetails.push(
-            `clearly defined ${characters.length === 1 ? "main character" : "characters"}`
-        );
-    }
-
-    if (objects.length > 0) {
-        const uniqueObjects = [...new Set(objects)];
-
-        visualDetails.push(
-            `natural supporting details such as ${uniqueObjects.slice(0, 4).join(", ")}`
-        );
-    }
-
-    if (visualConcepts.length > 0) {
-        const uniqueConcepts = [...new Set(visualConcepts)];
-
-        visualDetails.push(
-            `${uniqueConcepts.slice(0, 4).join(", ")} visual elements`
-        );
-    }
-
-    if (relationshipText) {
-        visualDetails.push(relationshipText);
-    }
-
-    // ---------- USER SETTINGS ----------
-
-    const style =
-        styleSelect?.value
-            ? styleSelect.options[styleSelect.selectedIndex]?.text
-            : "";
-
-    const lighting =
-        lightingSelect?.value
-            ? lightingSelect.options[lightingSelect.selectedIndex]?.text
-            : "";
-
-    const camera =
-        cameraSelect?.value
-            ? cameraSelect.options[cameraSelect.selectedIndex]?.text
-            : "";
-
-    const mood =
-        moodSelect?.value
-            ? moodSelect.options[moodSelect.selectedIndex]?.text
-            : "";
-
-    // ---------- BUILD NATURAL PROMPT ----------
-
-    const parts = [];
-
-    // User idea remains the foundation.
-    parts.push(idea);
-
-    if (environmentPhrase) {
-        parts.push(environmentPhrase);
-    }
-
-    if (visualDetails.length > 0) {
-        parts.push(visualDetails.join(", "));
-    }
-
-    if (style) {
-        parts.push(`${style} visual style`);
-    }
-
-    if (lighting) {
-        parts.push(`${lighting} lighting`);
-    }
-
-    if (camera) {
-        parts.push(`${camera} camera composition`);
-    }
-
-    if (mood) {
-        parts.push(`${mood} atmosphere`);
-    }
-
-    // ---------- REMOVE REPETITION ----------
-
-    let prompt = parts.join(". ");
-
-    prompt = prompt
-        .replace(/\s+/g, " ")
-        .replace(/\.\s*\./g, ".")
-        .replace(/,\s*,/g, ",")
-        .trim();
-
-    // Prevent accidental duplicated phrases.
-    const sentences = prompt
-        .split(".")
-        .map(sentence => sentence.trim())
-        .filter(Boolean);
-
-    const uniqueSentences = [];
-
-    for (const sentence of sentences) {
-        const normalized = sentence.toLowerCase();
-
-        if (
-            !uniqueSentences.some(
-                existing =>
-                    existing.toLowerCase() === normalized
-            )
-        ) {
-            uniqueSentences.push(sentence);
-        }
-    }
-
-    prompt = uniqueSentences.join(". ");
-
-    // Ensure clean ending.
-    if (prompt && !/[.!?]$/.test(prompt)) {
-        prompt += ".";
-    }
-
-    return prompt;
-    }
+  }
+
+  prompt = cleanedSentences.join(". ");
+
+  if (
+    prompt &&
+    !/[.!?]$/.test(prompt)
+  ) {
+    prompt += ".";
+  }
+
+  return prompt;
+  }
+    
 
     
-   
 
+                
+            
     
+
   
     
 
