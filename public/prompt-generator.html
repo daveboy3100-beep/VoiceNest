@@ -997,143 +997,262 @@ const clearPromptButton =
   
 
           
-          
-  
-    
-    function buildPrompt() {
+   function buildPrompt() {
 
-  const idea =
-    ideaInput.value.trim();
+  const idea = ideaInput.value.trim();
 
   if (!idea) {
-
-    showToast(
-      "Describe your idea first."
-    );
-
+    showToast("Describe your idea first.");
     ideaInput.focus();
-
     return;
   }
 
   // =========================================================
-  // PROMPT ENGINE V1.4
-  // Semantic scene composition
+  // PROMPT ENGINE V1.5
+  // Semantic subjects + action priority + relationships
   // Local / No AI API
   // =========================================================
 
   const vocabulary = {
 
     characters: [
-      "robot", "android", "cyborg",
-      "cat", "dog", "horse", "bird",
-      "lion", "tiger", "wolf",
-      "child", "boy", "girl",
-      "man", "woman", "person", "people",
-      "explorer", "astronaut",
-      "warrior", "wizard", "knight",
-      "princess", "king", "queen",
-      "scientist", "chef", "detective",
-      "soldier", "pilot", "musician",
-      "artist", "farmer", "pirate",
-      "superhero", "villain",
-      "alien", "monster", "dragon"
+      "young explorer",
+      "old man",
+      "old woman",
+      "young man",
+      "young woman",
+      "little boy",
+      "little girl",
+      "young boy",
+      "young girl",
+      "businessman",
+      "businesswoman",
+
+      "robot",
+      "android",
+      "cyborg",
+
+      "cat",
+      "dog",
+      "horse",
+      "bird",
+      "lion",
+      "tiger",
+      "wolf",
+
+      "child",
+      "boy",
+      "girl",
+      "man",
+      "woman",
+      "person",
+      "people",
+
+      "explorer",
+      "astronaut",
+      "warrior",
+      "wizard",
+      "knight",
+      "princess",
+      "king",
+      "queen",
+      "scientist",
+      "chef",
+      "detective",
+      "soldier",
+      "pilot",
+      "musician",
+      "artist",
+      "farmer",
+      "pirate",
+      "superhero",
+      "villain",
+      "alien",
+      "monster",
+      "dragon"
     ],
 
     actions: [
-      "cooking", "cook",
-      "eating", "eat",
-      "watching", "watch",
-      "running", "run",
-      "walking", "walk",
-      "flying", "fly",
-      "swimming", "swim",
-      "reading", "read",
-      "holding", "hold",
-      "talking", "talk",
-      "fighting", "fight",
-      "dancing", "dance",
-      "playing", "play",
-      "writing", "write",
-      "driving", "drive",
-      "riding", "ride",
-      "sleeping", "sleep",
-      "standing", "stand",
-      "sitting", "sit",
-      "looking", "look",
-      "climbing", "climb",
-      "building", "build",
-      "painting", "paint",
-      "singing", "sing",
-      "working", "work",
-      "studying", "study",
-      "exploring", "explore",
-      "smiling", "smile",
-      "laughing", "laugh",
-      "crying", "cry",
-      "jumping", "jump"
+      "cooking",
+      "cook",
+      "eating",
+      "eat",
+      "watching",
+      "watch",
+      "running",
+      "run",
+      "walking",
+      "walk",
+      "flying",
+      "fly",
+      "swimming",
+      "swim",
+      "reading",
+      "read",
+      "holding",
+      "hold",
+      "carrying",
+      "carry",
+      "talking",
+      "talk",
+      "fighting",
+      "fight",
+      "dancing",
+      "dance",
+      "playing",
+      "play",
+      "writing",
+      "write",
+      "driving",
+      "drive",
+      "riding",
+      "ride",
+      "sleeping",
+      "sleep",
+      "standing",
+      "stand",
+      "sitting",
+      "sit",
+      "looking",
+      "look",
+      "climbing",
+      "climb",
+      "building",
+      "build",
+      "painting",
+      "paint",
+      "singing",
+      "sing",
+      "working",
+      "work",
+      "studying",
+      "study",
+      "exploring",
+      "explore",
+      "smiling",
+      "smile",
+      "laughing",
+      "laugh",
+      "crying",
+      "cry",
+      "jumping",
+      "jump"
     ],
 
     objects: [
-      "map", "phone", "book",
-      "guitar", "clarinet", "piano",
-      "camera", "laptop", "computer",
-      "car", "truck",
-      "motorcycle", "bicycle",
-      "food", "breakfast",
-      "lunch", "dinner",
-      "table", "chair",
-      "sword", "shield",
-      "backpack", "umbrella",
-      "flower", "tree", "ball",
-      "boat", "airplane",
-      "house", "building",
-      "sign", "lamp",
-      "television", "microphone",
+      "map",
+      "phone",
+      "book",
+      "guitar",
+      "clarinet",
+      "piano",
+      "camera",
+      "laptop",
+      "computer",
+      "car",
+      "truck",
+      "motorcycle",
+      "bicycle",
+      "food",
+      "breakfast",
+      "lunch",
+      "dinner",
+      "table",
+      "chair",
+      "sword",
+      "shield",
+      "backpack",
+      "umbrella",
+      "flower",
+      "tree",
+      "ball",
+      "boat",
+      "airplane",
+      "house",
+      "building",
+      "sign",
+      "lamp",
+      "television",
+      "microphone",
       "instrument",
-      "cup", "plate", "bowl",
-      "bottle", "key",
-      "watch", "bag",
-      "hat", "clothes"
+      "cup",
+      "plate",
+      "bowl",
+      "bottle",
+      "key",
+      "watch",
+      "bag",
+      "hat",
+      "clothes"
     ],
 
     environments: [
-      "kitchen", "bedroom",
-      "living room", "office",
-      "classroom", "restaurant",
-      "cafe", "house",
-      "apartment", "mountain",
-      "forest", "beach",
-      "desert", "city",
-      "street", "road",
-      "village", "garden",
-      "park", "farm",
-      "castle", "school",
-      "hospital", "market",
-      "underwater", "ocean",
-      "space", "laboratory",
-      "studio", "warehouse",
-      "airport", "train station",
-      "river", "lake"
+      "kitchen",
+      "bedroom",
+      "living room",
+      "office",
+      "classroom",
+      "restaurant",
+      "cafe",
+      "house",
+      "apartment",
+      "mountain",
+      "forest",
+      "beach",
+      "desert",
+      "city",
+      "street",
+      "road",
+      "village",
+      "garden",
+      "park",
+      "farm",
+      "castle",
+      "school",
+      "hospital",
+      "market",
+      "underwater",
+      "ocean",
+      "space",
+      "laboratory",
+      "studio",
+      "warehouse",
+      "airport",
+      "train station",
+      "river",
+      "lake"
     ],
 
     visualConcepts: [
-      "night", "day",
-      "sunset", "sunrise",
-      "rain", "snow", "fog",
-      "fire", "smoke", "water",
-      "clouds", "stars", "neon",
-      "glowing", "futuristic",
-      "ancient", "modern",
-      "crowded", "empty",
-      "dark", "bright",
-      "colorful", "luxury",
-      "rustic", "magical"
+      "night",
+      "day",
+      "sunset",
+      "sunrise",
+      "rain",
+      "snow",
+      "fog",
+      "fire",
+      "smoke",
+      "water",
+      "clouds",
+      "stars",
+      "neon",
+      "glowing",
+      "futuristic",
+      "ancient",
+      "modern",
+      "crowded",
+      "empty",
+      "dark",
+      "bright",
+      "colorful",
+      "luxury",
+      "rustic",
+      "magical"
     ]
   };
 
-  const lowerIdea =
-    idea.toLowerCase();
+  const lowerIdea = idea.toLowerCase();
 
 
   // =========================================================
@@ -1141,12 +1260,10 @@ const clearPromptButton =
   // =========================================================
 
   function escapeRegex(text) {
-
     return text.replace(
       /[.*+?^${}()|[\]\\]/g,
       "\\$&"
     );
-
   }
 
 
@@ -1171,137 +1288,53 @@ const clearPromptButton =
   }
 
 
-  function normalizeAction(action) {
-
-    const actionMap = {
-
-      cook: "cooking",
-      cooking: "cooking",
-
-      eat: "eating",
-      eating: "eating",
-
-      watch: "watching",
-      watching: "watching",
-
-      run: "running",
-      running: "running",
-
-      walk: "walking",
-      walking: "walking",
-
-      fly: "flying",
-      flying: "flying",
-
-      swim: "swimming",
-      swimming: "swimming",
-
-      read: "reading",
-      reading: "reading",
-
-      hold: "holding",
-      holding: "holding",
-
-      talk: "talking",
-      talking: "talking",
-
-      fight: "fighting",
-      fighting: "fighting",
-
-      dance: "dancing",
-      dancing: "dancing",
-
-      play: "playing",
-      playing: "playing",
-
-      write: "writing",
-      writing: "writing",
-
-      drive: "driving",
-      driving: "driving",
-
-      ride: "riding",
-      riding: "riding",
-
-      sleep: "sleeping",
-      sleeping: "sleeping",
-
-      stand: "standing",
-      standing: "standing",
-
-      sit: "sitting",
-      sitting: "sitting",
-
-      look: "looking",
-      looking: "looking",
-
-      climb: "climbing",
-      climbing: "climbing",
-
-      build: "building",
-      building: "building",
-
-      paint: "painting",
-      painting: "painting",
-
-      sing: "singing",
-      singing: "singing",
-
-      work: "working",
-      working: "working",
-
-      study: "studying",
-      studying: "studying",
-
-      explore: "exploring",
-      exploring: "exploring",
-
-      smile: "smiling",
-      smiling: "smiling",
-
-      laugh: "laughing",
-      laughing: "laughing",
-
-      cry: "crying",
-      crying: "crying",
-
-      jump: "jumping",
-      jumping: "jumping"
-    };
-
-    return (
-      actionMap[action] ||
-      action
-    );
-
-  }
-
-
   // =========================================================
-  // DETECT SCENE COMPONENTS
+  // DETECT COMPONENTS
   // =========================================================
+
+  /*
+   * Sort character phrases by length first.
+   *
+   * This is important because:
+   *
+   * "old man"
+   *
+   * must be detected before:
+   *
+   * "man"
+   */
+
+  const sortedCharacters = [
+    ...vocabulary.characters
+  ].sort(
+    (a, b) =>
+      b.length - a.length
+  );
+
 
   const characters =
     findMatches(
-      vocabulary.characters
+      sortedCharacters
     );
+
 
   const actions =
     findMatches(
       vocabulary.actions
-    ).map(
-      normalizeAction
     );
+
 
   const objects =
     findMatches(
       vocabulary.objects
     );
 
+
   const environments =
     findMatches(
       vocabulary.environments
     );
+
 
   const visualConcepts =
     findMatches(
@@ -1310,64 +1343,190 @@ const clearPromptButton =
 
 
   // =========================================================
-  // PRIMARY + SECONDARY SUBJECTS
+  // NORMALIZE ACTIONS
   // =========================================================
 
-  const primarySubject =
-    characters[0] || "";
+  const actionMap = {
+
+    cook: "cooking",
+    cooking: "cooking",
+
+    eat: "eating",
+    eating: "eating",
+
+    watch: "watching",
+    watching: "watching",
+
+    run: "running",
+    running: "running",
+
+    walk: "walking",
+    walking: "walking",
+
+    fly: "flying",
+    flying: "flying",
+
+    swim: "swimming",
+    swimming: "swimming",
+
+    read: "reading",
+    reading: "reading",
+
+    hold: "holding",
+    holding: "holding",
+
+    carry: "carrying",
+    carrying: "carrying",
+
+    talk: "talking",
+    talking: "talking",
+
+    fight: "fighting",
+    fighting: "fighting",
+
+    dance: "dancing",
+    dancing: "dancing",
+
+    play: "playing",
+    playing: "playing",
+
+    write: "writing",
+    writing: "writing",
+
+    drive: "driving",
+    driving: "driving",
+
+    ride: "riding",
+    riding: "riding",
+
+    sleep: "sleeping",
+    sleeping: "sleeping",
+
+    stand: "standing",
+    standing: "standing",
+
+    sit: "sitting",
+    sitting: "sitting",
+
+    look: "looking",
+    looking: "looking",
+
+    climb: "climbing",
+    climbing: "climbing",
+
+    build: "building",
+    building: "building",
+
+    paint: "painting",
+    painting: "painting",
+
+    sing: "singing",
+    singing: "singing",
+
+    work: "working",
+    working: "working",
+
+    study: "studying",
+    studying: "studying",
+
+    explore: "exploring",
+    exploring: "exploring",
+
+    smile: "smiling",
+    smiling: "smiling",
+
+    laugh: "laughing",
+    laughing: "laughing",
+
+    cry: "crying",
+    crying: "crying",
+
+    jump: "jumping",
+    jumping: "jumping"
+  };
 
 
-  let secondarySubject =
+  const normalizedActions =
+    actions.map(
+      action =>
+        actionMap[action] ||
+        action
+    );
+
+
+  // =========================================================
+  // ACTION PRIORITY
+  // =========================================================
+
+  /*
+   * Interaction actions describe what the subject is
+   * actually doing to another subject or object.
+   *
+   * Pose/status actions are secondary.
+   */
+
+  const interactionActions = [
+    "holding",
+    "carrying",
+    "watching",
+    "talking",
+    "fighting",
+    "playing",
+    "cooking",
+    "eating",
+    "reading",
+    "writing",
+    "driving",
+    "riding",
+    "building",
+    "painting",
+    "singing",
+    "exploring"
+  ];
+
+
+  const poseActions = [
+    "standing",
+    "sitting",
+    "looking",
+    "smiling",
+    "laughing",
+    "crying",
+    "sleeping"
+  ];
+
+
+  const primaryAction =
+    normalizedActions.find(
+      action =>
+        interactionActions.includes(
+          action
+        )
+    ) ||
+    normalizedActions.find(
+      action =>
+        !poseActions.includes(
+          action
+        )
+    ) ||
+    normalizedActions[0] ||
     "";
 
 
-  if (characters.length >= 2) {
-
-    const relationshipPattern =
-      /\bwhile\b|\bas\b|\bnext to\b|\bbeside\b|\bin front of\b|\bbehind\b|\bwith\b/i;
-
-
-    const relationshipMatch =
-      idea.match(
-        new RegExp(
-          `${relationshipPattern.source}[^,.!?]*`,
-          "i"
+  const poseActionsDetected =
+    normalizedActions.filter(
+      action =>
+        poseActions.includes(
+          action
         )
-      );
-
-
-    if (relationshipMatch) {
-
-      secondarySubject =
-        characters.find(
-          character =>
-            relationshipMatch[0]
-              .toLowerCase()
-              .includes(
-                character.toLowerCase()
-              )
-        ) || "";
-
-    }
-
-
-    if (!secondarySubject) {
-
-      secondarySubject =
-        characters[1];
-
-    }
-
-  }
+    );
 
 
   // =========================================================
   // RELATIONSHIP DETECTION
   // =========================================================
 
-  let relationship =
-    "";
-
+  let relationship = "";
 
   if (
     /\bwhile\b/i.test(idea)
@@ -1375,15 +1534,6 @@ const clearPromptButton =
 
     relationship =
       "while";
-
-  }
-
-  else if (
-    /\bas\b/i.test(idea)
-  ) {
-
-    relationship =
-      "as";
 
   }
 
@@ -1414,24 +1564,103 @@ const clearPromptButton =
 
   }
 
+  else if (
+    /\bto\b/i.test(idea) &&
+    /\btalking\b|\btalk\b/i.test(idea)
+  ) {
+
+    relationship =
+      "to";
+
+  }
+
 
   // =========================================================
-  // ORIGINAL STORY
-  //
-  // Keep the user's actual idea as the foundation.
-  // We enhance around it instead of replacing it.
+  // PRIMARY + SECONDARY SUBJECTS
+  // =========================================================
+
+  /*
+   * The first detected meaningful character is the primary
+   * subject.
+   *
+   * Because multi-word character phrases are detected first,
+   * "old man" is now one subject instead of:
+   *
+   * old + man
+   */
+
+  const primarySubject =
+    characters[0] || "";
+
+
+  let secondarySubject =
+    "";
+
+
+  if (
+    characters.length >= 2
+  ) {
+
+    /*
+     * Look at the portion of the sentence after an
+     * interaction/relationship marker.
+     */
+
+    const relationshipPattern =
+      /\bwhile\b|\bnext to\b|\bbeside\b|\bin front of\b|\bbehind\b|\bwith\b|\btalking to\b|\bto\b/i;
+
+
+    const relationshipMatch =
+      idea.match(
+        new RegExp(
+          `${relationshipPattern.source}[^,.!?]*`,
+          "i"
+        )
+      );
+
+
+    if (
+      relationshipMatch
+    ) {
+
+      const relationshipText =
+        relationshipMatch[0]
+          .toLowerCase();
+
+
+      secondarySubject =
+        characters.find(
+          character =>
+            character !==
+              primarySubject &&
+            relationshipText.includes(
+              character.toLowerCase()
+            )
+        ) || "";
+
+    }
+
+
+    if (
+      !secondarySubject
+    ) {
+
+      secondarySubject =
+        characters[1];
+
+    }
+
+  }
+
+
+  // =========================================================
+  // STORY
   // =========================================================
 
   let story =
     idea
       .replace(/\s+/g, " ")
       .trim();
-
-
-  story =
-    story
-      .replace(/\s+([,.!?])/g, "$1")
-      .replace(/([,.!?]){2,}/g, "$1");
 
 
   story =
@@ -1449,22 +1678,26 @@ const clearPromptButton =
 
 
   // =========================================================
-  // SEMANTIC SCENE GUIDANCE
+  // SEMANTIC DETAIL PARTS
   // =========================================================
 
   const detailParts = [];
 
 
-  // ---------------------------------------------------------
+  // =========================================================
   // PRIMARY SUBJECT
-  // ---------------------------------------------------------
+  // =========================================================
 
-  if (primarySubject) {
+  if (
+    primarySubject
+  ) {
 
-    if (actions.length > 0) {
+    if (
+      primaryAction
+    ) {
 
       detailParts.push(
-        `The ${primarySubject} remains the primary subject, with the main action clearly readable`
+        `The ${primarySubject} remains the primary subject, with ${primaryAction} as the main readable action`
       );
 
     }
@@ -1472,7 +1705,7 @@ const clearPromptButton =
     else {
 
       detailParts.push(
-        `The ${primarySubject} remains the primary subject with a clear and readable silhouette`
+        `The ${primarySubject} remains the primary subject with a clear and distinct silhouette`
       );
 
     }
@@ -1480,19 +1713,21 @@ const clearPromptButton =
   }
 
 
-  // ---------------------------------------------------------
+  // =========================================================
   // SECONDARY SUBJECT
-  // ---------------------------------------------------------
+  // =========================================================
 
   if (
     secondarySubject &&
     secondarySubject !== primarySubject
   ) {
 
-    if (relationship === "while") {
+    if (
+      relationship === "while"
+    ) {
 
       detailParts.push(
-        `the ${secondarySubject} remains a secondary subject supporting the main action`
+        `the ${secondarySubject} remains a secondary subject supporting the scene`
       );
 
     }
@@ -1538,110 +1773,131 @@ const clearPromptButton =
   }
 
 
-  // ---------------------------------------------------------
-  // MULTIPLE ACTIONS
-  // ---------------------------------------------------------
+  // =========================================================
+  // INTERACTION ACTION
+  // =========================================================
 
   if (
-    actions.length >= 2
+    primaryAction
   ) {
 
-    const uniqueActions =
-      [
-        ...new Set(actions)
-      ];
+    if (
+      (
+        primaryAction === "holding" ||
+        primaryAction === "carrying"
+      ) &&
+      secondarySubject
+    ) {
+
+      detailParts.push(
+        `the ${primaryAction} action clearly connects the primary subject with the ${secondarySubject}`
+      );
+
+    }
+
+    else if (
+      primaryAction === "watching" &&
+      secondarySubject
+    ) {
+
+      detailParts.push(
+        `the ${primaryAction} action clearly shows the relationship between the two subjects`
+      );
+
+    }
+
+    else {
+
+      detailParts.push(
+        `make the ${primaryAction} action immediately understandable through clear body positioning and readable gestures`
+      );
+
+    }
+
+  }
+
+
+  // =========================================================
+  // POSE
+  // =========================================================
+
+  if (
+    poseActionsDetected.length > 0
+  ) {
+
+    const poses = [
+      ...new Set(
+        poseActionsDetected
+      )
+    ];
+
 
     detailParts.push(
-      `make the different actions clearly readable without confusing the subjects`
+      `use the detected ${poses.join(" and ")} pose naturally to support the main action`
     );
 
   }
 
-  else if (
-    actions.length === 1
-  ) {
 
-    detailParts.push(
-      `make the ${actions[0]} action immediately understandable through clear body positioning and readable gestures`
-    );
-
-  }
-
-
-  // ---------------------------------------------------------
+  // =========================================================
   // OBJECTS
-  //
-  // Objects are NOT added as fake new objects.
-  // Instead, they are used to strengthen the scene.
-  // ---------------------------------------------------------
+  // =========================================================
 
   if (
     objects.length > 0
   ) {
 
-    const importantObjects =
-      objects
-        .slice(0, 4)
-        .join(", ");
-
-
     detailParts.push(
-      `keep the ${importantObjects} clearly recognizable and naturally connected to the scene`
+      `keep the ${objects
+        .slice(0, 4)
+        .join(", ")} clearly recognizable and naturally connected to the scene`
     );
 
   }
 
 
-  // ---------------------------------------------------------
+  // =========================================================
   // ENVIRONMENT
-  // ---------------------------------------------------------
+  // =========================================================
 
   if (
     environments.length > 0
   ) {
 
-    const environment =
-      environments[0];
-
-
     detailParts.push(
-      `maintain clear environmental depth within the ${environment} setting`
+      `maintain clear environmental depth within the ${environments[0]} setting`
     );
 
   }
 
 
-  // ---------------------------------------------------------
+  // =========================================================
   // VISUAL CONCEPTS
-  // ---------------------------------------------------------
+  // =========================================================
 
   if (
     visualConcepts.length > 0
   ) {
 
-    const concepts =
-      visualConcepts
-        .slice(0, 4)
-        .join(", ");
-
-
     detailParts.push(
-      `preserve the ${concepts} visual characteristics already present in the idea`
+      `preserve the ${visualConcepts
+        .slice(0, 4)
+        .join(", ")} visual characteristics already present in the idea`
     );
 
   }
 
 
-  // ---------------------------------------------------------
-  // GENERAL COMPOSITION
-  // ---------------------------------------------------------
+  // =========================================================
+  // COMPOSITION
+  // =========================================================
 
   if (
     characters.length >= 2
   ) {
 
     detailParts.push(
-      "Use natural positioning, clear subject separation, and a strong visual hierarchy so the main action remains easy to understand"
+      "Use natural positioning, clear subject separation, and strong visual hierarchy so the primary subject and main action remain easy to understand"
     );
 
   }
@@ -1695,10 +1951,6 @@ const clearPromptButton =
       : "";
 
 
-  // =========================================================
-  // NATURAL CREATIVE DIRECTION
-  // =========================================================
-
   const settingParts = [];
 
 
@@ -1745,13 +1997,11 @@ const clearPromptButton =
   const sentences = [];
 
 
-  // User's original idea always comes first.
   sentences.push(
     story
   );
 
 
-  // Semantic enhancement.
   if (
     detailParts.length > 0
   ) {
@@ -1763,7 +2013,6 @@ const clearPromptButton =
   }
 
 
-  // Creative direction.
   if (
     settingParts.length > 0
   ) {
@@ -1782,7 +2031,7 @@ const clearPromptButton =
 
 
   // =========================================================
-  // FINAL CLEANUP
+  // CLEANUP
   // =========================================================
 
   prompt =
@@ -1794,10 +2043,28 @@ const clearPromptButton =
       .trim();
 
 
-  // ---------------------------------------------------------
-  // Remove duplicate sentences.
-  // ---------------------------------------------------------
+  // Capitalize sentences.
+  prompt =
+    prompt
+      .split(". ")
+      .map(
+        sentence => {
 
+          if (!sentence) {
+            return sentence;
+          }
+
+          return (
+            sentence.charAt(0).toUpperCase() +
+            sentence.slice(1)
+          );
+
+        }
+      )
+      .join(". ");
+
+
+  // Remove exact duplicates.
   const uniqueSentences = [];
 
 
@@ -1853,7 +2120,19 @@ const clearPromptButton =
 
   return prompt;
 
-  }
+  }       
+  
+    
+          
+
+
+                    
+
+  
+
+  
+
+
 
      
 
