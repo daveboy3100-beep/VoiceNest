@@ -1208,22 +1208,50 @@ function buildPrompt() {
   );
 
   // =========================================================
-  // RELATIONSHIP DETECTION
-  // =========================================================
+// RELATIONSHIP DETECTION
+// =========================================================
 
-  let relationship = "";
+let relationship = "";
+let secondarySubject = "";
 
-  if (/\bwhile\b/i.test(idea)) {
-    relationship = "while";
-  } else if (/\bas\b/i.test(idea)) {
-    relationship = "as";
-  } else if (/\bnext to\b|\bbeside\b/i.test(idea)) {
-    relationship = "beside";
-  } else if (/\bin front of\b|\bbehind\b/i.test(idea)) {
-    relationship = "position";
-  } else if (/\bwith\b/i.test(idea)) {
-    relationship = "with";
+if (/\bwhile\b/i.test(idea)) {
+  relationship = "while";
+} else if (/\bas\b/i.test(idea)) {
+  relationship = "as";
+} else if (/\bnext to\b|\bbeside\b/i.test(idea)) {
+  relationship = "beside";
+} else if (/\bin front of\b|\bbehind\b/i.test(idea)) {
+  relationship = "position";
+} else if (/\bwith\b/i.test(idea)) {
+  relationship = "with";
+}
+
+// Detect a secondary character after common relationship words.
+if (characters.length >= 2) {
+  const relationshipPattern =
+    /\bwhile\b|\bas\b|\bnext to\b|\bbeside\b|\bin front of\b|\bbehind\b|\bwith\b/i;
+
+  const relationshipMatch =
+    idea.match(
+      new RegExp(
+        `${relationshipPattern.source}[^,.!?]*`,
+        "i"
+      )
+    );
+
+  if (relationshipMatch) {
+    secondarySubject =
+      characters.find(character =>
+        relationshipMatch[0]
+          .toLowerCase()
+          .includes(character.toLowerCase())
+      ) || "";
   }
+
+  if (!secondarySubject) {
+    secondarySubject = characters[1];
+  }
+}
 
   // =========================================================
   // NATURALIZE COMMON ACTION FRAGMENTS
