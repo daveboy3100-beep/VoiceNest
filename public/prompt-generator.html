@@ -1361,11 +1361,9 @@ story =
   let environmentPhrase = "";
 
   if (environments.length === 0) {
-    if (characters.length > 0) {
-      environmentPhrase =
-        "set in a visually rich environment";
+  environmentPhrase = "";
     }
-  }
+
 
   // =========================================================
   // SUPPORTING DETAILS
@@ -1402,16 +1400,25 @@ story =
     );
   }
 
-  // Composition guidance is useful, but only once.
-  if (characters.length >= 2) {
+  // =========================================================
+// NATURAL COMPOSITION GUIDANCE
+// =========================================================
+
+if (characters.length >= 2) {
+  if (relationship) {
     detailParts.push(
-      "both characters clearly visible with natural separation"
+      "natural positioning and clear visual focus across the subjects"
     );
-  } else if (characters.length === 1) {
+  } else {
     detailParts.push(
-      "clear visual focus on the main subject"
+      "clear visual focus with natural positioning of the subjects"
     );
   }
+} else if (characters.length === 1) {
+  detailParts.push(
+    "clear visual focus on the main subject"
+  );
+    }
 
   // =========================================================
   // CREATIVE SETTINGS
