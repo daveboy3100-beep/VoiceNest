@@ -974,12 +974,15 @@ const clearPromptButton =
 
   
 function buildPrompt() {
-  const idea = ideaInput.value.trim();
+    const idea = ideaInput.value.trim();
 
-  if (!idea) {
-    return "";
-  }
-
+    if (!idea) {
+        showToast("Describe your idea first.");
+        ideaInput.focus();
+        return;
+    } 
+}
+    
   // =========================================================
   // PROMPT ENGINE V1.3
   // Natural composition + semantic deduplication
