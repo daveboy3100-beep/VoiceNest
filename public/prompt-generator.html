@@ -1259,21 +1259,97 @@ if (characters.length >= 2) {
 
   let story = idea;
 
-  if (
-    characters.length > 0 &&
-    normalizedActions.length > 0
-  ) {
-    story = story.replace(
-      /^the\s+([^,]+?)\s+(cooking|eating|watching|running|walking|flying|swimming|reading|holding|talking|fighting|dancing|playing|writing|driving|riding|sleeping|standing|sitting|looking|climbing|building|painting|singing|working|studying|exploring|smiling|laughing|crying|jumping)\b/i,
-      (match, subject, action) => {
-        return `The ${subject} is ${action.toLowerCase()}`;
-      }
+// =========================================================
+// RELATIONSHIP-AWARE STORY CONSTRUCTION
+// =========================================================
+
+if (
+  relationship &&
+  secondarySubject &&
+  characters.length >= 2
+) {
+  const primarySubject = characters[0];
+
+  // Handle "while" relationships naturally.
+  if (relationship === "while") {
+    const whileMatch = idea.match(
+      /\bwhile\b(.+)/i
+    );
+
+    if (whileMatch) {
+      const secondaryClause =
+        whileMatch[1]
+          .trim()
+          .replace(/[.!?]+$/, "");
+
+      story = idea
+        .replace(
+          /\bwhile\b.+/i,
+          `while ${secondaryClause}`
+        )
+        .trim();
+    }
+  }
+
+  // Handle "as" relationships naturally.
+  else if (relationship === "as") {
+    const asMatch = idea.match(
+      /\bas\b(.+)/i
+    );
+
+    if (asMatch) {
+      const secondaryClause =
+        asMatch[1]
+          .trim()
+          .replace(/[.!?]+$/, "");
+
+      story = idea
+        .replace(
+          /\bas\b.+/i,
+          `as ${secondaryClause}`
+        )
+        .trim();
+    }
+  }
+
+  // Handle positional relationships.
+  else if (relationship === "beside") {
+    story = idea.replace(
+      /\b(next to|beside)\b/i,
+      "beside"
     );
   }
 
-  story =
-    story.charAt(0).toUpperCase() +
-    story.slice(1);
+  else if (relationship === "position") {
+    story = idea;
+  }
+
+  // Handle "with" relationships.
+  else if (relationship === "with") {
+    story = idea.replace(
+      /\bwith\b/i,
+      "with"
+    );
+  }
+}
+
+// Normalize common subject + action fragments.
+if (
+  !relationship &&
+  characters.length > 0 &&
+  normalizedActions.length > 0
+) {
+  story = story.replace(
+    /^the\s+([^,]+?)\s+(cooking|eating|watching|running|walking|flying|swimming|reading|holding|talking|fighting|dancing|playing|writing|driving|riding|sleeping|standing|sitting|looking|climbing|building|painting|singing|working|studying|exploring|smiling|laughing|crying|jumping)\b/i,
+    (match, subject, action) => {
+      return `The ${subject} is ${action.toLowerCase()}`;
+    }
+  );
+}
+
+story =
+  story.charAt(0).toUpperCase() +
+  story.slice(1);
 
   // =========================================================
   // ENVIRONMENT ENHANCEMENT
