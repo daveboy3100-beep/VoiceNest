@@ -570,7 +570,9 @@
           maxlength="4000"
           placeholder="Example: A stickman walking through Lagos at night..."
         ></textarea>
-
+<button type="button" id="exampleBtn" class="example-btn">
+    💡 Try an example
+</button>
 
         <div
           class="character-count"
@@ -852,7 +854,7 @@
       document.getElementById(
         "ideaInput"
       );
-
+const exampleBtn = document.getElementById("exampleBtn");
     const characterCount =
       document.getElementById(
         "characterCount"
@@ -1502,7 +1504,11 @@ generatePromptButton.addEventListener(
   }
 );
 
-
+exampleBtn.addEventListener("click", () => {
+    ideaInput.value = "A young astronaut exploring an abandoned space station.";
+    ideaInput.dispatchEvent(new Event("input"));
+    ideaInput.focus();
+});
 // =========================================================
 // COPY PROMPT
 // =========================================================
