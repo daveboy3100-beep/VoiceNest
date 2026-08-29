@@ -1303,19 +1303,81 @@ const clearPromptButton =
    *
    * "man"
    */
+// =========================================================
+// DETECT CHARACTERS WITHOUT OVERLAPPING SUBJECTS
+// =========================================================
 
-  const sortedCharacters = [
-    ...vocabulary.characters
-  ].sort(
-    (a, b) =>
-      b.length - a.length
-  );
+const sortedCharacters = [
+  ...vocabulary.characters
+].sort(
+  (a, b) =>
+    b.length - a.length
+);
 
 
-  const characters =
-    findMatches(
-      sortedCharacters
-    );
+const characters = [];
+
+sortedCharacters.forEach(
+  character => {
+
+    if (!containsTerm(character)) {
+      return;
+    }
+
+    const characterPattern =
+      new RegExp(
+        `\\b${escapeRegex(character)}\\b`,
+        "i"
+      );
+
+    /*
+     * If this character phrase is completely contained
+     * inside a longer character phrase that has already
+     * been detected, ignore it.
+     *
+     * Examples:
+     *
+     * young explorer → explorer ignored
+     * old man → man ignored
+     * little boy → boy ignored
+     */
+
+    const coveredByExisting =
+      characters.some(
+        existing => {
+
+          if (
+            existing.length <=
+            character.length
+          ) {
+            return false;
+          }
+
+          return new RegExp(
+            `\\b${escapeRegex(existing)}\\b`,
+            "i"
+          ).test(
+            character
+          );
+
+        }
+      );
+
+
+    if (
+      !coveredByExisting &&
+      characterPattern.test(lowerIdea)
+    ) {
+
+      characters.push(
+        character
+      );
+
+    }
+
+  }
+);
+  
 
 
   const actions =
