@@ -1303,6 +1303,8 @@ const clearPromptButton =
    *
    * "man"
    */
+
+        
 // =========================================================
 // DETECT CHARACTERS WITHOUT OVERLAPPING SUBJECTS
 // =========================================================
@@ -1315,69 +1317,131 @@ const sortedCharacters = [
 );
 
 
-const characters = [];
+const characterMatches = [];
+
+
+// Find the exact position of every character phrase
+// in the user's original idea.
 
 sortedCharacters.forEach(
   character => {
 
-    if (!containsTerm(character)) {
-      return;
-    }
-
-    const characterPattern =
+    const pattern =
       new RegExp(
         `\\b${escapeRegex(character)}\\b`,
-        "i"
+        "gi"
       );
 
-    /*
-     * If this character phrase is completely contained
-     * inside a longer character phrase that has already
-     * been detected, ignore it.
-     *
-     * Examples:
-     *
-     * young explorer → explorer ignored
-     * old man → man ignored
-     * little boy → boy ignored
-     */
+    let match;
 
-    const coveredByExisting =
-      characters.some(
-        existing => {
-
-          if (
-            existing.length <=
-            character.length
-          ) {
-            return false;
-          }
-
-          return new RegExp(
-            `\\b${escapeRegex(existing)}\\b`,
-            "i"
-          ).test(
-            character
-          );
-
-        }
-      );
-
-
-    if (
-      !coveredByExisting &&
-      characterPattern.test(lowerIdea)
+    while (
+      (match = pattern.exec(idea)) !== null
     ) {
 
-      characters.push(
-        character
+      characterMatches.push({
+
+        character,
+
+        start: match.index,
+
+        end:
+          match.index +
+          match[0].length
+
+      });
+
+    }
+
+  }
+);
+
+
+// =========================================================
+// REMOVE OVERLAPPING CHARACTER MATCHES
+// =========================================================
+//
+// Longer phrases get priority.
+//
+// Example:
+//
+// "young explorer"
+// "explorer"
+//
+// Both match the sentence, but their positions overlap.
+// The longer "young explorer" wins.
+//
+// Same for:
+//
+// "old man"
+// "man"
+//
+
+characterMatches.sort(
+  (a, b) => {
+
+    const lengthA =
+      a.end - a.start;
+
+    const lengthB =
+      b.end - b.start;
+
+    return lengthB - lengthA;
+
+  }
+);
+
+
+const acceptedCharacterMatches = [];
+
+
+characterMatches.forEach(
+  candidate => {
+
+    const overlaps =
+      acceptedCharacterMatches.some(
+        accepted =>
+
+          candidate.start <
+            accepted.end &&
+
+          candidate.end >
+            accepted.start
+      );
+
+
+    if (!overlaps) {
+
+      acceptedCharacterMatches.push(
+        candidate
       );
 
     }
 
   }
 );
-  
+
+
+// =========================================================
+// RESTORE ORIGINAL SENTENCE ORDER
+// =========================================================
+
+acceptedCharacterMatches.sort(
+  (a, b) =>
+    a.start - b.start
+);
+
+
+const characters = [
+  ...new Set(
+    acceptedCharacterMatches.map(
+      match =>
+        match.character
+    )
+  )
+];
+
+    
+     
 
 
   const actions =
