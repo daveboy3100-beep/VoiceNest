@@ -239,64 +239,119 @@ section {
    USAGE
    ========================================================= */
 
-.usage-card {
-  padding: 22px;
+.usage-grid {
+  display: grid;
 
-  background:
-    linear-gradient(
-      145deg,
-      rgba(139, 92, 246, 0.12),
-      var(--surface)
-    );
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
 
-  border: 1px solid var(--border);
+  gap: 12px;
+}
+
+
+.usage-item {
+  padding: 18px;
+
+  background: var(--surface);
+
+  border:
+    1px solid var(--border);
 
   border-radius:
-    var(--radius-large);
+    var(--radius-medium);
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 
-.usage-top {
+.usage-item:hover {
+  background: var(--surface-light);
+
+  border-color:
+    rgba(139, 92, 246, 0.22);
+}
+
+
+.usage-item-top {
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
 
-  gap: 20px;
+  gap: 15px;
 }
 
 
-.usage-title {
+.usage-tool {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+
+.usage-icon {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background:
+    rgba(139, 92, 246, 0.10);
+
+  border:
+    1px solid
+    rgba(139, 92, 246, 0.14);
+
+  border-radius: 11px;
+
+  font-size: 18px;
+}
+
+
+.usage-tool h3 {
+  font-size: 14px;
+
+  font-weight: 700;
+}
+
+
+.usage-tool span {
   display: block;
+
+  margin-top: 2px;
 
   color: var(--muted);
 
-  font-size: 13px;
+  font-size: 11px;
 }
 
 
-.usage-top strong {
-  display: block;
+.usage-item-top > strong {
+  white-space: nowrap;
 
-  margin-top: 3px;
+  font-size: 18px;
 
-  font-size: 28px;
-}
-
-
-.usage-remaining {
-  color: var(--accent-light);
-
-  font-size: 13px;
-  font-weight: 700;
+  letter-spacing: -0.3px;
 }
 
 
 .usage-bar {
   width: 100%;
 
-  height: 8px;
+  height: 6px;
 
-  margin-top: 20px;
+  margin-top: 17px;
 
   overflow: hidden;
 
@@ -326,13 +381,65 @@ section {
 }
 
 
-.usage-note {
-  margin-top: 12px;
+.usage-status {
+  margin-top: 8px;
 
   color: var(--subtle);
 
-  font-size: 12px;
+  font-size: 11px;
 }
+
+
+.usage-item.unlimited {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(139, 92, 246, 0.08),
+      var(--surface)
+    );
+}
+
+
+.usage-item.unlimited
+.usage-item-top > strong {
+  color: var(--accent-light);
+
+  font-size: 13px;
+}
+
+
+.unlimited-line {
+  margin-top: 17px;
+
+  padding-top: 12px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  border-top:
+    1px solid var(--border);
+
+  color: var(--muted);
+
+  font-size: 11px;
+}
+
+
+.unlimited-line span:last-child {
+  color: var(--accent-light);
+
+  font-size: 18px;
+
+  font-weight: 700;
+   }
+
+
+
+
+
 
 
 /* =========================================================
@@ -714,5 +821,8 @@ section {
 
     gap: 5px;
   }
+     .usage-grid {
+    grid-template-columns: 1fr;
+     }
 
 }
