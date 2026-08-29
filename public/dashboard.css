@@ -1,1 +1,718 @@
+/* =========================================================
+   VOICENEST DASHBOARD
+   ========================================================= */
 
+:root {
+  --background: #0b0b0f;
+  --surface: #121218;
+  --surface-light: #18181f;
+  --border: rgba(255, 255, 255, 0.08);
+
+  --text: #f5f5f7;
+  --muted: #9999a6;
+  --subtle: #6f6f7c;
+
+  --accent: #8b5cf6;
+  --accent-light: #a78bfa;
+
+  --radius-large: 22px;
+  --radius-medium: 16px;
+  --radius-small: 12px;
+
+  --max-width: 1180px;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+
+body {
+  min-height: 100vh;
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(139, 92, 246, 0.10),
+      transparent 32%
+    ),
+    var(--background);
+
+  color: var(--text);
+
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  line-height: 1.5;
+
+  -webkit-font-smoothing: antialiased;
+}
+
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+button {
+  font: inherit;
+}
+
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+.dashboard {
+  min-height: 100vh;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.dashboard-header {
+  width: 100%;
+  max-width: var(--max-width);
+
+  margin: 0 auto;
+
+  padding:
+    22px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+.brand {
+  font-size: 22px;
+  font-weight: 800;
+
+  letter-spacing: -0.6px;
+}
+
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+.header-button {
+  border: 1px solid var(--border);
+
+  background: var(--surface);
+
+  color: var(--text);
+
+  padding:
+    9px 15px;
+
+  border-radius: 999px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.header-button:hover {
+  background: var(--surface-light);
+
+  border-color:
+    rgba(255, 255, 255, 0.15);
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+.dashboard-main {
+  width: 100%;
+  max-width: var(--max-width);
+
+  margin: 0 auto;
+
+  padding:
+    30px 20px 80px;
+}
+
+
+/* =========================================================
+   WELCOME
+   ========================================================= */
+
+.welcome-section {
+  padding:
+    45px 0 35px;
+}
+
+
+.eyebrow,
+.section-label {
+  color: var(--accent-light);
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 1.5px;
+}
+
+
+.welcome-section h1 {
+  max-width: 700px;
+
+  margin-top: 10px;
+
+  font-size:
+    clamp(34px, 6vw, 58px);
+
+  line-height: 1.05;
+
+  letter-spacing: -2px;
+}
+
+
+.welcome-description {
+  max-width: 600px;
+
+  margin-top: 18px;
+
+  color: var(--muted);
+
+  font-size: 16px;
+}
+
+
+/* =========================================================
+   SECTION HEADINGS
+   ========================================================= */
+
+section {
+  margin-top: 50px;
+}
+
+
+.section-heading {
+  margin-bottom: 18px;
+}
+
+
+.section-heading h2 {
+  margin-top: 4px;
+
+  font-size: 22px;
+
+  letter-spacing: -0.5px;
+}
+
+
+/* =========================================================
+   USAGE
+   ========================================================= */
+
+.usage-card {
+  padding: 22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(139, 92, 246, 0.12),
+      var(--surface)
+    );
+
+  border: 1px solid var(--border);
+
+  border-radius:
+    var(--radius-large);
+}
+
+
+.usage-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+
+.usage-title {
+  display: block;
+
+  color: var(--muted);
+
+  font-size: 13px;
+}
+
+
+.usage-top strong {
+  display: block;
+
+  margin-top: 3px;
+
+  font-size: 28px;
+}
+
+
+.usage-remaining {
+  color: var(--accent-light);
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+
+.usage-bar {
+  width: 100%;
+
+  height: 8px;
+
+  margin-top: 20px;
+
+  overflow: hidden;
+
+  background:
+    rgba(255, 255, 255, 0.07);
+
+  border-radius: 999px;
+}
+
+
+.usage-progress {
+  width: 0%;
+
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--accent),
+      var(--accent-light)
+    );
+
+  border-radius: inherit;
+
+  transition:
+    width 0.4s ease;
+}
+
+
+.usage-note {
+  margin-top: 12px;
+
+  color: var(--subtle);
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   TOOLS GRID
+   ========================================================= */
+
+.tools-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 14px;
+}
+
+
+.tool-card {
+  position: relative;
+
+  min-height: 180px;
+
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  background: var(--surface);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    var(--radius-medium);
+
+  overflow: hidden;
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+
+
+.tool-card::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(139, 92, 246, 0.09),
+      transparent 45%
+    );
+
+  opacity: 0;
+
+  transition:
+    opacity 0.25s ease;
+}
+
+
+.tool-card:hover {
+  transform:
+    translateY(-4px);
+
+  background:
+    var(--surface-light);
+
+  border-color:
+    rgba(139, 92, 246, 0.30);
+}
+
+
+.tool-card:hover::before {
+  opacity: 1;
+}
+
+
+.tool-icon {
+  position: relative;
+
+  width: 45px;
+  height: 45px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    rgba(139, 92, 246, 0.12);
+
+  border:
+    1px solid
+    rgba(139, 92, 246, 0.15);
+
+  border-radius:
+    13px;
+
+  font-size: 21px;
+}
+
+
+.tool-content {
+  position: relative;
+
+  margin-top: 18px;
+
+  padding-right: 20px;
+}
+
+
+.tool-content h3 {
+  font-size: 16px;
+
+  letter-spacing: -0.2px;
+}
+
+
+.tool-content p {
+  margin-top: 6px;
+
+  color: var(--muted);
+
+  font-size: 13px;
+
+  line-height: 1.55;
+}
+
+
+.tool-arrow {
+  position: absolute;
+
+  right: 18px;
+  bottom: 17px;
+
+  color: var(--accent-light);
+
+  font-size: 20px;
+
+  transition:
+    transform 0.2s ease;
+}
+
+
+.tool-card:hover .tool-arrow {
+  transform:
+    translateX(4px);
+}
+
+
+/* =========================================================
+   COMING SOON
+   ========================================================= */
+
+.coming-soon {
+  cursor: default;
+
+  opacity: 0.72;
+}
+
+
+.coming-soon:hover {
+  transform: none;
+
+  border-color: var(--border);
+
+  background: var(--surface);
+}
+
+
+.coming-soon:hover::before {
+  opacity: 0;
+}
+
+
+.coming-badge {
+  display: inline-flex;
+
+  margin-top: 12px;
+
+  padding:
+    4px 9px;
+
+  width: fit-content;
+
+  background:
+    rgba(255, 255, 255, 0.06);
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 999px;
+
+  color: var(--muted);
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   RECENT CREATIONS
+   ========================================================= */
+
+.recent-empty {
+  min-height: 220px;
+
+  padding: 30px 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  background: var(--surface);
+
+  border:
+    1px dashed
+    rgba(255, 255, 255, 0.12);
+
+  border-radius:
+    var(--radius-large);
+}
+
+
+.recent-empty-icon {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    rgba(139, 92, 246, 0.10);
+
+  border-radius: 15px;
+
+  font-size: 22px;
+}
+
+
+.recent-empty h3 {
+  margin-top: 15px;
+
+  font-size: 16px;
+}
+
+
+.recent-empty p {
+  max-width: 350px;
+
+  margin-top: 6px;
+
+  color: var(--muted);
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.dashboard-footer {
+  width: 100%;
+  max-width: var(--max-width);
+
+  margin: 0 auto;
+
+  padding:
+    25px 20px 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-top:
+    1px solid var(--border);
+
+  color: var(--subtle);
+
+  font-size: 12px;
+}
+
+
+.dashboard-footer p {
+  color: var(--muted);
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .dashboard-header {
+    padding:
+      18px 16px;
+  }
+
+
+  .dashboard-main {
+    padding:
+      15px 16px 60px;
+  }
+
+
+  .welcome-section {
+    padding:
+      35px 0 25px;
+  }
+
+
+  .welcome-section h1 {
+    font-size: 38px;
+
+    letter-spacing: -1.5px;
+  }
+
+
+  .welcome-description {
+    font-size: 14px;
+  }
+
+
+  section {
+    margin-top: 38px;
+  }
+
+
+  .tools-grid {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+
+  .tool-card {
+    min-height: 165px;
+  }
+
+
+  .usage-card {
+    padding: 18px;
+  }
+
+
+  .usage-top {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 5px;
+  }
+
+
+  .usage-remaining {
+    font-size: 12px;
+  }
+
+
+  .dashboard-footer {
+    padding:
+      22px 16px 35px;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 5px;
+  }
+
+}
