@@ -83,76 +83,253 @@
 
       </section>
 
+<!-- =================================================
+     USAGE
+     ================================================= -->
 
-      <!-- =================================================
-           USAGE
-           ================================================= -->
+<section class="usage-section">
 
-      <section class="usage-section">
+  <div class="section-heading">
 
-        <div class="section-heading">
+    <div>
+
+      <p class="section-label">
+        TODAY
+      </p>
+
+      <h2>
+        Your usage
+      </h2>
+
+    </div>
+
+  </div>
+
+
+  <div class="usage-grid">
+
+
+    <!-- VOICE -->
+
+    <div class="usage-item">
+
+      <div class="usage-item-top">
+
+        <div class="usage-tool">
+
+          <div class="usage-icon">
+            🎙️
+          </div>
 
           <div>
 
-            <p class="section-label">
-              TODAY
-            </p>
+            <h3>
+              Voice
+            </h3>
 
-            <h2>
-              Your usage
-            </h2>
-
-          </div>
-
-        </div>
-
-
-        <div class="usage-card">
-
-          <div class="usage-top">
-
-            <div>
-
-              <span class="usage-title">
-                AI Generations
-              </span>
-
-              <strong
-                id="usageCount"
-              >
-                0 / 5
-              </strong>
-
-            </div>
-
-            <span
-              class="usage-remaining"
-              id="usageRemaining"
-            >
-              5 remaining
+            <span>
+              Voice generations
             </span>
 
           </div>
 
+        </div>
 
-          <div class="usage-bar">
 
-            <div
-              class="usage-progress"
-              id="usageProgress"
-            ></div>
+        <strong>
+          <span id="voiceUsed">0</span>
+          /
+          <span id="voiceLimit">5</span>
+        </strong>
+
+      </div>
+
+
+      <div class="usage-bar">
+
+        <div
+          class="usage-progress"
+          id="voiceProgress"
+        ></div>
+
+      </div>
+
+
+      <p
+        class="usage-status"
+        id="voiceRemaining"
+      >
+        5 remaining
+      </p>
+
+    </div>
+
+
+    <!-- IMAGE -->
+
+    <div class="usage-item">
+
+      <div class="usage-item-top">
+
+        <div class="usage-tool">
+
+          <div class="usage-icon">
+            🎨
+          </div>
+
+          <div>
+
+            <h3>
+              Images
+            </h3>
+
+            <span>
+              Image generations
+            </span>
 
           </div>
 
+        </div>
 
-          <p class="usage-note">
-            Your free daily generations reset tomorrow.
-          </p>
+
+        <strong>
+          <span id="imageUsed">0</span>
+          /
+          <span id="imageLimit">3</span>
+        </strong>
+
+      </div>
+
+
+      <div class="usage-bar">
+
+        <div
+          class="usage-progress"
+          id="imageProgress"
+        ></div>
+
+      </div>
+
+
+      <p
+        class="usage-status"
+        id="imageRemaining"
+      >
+        3 remaining
+      </p>
+
+    </div>
+
+
+    <!-- SCRIPT -->
+
+    <div class="usage-item">
+
+      <div class="usage-item-top">
+
+        <div class="usage-tool">
+
+          <div class="usage-icon">
+            📝
+          </div>
+
+          <div>
+
+            <h3>
+              Scripts
+            </h3>
+
+            <span>
+              Script generations
+            </span>
+
+          </div>
 
         </div>
 
-      </section>
 
+        <strong>
+          <span id="scriptUsed">0</span>
+          /
+          <span id="scriptLimit">5</span>
+        </strong>
+
+      </div>
+
+
+      <div class="usage-bar">
+
+        <div
+          class="usage-progress"
+          id="scriptProgress"
+        ></div>
+
+      </div>
+
+
+      <p
+        class="usage-status"
+        id="scriptRemaining"
+      >
+        5 remaining
+      </p>
+
+    </div>
+
+
+    <!-- PROMPT -->
+
+    <div class="usage-item unlimited">
+
+      <div class="usage-item-top">
+
+        <div class="usage-tool">
+
+          <div class="usage-icon">
+            ✨
+          </div>
+
+          <div>
+
+            <h3>
+              Prompts
+            </h3>
+
+            <span>
+              Prompt generations
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <strong>
+          Unlimited
+        </strong>
+
+      </div>
+
+
+      <div class="unlimited-line">
+
+        <span>
+          No daily limit
+        </span>
+
+        <span>
+          ∞
+        </span>
+
+      </div>
+
+    </div>
+
+
+  </div>
+
+            </section>
+      
 
       <!-- =================================================
            QUICK CREATE
