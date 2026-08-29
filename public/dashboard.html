@@ -1,1 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
+  <title>VoiceNest Dashboard</title>
+
+  <link
+    rel="stylesheet"
+    href="/dashboard.css"
+  >
+</head>
+
+<body>
+
+  <!-- =====================================================
+       VOICENEST DASHBOARD
+       ===================================================== -->
+
+  <div class="dashboard">
+
+    <!-- ===================================================
+         HEADER
+         =================================================== -->
+
+    <header class="dashboard-header">
+
+      <a
+        href="/dashboard.html"
+        class="brand"
+      >
+        VoiceNest
+      </a>
+
+
+      <div class="header-actions">
+
+        <button
+          class="header-button"
+          id="accountButton"
+        >
+          Account
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- ===================================================
+         MAIN CONTENT
+         =================================================== -->
+
+    <main class="dashboard-main">
+
+
+      <!-- =================================================
+           WELCOME
+           ================================================= -->
+
+      <section class="welcome-section">
+
+        <div class="welcome-content">
+
+          <p class="eyebrow">
+            YOUR CREATIVE WORKSPACE
+          </p>
+
+          <h1>
+            Create something amazing.
+          </h1>
+
+          <p class="welcome-description">
+            Turn your ideas into scripts, voices,
+            images and more with VoiceNest.
+          </p>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           USAGE
+           ================================================= -->
+
+      <section class="usage-section">
+
+        <div class="section-heading">
+
+          <div>
+
+            <p class="section-label">
+              TODAY
+            </p>
+
+            <h2>
+              Your usage
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="usage-card">
+
+          <div class="usage-top">
+
+            <div>
+
+              <span class="usage-title">
+                AI Generations
+              </span>
+
+              <strong
+                id="usageCount"
+              >
+                0 / 5
+              </strong>
+
+            </div>
+
+            <span
+              class="usage-remaining"
+              id="usageRemaining"
+            >
+              5 remaining
+            </span>
+
+          </div>
+
+
+          <div class="usage-bar">
+
+            <div
+              class="usage-progress"
+              id="usageProgress"
+            ></div>
+
+          </div>
+
+
+          <p class="usage-note">
+            Your free daily generations reset tomorrow.
+          </p>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           QUICK CREATE
+           ================================================= -->
+
+      <section class="tools-section">
+
+        <div class="section-heading">
+
+          <div>
+
+            <p class="section-label">
+              CREATE
+            </p>
+
+            <h2>
+              What do you want to make?
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="tools-grid">
+
+
+          <!-- SCRIPT -->
+
+          <a
+            href="/script.html"
+            class="tool-card"
+          >
+
+            <div class="tool-icon">
+              📝
+            </div>
+
+            <div class="tool-content">
+
+              <h3>
+                Script Generator
+              </h3>
+
+              <p>
+                Turn your ideas into
+                complete scripts.
+              </p>
+
+            </div>
+
+            <span class="tool-arrow">
+              →
+            </span>
+
+          </a>
+
+
+          <!-- VOICE -->
+
+          <a
+            href="/"
+            class="tool-card"
+          >
+
+            <div class="tool-icon">
+              🎙️
+            </div>
+
+            <div class="tool-content">
+
+              <h3>
+                Voice Generator
+              </h3>
+
+              <p>
+                Turn your words into
+                natural AI voiceovers.
+              </p>
+
+            </div>
+
+            <span class="tool-arrow">
+              →
+            </span>
+
+          </a>
+
+
+          <!-- PROMPT -->
+
+          <a
+            href="/prompt-generator.html"
+            class="tool-card"
+          >
+
+            <div class="tool-icon">
+              ✨
+            </div>
+
+            <div class="tool-content">
+
+              <h3>
+                Prompt Generator
+              </h3>
+
+              <p>
+                Transform simple ideas
+                into powerful prompts.
+              </p>
+
+            </div>
+
+            <span class="tool-arrow">
+              →
+            </span>
+
+          </a>
+
+
+          <!-- IMAGE -->
+
+          <a
+            href="/image-generator.html"
+            class="tool-card"
+          >
+
+            <div class="tool-icon">
+              🎨
+            </div>
+
+            <div class="tool-content">
+
+              <h3>
+                Image Generator
+              </h3>
+
+              <p>
+                Bring your ideas to life
+                with AI-generated images.
+              </p>
+
+            </div>
+
+            <span class="tool-arrow">
+              →
+            </span>
+
+          </a>
+
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           COMING SOON
+           ================================================= -->
+
+      <section class="coming-soon-section">
+
+        <div class="section-heading">
+
+          <div>
+
+            <p class="section-label">
+              EXPANDING
+            </p>
+
+            <h2>
+              Coming soon
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="tools-grid">
+
+
+          <!-- AI VIDEO -->
+
+          <div class="tool-card coming-soon">
+
+            <div class="tool-icon">
+              🎬
+            </div>
+
+            <div class="tool-content">
+
+              <h3>
+                AI Video Generator
+              </h3>
+
+              <p>
+                Create videos from your
+                ideas, images and prompts.
+              </p>
+
+              <span class="coming-badge">
+                Coming Soon
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- AI EDITOR -->
+
+          <div class="tool-card coming-soon">
+
+            <div class="tool-icon">
+              ✂️
+            </div>
+
+            <div class="tool-content">
+
+              <h3>
+                AI Editor
+              </h3>
+
+              <p>
+                Edit and assemble your
+                creations inside VoiceNest.
+              </p>
+
+              <span class="coming-badge">
+                Coming Soon
+              </span>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           RECENT CREATIONS
+           ================================================= -->
+
+      <section class="recent-section">
+
+        <div class="section-heading">
+
+          <div>
+
+            <p class="section-label">
+              WORKSPACE
+            </p>
+
+            <h2>
+              Recent creations
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="recent-empty"
+          id="recentCreations"
+        >
+
+          <div class="recent-empty-icon">
+            ✨
+          </div>
+
+          <h3>
+            Your creations will appear here.
+          </h3>
+
+          <p>
+            Start creating with any of the
+            tools above.
+          </p>
+
+        </div>
+
+      </section>
+
+
+    </main>
+
+
+    <!-- ===================================================
+         FOOTER
+         =================================================== -->
+
+    <footer class="dashboard-footer">
+
+      <p>
+        VoiceNest
+      </p>
+
+      <span>
+        Create. Transform. Share.
+      </span>
+
+    </footer>
+
+
+  </div>
+
+
+  <script
+    src="/dashboard.js"
+  ></script>
+
+</body>
+            </html>
