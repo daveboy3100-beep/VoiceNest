@@ -1,1 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Create Your VoiceNest Account</title>
+
+  <link
+    rel="stylesheet"
+    href="signup.css"
+  >
+</head>
+
+
+<body>
+
+  <main class="auth-page">
+
+    <div class="auth-card">
+
+      <!-- BRAND -->
+
+      <a
+        href="/dashboard.html"
+        class="brand"
+      >
+        VoiceNest
+      </a>
+
+
+      <!-- HEADING -->
+
+      <div class="auth-heading">
+
+        <p class="eyebrow">
+          GET STARTED
+        </p>
+
+        <h1>
+          Create your account
+        </h1>
+
+        <p>
+          Join VoiceNest and start creating with AI.
+        </p>
+
+      </div>
+
+
+      <!-- SIGN UP FORM -->
+
+      <form
+        id="signupForm"
+        class="auth-form"
+      >
+
+        <div class="form-group">
+
+          <label for="email">
+            Email address
+          </label>
+
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="password">
+            Password
+          </label>
+
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Create a password"
+            autocomplete="new-password"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="confirmPassword">
+            Confirm password
+          </label>
+
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="Confirm your password"
+            autocomplete="new-password"
+            required
+          >
+
+        </div>
+
+
+        <p
+          id="signupMessage"
+          class="auth-message"
+        ></p>
+
+
+        <button
+          type="submit"
+          id="signupButton"
+          class="auth-button"
+        >
+          Create account
+        </button>
+
+      </form>
+
+
+      <!-- LOGIN -->
+
+      <p class="auth-switch">
+
+        Already have an account?
+
+        <a href="/login.html">
+          Sign in
+        </a>
+
+      </p>
+
+
+      <!-- TERMS -->
+
+      <p class="auth-terms">
+
+        By creating an account, you agree to use VoiceNest
+        responsibly and comply with our terms.
+
+      </p>
+
+    </div>
+
+  </main>
+
+
+  <script src="signup.js"></script>
+
+</body>
+
+  </html>
