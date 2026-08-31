@@ -57,7 +57,7 @@ function showMessage(message) {
 
 signupForm.addEventListener(
   "submit",
-  (event) => {
+async (event) => {
 
     event.preventDefault();
 
@@ -157,13 +157,78 @@ signupForm.addEventListener(
     }
 
 
-    // -------------------------------------------------------
-    // TEMPORARY SUCCESS
-    // -------------------------------------------------------
+    // =========================================================
+// CREATE SUPABASE ACCOUNT
+// =========================================================
 
-    showMessage(
-      "Everything looks good. Ready to create your account."
-    );
+signupButton.disabled = true;
+
+signupButton.textContent =
+  "Creating account...";
+
+showMessage(
+  "Creating your VoiceNest account..."
+);
+
+
+const {
+  data,
+  error
+} = await supabaseClient.auth.signUp({
+  email: email,
+  password: password
+});
+
+
+if (error) {
+
+  showMessage(
+    error.message
+  );
+
+  signupButton.disabled = false;
+
+  signupButton.textContent =
+    "Create account";
+
+  return;
+
+}
+
+
+// =========================================================
+// SUCCESS
+// =========================================================
+
+signupButton.disabled = false;
+
+signupButton.textContent =
+  "Account created";
+
+
+if (
+  data.user &&
+  data.session
+) {
+
+  showMessage(
+    "Account created successfully. Redirecting..."
+  );
+
+  setTimeout(() => {
+
+    window.location.href =
+      "/dashboard.html";
+
+  }, 1000);
+
+} else {
+
+  showMessage(
+    "Account created! Please check your email to verify your account."
+  );
+
+        }
 
   }
 );
