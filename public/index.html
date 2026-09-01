@@ -3493,6 +3493,7 @@ const supabaseClient = window.supabase.createClient(
 // CHECK EXISTING SESSION
 // ========================================
 
+
 async function checkAuthSession() {
 
   const {
@@ -3501,10 +3502,17 @@ async function checkAuthSession() {
     }
   } = await supabaseClient.auth.getSession();
 
+  if (session) {
+    publicAuth.classList.add("hidden");
+    accountArea.classList.remove("hidden");
+  } else {
+    publicAuth.classList.remove("hidden");
+    accountArea.classList.add("hidden");
+  }
+
   return session;
 
     }
-
 
 // Run authentication check
 checkAuthSession();
