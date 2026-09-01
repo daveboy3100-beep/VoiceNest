@@ -3439,31 +3439,6 @@ let isSignUpMode = true;
 
 
 // Show authentication message
-function showAuthMessage(
-  message,
-  title = "Notice",
-  icon = "ℹ️"
-) {
-
-  const authMessageIcon =
-    document.getElementById("authMessageIcon");
-
-  const authMessageTitle =
-    document.getElementById("authMessageTitle");
-
-  const authMessageText =
-    document.getElementById("authMessageText");
-
-
-  authMessageIcon.textContent = icon;
-
-  authMessageTitle.textContent = title;
-
-  authMessageText.textContent = message;
-
-  authMessage.classList.remove("hidden");
-}
-
 
 
 // Hide authentication message
