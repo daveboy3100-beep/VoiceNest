@@ -3889,19 +3889,15 @@ async function checkAuthSession() {
     }
   } = await supabaseClient.auth.getSession();
 
+  // The Voice Generator is publicly explorable.
+  // Authentication is required when using protected features.
   if (session) {
-
-    // User is already signed in
     authScreen.classList.add("hidden");
-
   } else {
-
-    // User is not signed in
-    authScreen.classList.remove("hidden");
-
+    authScreen.classList.add("hidden");
   }
 
-}
+    }
 
 
 // Run authentication check
@@ -3912,15 +3908,9 @@ checkAuthSession();
 supabaseClient.auth.onAuthStateChange(
   (event, session) => {
 
-    if (session) {
-
-      authScreen.classList.add("hidden");
-
-    } else {
-
-      authScreen.classList.remove("hidden");
-
-    }
+    // Keep the Voice Generator publicly explorable.
+    // Protected actions still verify the user's session.
+    authScreen.classList.add("hidden");
 
   }
 );
