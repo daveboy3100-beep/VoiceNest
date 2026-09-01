@@ -3462,16 +3462,9 @@ async function checkAuthSession() {
 checkAuthSession();
 
 
-// Listen for authentication changes
-supabaseClient.auth.onAuthStateChange(
-  (event, session) => {
-
-    // Keep the Voice Generator publicly explorable.
-    // Protected actions still verify the user's session.
-    authScreen.classList.add("hidden");
-
-  }
-);
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  // Authentication state will be handled by the VoiceNest account UI.
+});
     // ========================================
 // ACCOUNT MENU & LOGOUT
 // ========================================
