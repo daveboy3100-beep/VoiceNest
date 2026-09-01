@@ -3513,7 +3513,9 @@ async function checkAuthSession() {
   return session;
 
     }
-
+supabaseClient.auth.onAuthStateChange(() => {
+  checkAuthSession();
+});
 // Run authentication check
 checkAuthSession();
 
