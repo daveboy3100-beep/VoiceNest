@@ -3555,9 +3555,10 @@ logoutButton.addEventListener("click", async () => {
     logoutButton.textContent =
       "Log out";
 
-    showAuthMessage(
-      "Could not log out. Please try again."
-    );
+    showMessage(
+  "Could not log out. Please try again.",
+  "error"
+);
 
     return;
 
