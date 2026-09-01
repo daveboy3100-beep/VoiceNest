@@ -3472,44 +3472,7 @@ function hideAuthMessage() {
                                            }
 
 
-// Switch between Sign Up and Sign In
-authSwitch.addEventListener("click", () => {
 
-  isSignUpMode = !isSignUpMode;
-
-  hideAuthMessage();
-
-  if (isSignUpMode) {
-
-    authTitle.textContent =
-      "Welcome to VoiceNest";
-
-    authSubtitle.textContent =
-      "Create an account to start creating.";
-
-    authSubmit.textContent =
-      "Create Account";
-
-    authSwitch.textContent =
-      "Already have an account? Sign in";
-
-  } else {
-
-    authTitle.textContent =
-      "Welcome back";
-
-    authSubtitle.textContent =
-      "Sign in to continue creating.";
-
-    authSubmit.textContent =
-      "Sign In";
-
-    authSwitch.textContent =
-      "Don't have an account? Create one";
-
-  }
-
-});
 
 // Handle authentication form
 authForm.addEventListener("submit", async (event) => {
