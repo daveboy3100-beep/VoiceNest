@@ -881,7 +881,43 @@
 
 
 
+.public-auth {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    margin-right: 12px;
+}
 
+.public-auth a {
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 12px;
+    border-radius: 9px;
+    transition: 0.2s ease;
+}
+
+.public-auth-login {
+    color: var(--text);
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.public-auth-login:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.public-auth-signup {
+    color: white;
+    background: var(--accent);
+    border: 1px solid var(--accent);
+}
+
+.public-auth-signup:hover {
+    background: var(--accent-light);
+    border-color: var(--accent-light);
+}
     /* ========================================
    ACCOUNT MENU
 ======================================== */
