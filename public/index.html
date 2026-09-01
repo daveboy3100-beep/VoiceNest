@@ -3453,13 +3453,7 @@ async function checkAuthSession() {
     }
   } = await supabaseClient.auth.getSession();
 
-  // The Voice Generator is publicly explorable.
-  // Authentication is required when using protected features.
-  if (session) {
-    authScreen.classList.add("hidden");
-  } else {
-    authScreen.classList.add("hidden");
-  }
+  return session;
 
     }
 
