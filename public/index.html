@@ -1367,6 +1367,77 @@
   }
 
       }
+    .auth-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 9999;
+  padding: 20px;
+}
+
+.auth-modal.hidden {
+  display: none;
+}
+
+.auth-modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.auth-modal-content h2 {
+  margin: 0 0 10px;
+  font-size: 24px;
+}
+
+.auth-modal-content p {
+  margin: 0 0 24px;
+  color: #666;
+}
+
+.auth-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  border: none;
+  background: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #777;
+}
+
+.auth-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.auth-modal-actions a {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  text-align: center;
+}
+
+.auth-modal-login {
+  background: #f1f1f1;
+  color: #333;
+}
+
+.auth-modal-signup {
+  background: #6c3cff;
+  color: #fff;
+  }
   </style>
 </head>
 
@@ -1692,6 +1763,19 @@
 
     </footer>
 
+  </div>
+  <div id="authModal" class="auth-modal hidden">
+  <div class="auth-modal-content">
+    <button id="authModalClose" class="auth-modal-close">×</button>
+
+    <h2>Sign in to continue</h2>
+    <p>You need an account to use this feature.</p>
+
+    <div class="auth-modal-actions">
+      <a href="/login.html" class="auth-modal-login">Log in</a>
+      <a href="/signup.html" class="auth-modal-signup">Sign up</a>
+    </div>
+  </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.all.min.js"></script>
@@ -2598,10 +2682,9 @@ if (scriptFromUrl) {
 
 
       if (!session) {
-
-        throw new Error(
-          "Please sign in before generating a voiceover."
-        );
+  showAuthModal();
+  return;
+    }
 
       }
 
@@ -3544,6 +3627,21 @@ const publicAuth =
 
 const accountArea =
   document.querySelector(".account-area");
+    const authModal = document.getElementById("authModal");
+const authModalClose = document.getElementById("authModalClose");
+    function showAuthModal() {
+  authModal.classList.remove("hidden");
+}
+
+function hideAuthModal() {
+  authModal.classList.add("hidden");
+      }
+    authModalClose.addEventListener("click", hideAuthModal);
+    authModal.addEventListener("click", (event) => {
+  if (event.target === authModal) {
+    hideAuthModal();
+  }
+});
 // ========================================
 // OPEN / CLOSE ACCOUNT MENU
 // ========================================
