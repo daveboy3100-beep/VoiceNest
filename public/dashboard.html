@@ -391,81 +391,129 @@
 
 
       <!-- USAGE -->
-      <section
-        class="view"
-        id="view-usage"
-        data-view-section="usage"
-      >
+      
 
-        <div class="page-heading">
-          <span class="eyebrow">ACCOUNT</span>
+<section
+  class="view"
+  id="view-usage"
+  data-view-section="usage"
+>
 
-          <h1>Your Usage</h1>
+  <div class="page-heading">
+    <span class="eyebrow">ACCOUNT</span>
 
-          <p>
-            Keep track of your VoiceNest usage and available limits.
-          </p>
-        </div>
+    <h1>Your Usage</h1>
 
-
-        <div class="usage-grid">
-
-          <div class="usage-card">
-            <div class="usage-card-header">
-              <span>🎙️ Voice Generations</span>
-              <strong id="voiceUsage">0 / 5</strong>
-            </div>
-
-            <div class="usage-progress">
-              <div
-                class="usage-progress-bar"
-                id="voiceUsageBar"
-              ></div>
-            </div>
-          </div>
+    <p>
+      Keep track of your VoiceNest usage and available limits.
+    </p>
+  </div>
 
 
-          <div class="usage-card">
-            <div class="usage-card-header">
-              <span>✍️ Script Generations</span>
-              <strong id="scriptUsage">0 / 5</strong>
-            </div>
+  <div class="usage-grid">
 
-            <div class="usage-progress">
-              <div
-                class="usage-progress-bar"
-                id="scriptUsageBar"
-              ></div>
-            </div>
-          </div>
+    <!-- Voice -->
+    <div class="usage-card">
+
+      <div class="usage-card-header">
+        <span>🎙️ Voice Generations</span>
+
+        <strong>
+          <span id="voiceUsed">0</span>
+          /
+          <span id="voiceLimit">5</span>
+        </strong>
+      </div>
+
+      <div class="usage-progress">
+        <div
+          class="usage-progress-bar"
+          id="voiceProgress"
+        ></div>
+      </div>
+
+      <p id="voiceRemaining">
+        Loading...
+      </p>
+
+    </div>
 
 
-          <div class="usage-card">
-            <div class="usage-card-header">
-              <span>🖼️ Image Generations</span>
-              <strong id="imageUsage">0 / 3</strong>
-            </div>
+    <!-- Image -->
+    <div class="usage-card">
 
-            <div class="usage-progress">
-              <div
-                class="usage-progress-bar"
-                id="imageUsageBar"
-              ></div>
-            </div>
-          </div>
+      <div class="usage-card-header">
+        <span>🖼️ Image Generations</span>
+
+        <strong>
+          <span id="imageUsed">0</span>
+          /
+          <span id="imageLimit">3</span>
+        </strong>
+      </div>
+
+      <div class="usage-progress">
+        <div
+          class="usage-progress-bar"
+          id="imageProgress"
+        ></div>
+      </div>
+
+      <p id="imageRemaining">
+        Loading...
+      </p>
+
+    </div>
 
 
-          <div class="usage-card">
-            <div class="usage-card-header">
-              <span>💡 Prompt Generations</span>
-              <strong id="promptUsage">Unlimited</strong>
-            </div>
-          </div>
+    <!-- Script -->
+    <div class="usage-card">
 
-        </div>
+      <div class="usage-card-header">
+        <span>✍️ Script Generations</span>
 
-      </section>
+        <strong>
+          <span id="scriptUsed">0</span>
+          /
+          <span id="scriptLimit">5</span>
+        </strong>
+      </div>
 
+      <div class="usage-progress">
+        <div
+          class="usage-progress-bar"
+          id="scriptProgress"
+        ></div>
+      </div>
+
+      <p id="scriptRemaining">
+        Loading...
+      </p>
+
+    </div>
+
+
+    <!-- Prompt -->
+    <div class="usage-card">
+
+      <div class="usage-card-header">
+        <span>💡 Prompt Generations</span>
+
+        <strong>
+          Unlimited
+        </strong>
+      </div>
+
+      <p>
+        Prompt generation is currently available without a daily limit.
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+          
 
       <!-- SETTINGS -->
       <section
