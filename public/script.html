@@ -78,23 +78,22 @@
        HEADER
     ======================================== */
 
-    .brand {
-      display: inline-flex;
+    .top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 42px;
+}
 
-      align-items: center;
-
-      gap: 9px;
-
-      margin-bottom: 42px;
-
-      color: var(--text);
-
-      font-size: 0.95rem;
-
-      font-weight: 900;
-
-      text-decoration: none;
-    }
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 900;
+  text-decoration: none;
+}
 
     .brand-mark {
       display: inline-flex;
@@ -499,22 +498,9 @@
         padding-top: 20px;
       }
 
-      .top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 42px;
-}
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  color: var(--text);
-  font-weight: 800;
-  font-size: 18px;
-      }
+      .brand {
+  font-size: 0.9rem;
+    }
 
       .generator-card {
         padding: 16px;
