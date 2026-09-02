@@ -520,6 +520,34 @@
       }
 
     }
+    .public-auth {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.public-auth a {
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: opacity 0.2s ease;
+}
+
+.public-auth a:hover {
+  opacity: 0.85;
+}
+
+.public-auth-login {
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.public-auth-signup {
+  color: #fff;
+  background: #6c3cff;
+      }
   </style>
 </head>
 
@@ -537,7 +565,10 @@
 
       VoiceNest
     </a>
-
+<div class="public-auth">
+  <a href="/login.html" class="public-auth-login">Log in</a>
+  <a href="/signup.html" class="public-auth-signup">Sign up</a>
+</div>
 
     <section class="hero">
 
