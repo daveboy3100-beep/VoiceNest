@@ -547,6 +547,77 @@
   color: #fff;
   background: #6c3cff;
       }
+    .auth-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.auth-modal.hidden {
+  display: none;
+}
+
+.auth-modal-content {
+  position: relative;
+  width: min(100%, 420px);
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.auth-modal-content h2 {
+  margin: 0 0 10px;
+  color: #fff;
+  font-size: 24px;
+}
+
+.auth-modal-content p {
+  margin: 0 0 24px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.auth-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 26px;
+  cursor: pointer;
+}
+
+.auth-modal-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.auth-modal-actions a {
+  flex: 1;
+  padding: 12px;
+  border-radius: 9px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.auth-modal-login {
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.auth-modal-signup {
+  background: var(--accent);
+  color: #fff;
+      }
   </style>
 </head>
 
@@ -812,6 +883,22 @@
     </section>
 
   </main>
+  <div id="authModal" class="auth-modal hidden">
+  <div class="auth-modal-content">
+    <button id="authModalClose" class="auth-modal-close">×</button>
+
+    <h2>Ready to create?</h2>
+
+    <p>
+      Log in or sign up to start generating scripts with VoiceNest.
+    </p>
+
+    <div class="auth-modal-actions">
+      <a href="/login.html" class="auth-modal-login">Log in</a>
+      <a href="/signup.html" class="auth-modal-signup">Sign up</a>
+    </div>
+  </div>
+  </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -827,6 +914,24 @@ const supabaseClient =
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
   );
+  const authModal = document.getElementById("authModal");
+const authModalClose = document.getElementById("authModalClose");
+
+function showAuthModal() {
+  authModal.classList.remove("hidden");
+}
+
+function hideAuthModal() {
+  authModal.classList.add("hidden");
+}
+
+authModalClose.addEventListener("click", hideAuthModal);
+
+authModal.addEventListener("click", (event) => {
+  if (event.target === authModal) {
+    hideAuthModal();
+  }
+});
 
     const topicInput =
       document.getElementById(
@@ -1193,12 +1298,9 @@ const supabaseClient =
         await supabaseClient.auth.getSession();
 
       if (!session) {
-
-        throw new Error(
-          "Please sign in before generating a script."
-        );
-
-      }
+  showAuthModal();
+  return;
+  }
 
       const response =
         await fetch(
