@@ -499,8 +499,21 @@
         padding-top: 20px;
       }
 
-      .brand {
-        margin-bottom: 32px;
+      .top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 42px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 800;
+  font-size: 18px;
       }
 
       .generator-card {
@@ -555,20 +568,23 @@
 
   <main class="page">
 
-    <a
-      href="/index.html"
-      class="brand"
-    >
-      <span class="brand-mark">
-        VN
-      </span>
+    <header class="top-bar">
+  <a
+    href="/index.html"
+    class="brand"
+  >
+    <span class="brand-mark">
+      VN
+    </span>
 
-      VoiceNest
-    </a>
-<div class="public-auth">
-  <a href="/login.html" class="public-auth-login">Log in</a>
-  <a href="/signup.html" class="public-auth-signup">Sign up</a>
-</div>
+    VoiceNest
+  </a>
+
+  <div class="public-auth">
+    <a href="/login.html" class="public-auth-login">Log in</a>
+    <a href="/signup.html" class="public-auth-signup">Sign up</a>
+  </div>
+    </header>
 
     <section class="hero">
 
