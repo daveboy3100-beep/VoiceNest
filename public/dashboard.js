@@ -63,11 +63,52 @@ function updateUsageItem(type) {
 }
 
 
-function updateDashboardUsage() {
-  updateUsageItem("voice");
-  updateUsageItem("image");
-  updateUsageItem("script");
-}
+async function updateDashboardUsage() {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      updateUsageItem("voice");
+      updateUsageItem("image");
+      updateUsageItem("script");
+      return;
+    }
+
+    const response = await fetch("/api/usage", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`
+      }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Unable to load usage.");
+    }
+
+    if (data.voice) {
+      usageData.voice.used = data.voice.used;
+      usageData.voice.limit = data.voice.limit;
+    }
+
+    if (data.script) {
+      usageData.script.used = data.script.used;
+      usageData.script.limit = data.script.limit;
+    }
+
+    updateUsageItem("voice");
+    updateUsageItem("image");
+    updateUsageItem("script");
+
+  } catch (error) {
+    console.error("Dashboard usage error:", error);
+
+    updateUsageItem("voice");
+    updateUsageItem("image");
+    updateUsageItem("script");
+  }
+      }
 
 
 /* =========================
