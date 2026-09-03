@@ -8,11 +8,23 @@ const SUPABASE_URL =
 const SUPABASE_ANON_KEY =
   "sb_publishable_wp1MJ7xmnJjseGjFtM9PWQ_xQWRh7hW";
 
-const supabase =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
+let supabaseClient = null;
+
+function initializeSupabase() {
+  if (!window.supabase) {
+    throw new Error(
+      "Supabase library failed to load."
+    );
+  }
+
+  supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+  return supabaseClient;
+}
 const usageData = {
   voice: {
     used: 0,
@@ -80,8 +92,7 @@ function updateUsageItem(type) {
 
 async function updateDashboardUsage() {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-
+    const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) {
       updateUsageItem("voice");
       updateUsageItem("image");
@@ -133,8 +144,7 @@ async function loadRecentCreations() {
   try {
     const {
       data: { session }
-    } = await supabase.auth.getSession();
-
+    } = await supabaseClient.auth.getSession();
     if (!session) {
       return;
     }
@@ -255,8 +265,22 @@ navItems.forEach((item) => {
 
 function initializeDashboard() {
   showView("home");
-  updateDashboardUsage();
-}
-loadRecentCreations();
 
-document.addEventListener("DOMContentLoaded", initializeDashboard);
+  try {
+    initializeSupabase();
+  } catch (error) {
+    console.error(
+      "Supabase initialization error:",
+      error
+    );
+    return;
+  }
+
+  updateDashboardUsage();
+  loadRecentCreations();
+}
+
+document.addEventListener(
+  "DOMContentLoaded",
+  initializeDashboard
+);
