@@ -4,129 +4,37 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>VoiceNest Dashboard</title>
+  <title>VoiceNest</title>
 
   <link rel="stylesheet" href="/dashboard.css" />
 </head>
 
 <body>
+
   <div class="app-shell">
 
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
+    <!-- Top bar -->
+    <header class="top-bar">
 
-      <div class="sidebar-top">
+      <a href="/index.html" class="brand">
+        <span class="brand-mark">VN</span>
+        <span>VoiceNest</span>
+      </a>
 
-        <a href="/index.html" class="brand">
-          <span class="brand-mark">VN</span>
-          <span>VoiceNest</span>
-        </a>
+      <button
+        type="button"
+        class="account-button"
+        id="accountButton"
+        aria-label="Account"
+      >
+        <span class="account-avatar" id="accountAvatar">U</span>
+      </button>
 
-        <nav class="main-nav" aria-label="Main navigation">
+    </header>
 
-          <button
-            class="nav-item active"
-            type="button"
-            data-view="home"
-          >
-            <span class="nav-icon">⌂</span>
-            <span>Home</span>
-          </button>
 
-          <button
-            class="nav-item"
-            type="button"
-            data-view="creator-tools"
-          >
-            <span class="nav-icon">✦</span>
-            <span>Creator Tools</span>
-          </button>
-
-          <button
-            class="nav-item"
-            type="button"
-            data-view="projects"
-          >
-            <span class="nav-icon">▣</span>
-            <span>Projects</span>
-          </button>
-
-          <button
-            class="nav-item"
-            type="button"
-            data-view="recent"
-          >
-            <span class="nav-icon">◷</span>
-            <span>Recent Creations</span>
-          </button>
-
-          <button
-            class="nav-item"
-            type="button"
-            data-view="usage"
-          >
-            <span class="nav-icon">◫</span>
-            <span>Usage</span>
-          </button>
-
-        </nav>
-
-      </div>
-
-      <div class="sidebar-bottom">
-
-        <button
-          class="nav-item"
-          type="button"
-          data-view="settings"
-        >
-          <span class="nav-icon">⚙</span>
-          <span>Settings</span>
-        </button>
-
-        <button
-          class="account-button"
-          type="button"
-          id="accountButton"
-        >
-          <span class="account-avatar" id="accountAvatar">U</span>
-
-          <span class="account-info">
-            <span class="account-name" id="accountName">
-              Account
-            </span>
-
-            <span class="account-email" id="accountEmail">
-              Loading...
-            </span>
-          </span>
-        </button>
-
-      </div>
-
-    </aside>
-
-    <!-- Main application -->
+    <!-- Main application area -->
     <main class="main-content">
-
-      <!-- Mobile header -->
-      <header class="mobile-header">
-
-        <a href="/index.html" class="brand">
-          <span class="brand-mark">VN</span>
-          <span>VoiceNest</span>
-        </a>
-
-        <button
-          type="button"
-          class="menu-button"
-          id="menuButton"
-          aria-label="Open navigation"
-        >
-          ☰
-        </button>
-
-      </header>
 
 
       <!-- HOME -->
@@ -156,68 +64,81 @@
         <div class="home-create">
 
           <div class="section-heading">
-            <div>
-              <h2>What do you want to create?</h2>
-              <p>Choose a tool and bring your next idea to life.</p>
-            </div>
+            <h2>What do you want to create?</h2>
+
+            <p>
+              Choose a tool and bring your next idea to life.
+            </p>
           </div>
 
 
           <div class="tool-grid">
 
             <a href="/script.html" class="tool-card">
+
               <div class="tool-icon">✍️</div>
 
               <div class="tool-content">
                 <h3>Script Generator</h3>
+
                 <p>
                   Turn your ideas into complete, engaging scripts.
                 </p>
               </div>
 
               <span class="tool-arrow">→</span>
+
             </a>
 
 
             <a href="/index.html" class="tool-card">
+
               <div class="tool-icon">🎙️</div>
 
               <div class="tool-content">
                 <h3>Voice Generator</h3>
+
                 <p>
                   Turn your words into natural AI voiceovers.
                 </p>
               </div>
 
               <span class="tool-arrow">→</span>
+
             </a>
 
 
             <a href="/prompt-generator.html" class="tool-card">
+
               <div class="tool-icon">💡</div>
 
               <div class="tool-content">
                 <h3>Prompt Generator</h3>
+
                 <p>
-                  Create better prompts for your creative projects.
+                  Create powerful prompts for your projects.
                 </p>
               </div>
 
               <span class="tool-arrow">→</span>
+
             </a>
 
 
             <a href="/image-generator.html" class="tool-card">
+
               <div class="tool-icon">🖼️</div>
 
               <div class="tool-content">
                 <h3>Image Generator</h3>
+
                 <p>
-                  Bring your ideas to life with AI-generated visuals.
+                  Bring your ideas to life with AI visuals.
                 </p>
               </div>
 
               <span class="tool-arrow">→</span>
+
             </a>
 
           </div>
@@ -235,6 +156,7 @@
       >
 
         <div class="page-heading">
+
           <span class="eyebrow">CREATE</span>
 
           <h1>Creator Tools</h1>
@@ -242,12 +164,14 @@
           <p>
             Everything you need to turn an idea into content.
           </p>
+
         </div>
 
 
         <div class="tool-grid">
 
           <a href="/script.html" class="tool-card">
+
             <div class="tool-icon">✍️</div>
 
             <div class="tool-content">
@@ -256,10 +180,12 @@
             </div>
 
             <span class="tool-arrow">→</span>
+
           </a>
 
 
           <a href="/index.html" class="tool-card">
+
             <div class="tool-icon">🎙️</div>
 
             <div class="tool-content">
@@ -268,10 +194,12 @@
             </div>
 
             <span class="tool-arrow">→</span>
+
           </a>
 
 
           <a href="/prompt-generator.html" class="tool-card">
+
             <div class="tool-icon">💡</div>
 
             <div class="tool-content">
@@ -280,10 +208,12 @@
             </div>
 
             <span class="tool-arrow">→</span>
+
           </a>
 
 
           <a href="/image-generator.html" class="tool-card">
+
             <div class="tool-icon">🖼️</div>
 
             <div class="tool-content">
@@ -292,20 +222,28 @@
             </div>
 
             <span class="tool-arrow">→</span>
+
           </a>
 
 
           <div class="tool-card tool-card-disabled">
+
             <div class="tool-icon">🎬</div>
 
             <div class="tool-content">
+
               <h3>Video Creator</h3>
-              <p>Build complete videos from your assets.</p>
+
+              <p>
+                Build complete videos from your assets.
+              </p>
 
               <span class="coming-soon">
                 Coming soon
               </span>
+
             </div>
+
           </div>
 
         </div>
@@ -321,6 +259,7 @@
       >
 
         <div class="page-heading">
+
           <span class="eyebrow">WORKSPACE</span>
 
           <h1>Projects</h1>
@@ -328,6 +267,7 @@
           <p>
             Keep your scripts, voices, images and other assets together.
           </p>
+
         </div>
 
 
@@ -358,6 +298,7 @@
       >
 
         <div class="page-heading">
+
           <span class="eyebrow">YOUR WORK</span>
 
           <h1>Recent Creations</h1>
@@ -365,6 +306,7 @@
           <p>
             Quickly find the content you've created with VoiceNest.
           </p>
+
         </div>
 
 
@@ -391,129 +333,123 @@
 
 
       <!-- USAGE -->
-      
+      <section
+        class="view"
+        id="view-usage"
+        data-view-section="usage"
+      >
 
-<section
-  class="view"
-  id="view-usage"
-  data-view-section="usage"
->
+        <div class="page-heading">
 
-  <div class="page-heading">
-    <span class="eyebrow">ACCOUNT</span>
+          <span class="eyebrow">ACCOUNT</span>
 
-    <h1>Your Usage</h1>
+          <h1>Your Usage</h1>
 
-    <p>
-      Keep track of your VoiceNest usage and available limits.
-    </p>
-  </div>
+          <p>
+            Keep track of your VoiceNest usage and available limits.
+          </p>
 
-
-  <div class="usage-grid">
-
-    <!-- Voice -->
-    <div class="usage-card">
-
-      <div class="usage-card-header">
-        <span>🎙️ Voice Generations</span>
-
-        <strong>
-          <span id="voiceUsed">0</span>
-          /
-          <span id="voiceLimit">5</span>
-        </strong>
-      </div>
-
-      <div class="usage-progress">
-        <div
-          class="usage-progress-bar"
-          id="voiceProgress"
-        ></div>
-      </div>
-
-      <p id="voiceRemaining">
-        Loading...
-      </p>
-
-    </div>
+        </div>
 
 
-    <!-- Image -->
-    <div class="usage-card">
+        <div class="usage-grid">
 
-      <div class="usage-card-header">
-        <span>🖼️ Image Generations</span>
+          <div class="usage-card">
 
-        <strong>
-          <span id="imageUsed">0</span>
-          /
-          <span id="imageLimit">3</span>
-        </strong>
-      </div>
+            <div class="usage-card-header">
+              <span>🎙️ Voice Generations</span>
 
-      <div class="usage-progress">
-        <div
-          class="usage-progress-bar"
-          id="imageProgress"
-        ></div>
-      </div>
+              <strong>
+                <span id="voiceUsed">0</span>
+                /
+                <span id="voiceLimit">5</span>
+              </strong>
+            </div>
 
-      <p id="imageRemaining">
-        Loading...
-      </p>
+            <div class="usage-progress">
+              <div
+                class="usage-progress-bar"
+                id="voiceProgress"
+              ></div>
+            </div>
 
-    </div>
+            <p id="voiceRemaining">
+              Loading...
+            </p>
 
-
-    <!-- Script -->
-    <div class="usage-card">
-
-      <div class="usage-card-header">
-        <span>✍️ Script Generations</span>
-
-        <strong>
-          <span id="scriptUsed">0</span>
-          /
-          <span id="scriptLimit">5</span>
-        </strong>
-      </div>
-
-      <div class="usage-progress">
-        <div
-          class="usage-progress-bar"
-          id="scriptProgress"
-        ></div>
-      </div>
-
-      <p id="scriptRemaining">
-        Loading...
-      </p>
-
-    </div>
+          </div>
 
 
-    <!-- Prompt -->
-    <div class="usage-card">
+          <div class="usage-card">
 
-      <div class="usage-card-header">
-        <span>💡 Prompt Generations</span>
+            <div class="usage-card-header">
+              <span>🖼️ Image Generations</span>
 
-        <strong>
-          Unlimited
-        </strong>
-      </div>
+              <strong>
+                <span id="imageUsed">0</span>
+                /
+                <span id="imageLimit">3</span>
+              </strong>
+            </div>
 
-      <p>
-        Prompt generation is currently available without a daily limit.
-      </p>
+            <div class="usage-progress">
+              <div
+                class="usage-progress-bar"
+                id="imageProgress"
+              ></div>
+            </div>
 
-    </div>
+            <p id="imageRemaining">
+              Loading...
+            </p>
 
-  </div>
+          </div>
 
-</section>
-          
+
+          <div class="usage-card">
+
+            <div class="usage-card-header">
+              <span>✍️ Script Generations</span>
+
+              <strong>
+                <span id="scriptUsed">0</span>
+                /
+                <span id="scriptLimit">5</span>
+              </strong>
+            </div>
+
+            <div class="usage-progress">
+              <div
+                class="usage-progress-bar"
+                id="scriptProgress"
+              ></div>
+            </div>
+
+            <p id="scriptRemaining">
+              Loading...
+            </p>
+
+          </div>
+
+
+          <div class="usage-card">
+
+            <div class="usage-card-header">
+              <span>💡 Prompt Generations</span>
+
+              <strong>Unlimited</strong>
+            </div>
+
+            <p>
+              Prompt generation is currently available without a daily limit.
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
 
       <!-- SETTINGS -->
       <section
@@ -523,6 +459,7 @@
       >
 
         <div class="page-heading">
+
           <span class="eyebrow">ACCOUNT</span>
 
           <h1>Settings</h1>
@@ -530,27 +467,37 @@
           <p>
             Manage your VoiceNest account and preferences.
           </p>
+
         </div>
 
 
         <div class="settings-card">
 
           <div class="settings-row">
+
             <div>
+
               <h3>Account</h3>
+
               <p id="settingsEmail">
                 Loading account information...
               </p>
+
             </div>
+
           </div>
 
 
           <div class="settings-row">
+
             <div>
+
               <h3>Authentication</h3>
+
               <p>
                 Manage your VoiceNest session.
               </p>
+
             </div>
 
             <button
@@ -560,6 +507,7 @@
             >
               Log out
             </button>
+
           </div>
 
         </div>
@@ -568,14 +516,75 @@
 
     </main>
 
+
+    <!-- Bottom navigation -->
+    <nav
+      class="bottom-nav"
+      aria-label="Dashboard navigation"
+    >
+
+      <button
+        class="nav-item active"
+        type="button"
+        data-view="home"
+      >
+        <span class="nav-icon">⌂</span>
+        <span class="nav-label">Home</span>
+      </button>
+
+
+      <button
+        class="nav-item"
+        type="button"
+        data-view="creator-tools"
+      >
+        <span class="nav-icon">✦</span>
+        <span class="nav-label">Tools</span>
+      </button>
+
+
+      <button
+        class="nav-item"
+        type="button"
+        data-view="projects"
+      >
+        <span class="nav-icon">▣</span>
+        <span class="nav-label">Projects</span>
+      </button>
+
+
+      <button
+        class="nav-item"
+        type="button"
+        data-view="recent"
+      >
+        <span class="nav-icon">◷</span>
+        <span class="nav-label">Recent</span>
+      </button>
+
+
+      <button
+        class="nav-item"
+        type="button"
+        data-view="usage"
+      >
+        <span class="nav-icon">◫</span>
+        <span class="nav-label">Usage</span>
+      </button>
+
+
+      <button
+        class="nav-item"
+        type="button"
+        data-view="settings"
+      >
+        <span class="nav-icon">⚙</span>
+        <span class="nav-label">Settings</span>
+      </button>
+
+    </nav>
+
   </div>
-
-
-  <!-- Mobile navigation overlay -->
-  <div
-    class="mobile-overlay"
-    id="mobileOverlay"
-  ></div>
 
 
   <!-- Supabase -->
@@ -585,4 +594,4 @@
   <script src="/dashboard.js"></script>
 
 </body>
-            </html>
+                  </html>
