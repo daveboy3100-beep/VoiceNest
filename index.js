@@ -441,6 +441,96 @@ async function incrementVoiceUsage(
 
 }
 // ============================================================
+// GET CURRENT USER USAGE
+// ============================================================
+
+app.get(
+  "/api/usage",
+  async (req, res) => {
+
+    try {
+
+      const auth =
+        await getAuthenticatedUser(
+          req
+        );
+
+      if (!auth.user) {
+
+        return res
+          .status(auth.status)
+          .json({
+            error:
+              "Please sign in before viewing your usage."
+          });
+
+      }
+
+      const {
+        user,
+        accessToken
+      } = auth;
+
+      const voiceUsage =
+        await checkVoiceUsage(
+          user.id,
+          accessToken
+        );
+
+      const scriptUsage =
+        await checkScriptUsage(
+          user.id,
+          accessToken
+        );
+
+      return res.json({
+
+        success: true,
+
+        voice: {
+          used:
+            voiceUsage.count,
+
+          limit:
+            DAILY_VOICE_LIMIT,
+
+          remaining:
+            voiceUsage.remaining
+        },
+
+        script: {
+          used:
+            scriptUsage.count,
+
+          limit:
+            DAILY_SCRIPT_LIMIT,
+
+          remaining:
+            scriptUsage.remaining
+        }
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        "Get usage error:",
+        error
+      );
+
+      return res
+        .status(500)
+        .json({
+          error:
+            error?.message ||
+            "Unable to load your usage."
+        });
+
+    }
+
+  }
+);
+// ============================================================
 // HELPER: CHECK SCRIPT USAGE
 // ============================================================
 
