@@ -78,24 +78,14 @@ a {
 
 
 /* =========================
-   APP CONTAINER
-========================= */
-
-.dashboard-container {
-  width: min(100% - 40px, var(--max-width));
-  margin: 0 auto;
-}
-
-
-/* =========================
    TOP BAR
 ========================= */
 
 .top-bar {
   width: min(100% - 40px, var(--max-width));
-  margin: 0 auto;
-
   min-height: 78px;
+
+  margin: 0 auto;
 
   display: flex;
   align-items: center;
@@ -105,6 +95,10 @@ a {
 }
 
 .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
   color: var(--text);
   text-decoration: none;
 
@@ -113,7 +107,24 @@ a {
   letter-spacing: -0.6px;
 }
 
-.account-button {
+.brand-mark {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: var(--black);
+  color: var(--white);
+
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.account-avatar {
   width: 42px;
   height: 42px;
 
@@ -135,12 +146,12 @@ a {
     transform 0.2s ease;
 }
 
-.account-button:hover {
+.account-avatar:hover {
   background: var(--surface-muted);
   border-color: var(--border-strong);
 }
 
-.account-button:active {
+.account-avatar:active {
   transform: scale(0.96);
 }
 
@@ -149,8 +160,9 @@ a {
    MAIN CONTENT
 ========================= */
 
-main {
+.main-content {
   width: min(100% - 40px, var(--max-width));
+
   margin: 0 auto;
   padding: 42px 0 30px;
 }
@@ -162,6 +174,7 @@ main {
 
 .view {
   display: none;
+
   animation: viewFade 0.2s ease;
 }
 
@@ -187,14 +200,14 @@ main {
 
 
 /* =========================
-   PAGE HEADINGS
+   PAGE HEADING
 ========================= */
 
-.page-header {
+.page-heading {
   margin-bottom: 30px;
 }
 
-.page-header h1 {
+.page-heading h1 {
   margin: 0 0 8px;
 
   font-size: clamp(28px, 4vw, 38px);
@@ -202,10 +215,11 @@ main {
   letter-spacing: -1.2px;
 }
 
-.page-header p {
+.page-heading p {
   margin: 0;
 
   color: var(--text-secondary);
+
   font-size: 15px;
   line-height: 1.6;
 }
@@ -228,55 +242,53 @@ main {
 }
 
 .welcome-section p {
-  margin: 0;
-
   max-width: 650px;
 
+  margin: 0;
+
   color: var(--text-secondary);
+
   font-size: 16px;
   line-height: 1.65;
 }
 
 
 /* =========================
-   SECTION
+   SECTIONS
 ========================= */
 
 .dashboard-section {
   margin-bottom: 42px;
 }
 
-.section-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 20px;
-
+.section-heading {
   margin-bottom: 18px;
 }
 
-.section-header h2 {
+.section-heading h2 {
   margin: 0;
 
   font-size: 21px;
   letter-spacing: -0.4px;
 }
 
-.section-header p {
+.section-heading p {
   margin: 5px 0 0;
 
   color: var(--text-secondary);
+
   font-size: 14px;
 }
 
 
 /* =========================
-   USAGE GRID
+   USAGE
 ========================= */
 
 .usage-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+
   gap: 16px;
 }
 
@@ -287,6 +299,7 @@ main {
   border-radius: var(--radius-md);
 
   background: var(--surface);
+
   box-shadow: var(--shadow-sm);
 }
 
@@ -294,8 +307,8 @@ main {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 15px;
 
+  gap: 15px;
   margin-bottom: 18px;
 }
 
@@ -310,12 +323,14 @@ main {
   margin: 0;
 
   color: var(--text-secondary);
+
   font-size: 13px;
 }
 
 .usage-value {
   font-size: 14px;
   font-weight: 700;
+
   white-space: nowrap;
 }
 
@@ -345,6 +360,7 @@ main {
   margin-top: 10px;
 
   color: var(--text-muted);
+
   font-size: 12px;
 }
 
@@ -353,9 +369,10 @@ main {
    CREATOR TOOLS
 ========================= */
 
-.creator-tools-grid {
+.tool-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+
   gap: 16px;
 }
 
@@ -373,8 +390,8 @@ main {
 
   background: var(--surface);
 
-  text-decoration: none;
   color: var(--text);
+  text-decoration: none;
 
   transition:
     transform 0.2s ease,
@@ -421,6 +438,7 @@ main {
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+
   gap: 16px;
 }
 
@@ -441,6 +459,7 @@ main {
 
 .project-card:hover {
   border-color: var(--border-strong);
+
   box-shadow: var(--shadow-sm);
 }
 
@@ -475,6 +494,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   gap: 20px;
 
   border: 1px solid var(--border);
@@ -501,6 +521,7 @@ main {
   flex-shrink: 0;
 
   color: var(--text);
+
   font-size: 13px;
   font-weight: 700;
 }
@@ -529,6 +550,7 @@ main {
 
 .empty-state p {
   max-width: 480px;
+
   margin: 0 auto;
 
   color: var(--text-secondary);
@@ -542,32 +564,38 @@ main {
    SETTINGS
 ========================= */
 
-.settings-list {
-  display: grid;
-  gap: 12px;
+.settings-card {
+  overflow: hidden;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+
+  background: var(--surface);
 }
 
-.settings-item {
+.settings-row {
   padding: 20px;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   gap: 20px;
 
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-
-  background: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 
-.settings-item h3 {
+.settings-row:last-child {
+  border-bottom: 0;
+}
+
+.settings-row h3 {
   margin: 0 0 5px;
 
   font-size: 15px;
 }
 
-.settings-item p {
+.settings-row p {
   margin: 0;
 
   color: var(--text-secondary);
@@ -605,6 +633,7 @@ main {
 
 .bottom-nav {
   position: fixed;
+
   z-index: 1000;
 
   left: 50%;
@@ -620,6 +649,7 @@ main {
   display: flex;
   align-items: stretch;
   justify-content: space-between;
+
   gap: 4px;
 
   border: 1px solid var(--border);
@@ -642,6 +672,7 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   gap: 5px;
 
   border: 0;
@@ -662,6 +693,7 @@ main {
 
 .nav-item:hover {
   background: var(--surface-muted);
+
   color: var(--text);
 }
 
@@ -670,12 +702,12 @@ main {
   color: var(--white);
 }
 
-.nav-item-icon {
+.nav-icon {
   font-size: 18px;
   line-height: 1;
 }
 
-.nav-item-label {
+.nav-label {
   line-height: 1;
 }
 
@@ -686,6 +718,7 @@ main {
 
 .dashboard-footer {
   width: min(100% - 40px, var(--max-width));
+
   margin: 20px auto 100px;
 
   color: var(--text-muted);
@@ -716,11 +749,10 @@ main {
     --bottom-nav-height: 72px;
   }
 
-  .dashboard-container,
-  main,
   .top-bar,
+  .main-content,
   .dashboard-footer {
-    width: min(100% - 24px, var(--max-width));
+    width: calc(100% - 24px);
   }
 
   .top-bar {
@@ -731,7 +763,12 @@ main {
     font-size: 20px;
   }
 
-  main {
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+  }
+
+  .main-content {
     padding-top: 30px;
   }
 
@@ -748,7 +785,7 @@ main {
   }
 
   .usage-grid,
-  .creator-tools-grid,
+  .tool-grid,
   .projects-grid {
     grid-template-columns: 1fr;
   }
@@ -761,13 +798,7 @@ main {
     min-height: 165px;
   }
 
-  .section-header {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .settings-item {
+  .settings-row {
     align-items: flex-start;
     flex-direction: column;
   }
@@ -789,7 +820,6 @@ main {
     bottom: 8px;
 
     width: calc(100% - 16px);
-
     height: var(--bottom-nav-height);
 
     border-radius: 18px;
@@ -801,7 +831,7 @@ main {
     font-size: 9px;
   }
 
-  .nav-item-icon {
+  .nav-icon {
     font-size: 17px;
   }
 
@@ -812,11 +842,11 @@ main {
 
 
 @media (max-width: 380px) {
-  .nav-item-label {
+  .nav-label {
     font-size: 8px;
   }
 
-  .nav-item-icon {
+  .nav-icon {
     font-size: 16px;
   }
-   }
+             }
