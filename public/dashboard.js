@@ -1,3 +1,18 @@
+/* =========================
+   SUPABASE
+========================= */
+
+const SUPABASE_URL =
+  "https://okbipirfsusciztzstka.supabase.co";
+
+const SUPABASE_ANON_KEY =
+  "sb_publishable_wp1MJ7xmnJjseGjFtM9PWQ_xQWRh7hW";
+
+const supabase =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
 const usageData = {
   voice: {
     used: 0,
