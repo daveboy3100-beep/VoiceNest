@@ -1,27 +1,16 @@
-// =========================================================
-// VOICENEST DASHBOARD
-// =========================================================
-
-// =========================================================
-// USAGE CONFIGURATION
-// =========================================================
-
 const usageData = {
   voice: {
     used: 0,
     limit: 5
   },
-
   image: {
     used: 0,
     limit: 3
   },
-
   script: {
     used: 0,
     limit: 5
   },
-
   prompt: {
     used: 0,
     limit: null
@@ -29,150 +18,106 @@ const usageData = {
 };
 
 
-// =========================================================
-// UPDATE USAGE ITEM
-// =========================================================
+/* =========================
+   USAGE
+========================= */
 
 function updateUsageItem(type) {
-
   const data = usageData[type];
 
-  if (!data) {
+  if (!data) return;
+
+  const usedElement = document.getElementById(`${type}Used`);
+  const limitElement = document.getElementById(`${type}Limit`);
+  const progressElement = document.getElementById(`${type}Progress`);
+  const remainingElement = document.getElementById(`${type}Remaining`);
+
+  if (!usedElement || !limitElement || !progressElement || !remainingElement) {
     return;
   }
 
-
-  // -------------------------------------------------------
-  // Unlimited usage
-  // -------------------------------------------------------
+  usedElement.textContent = data.used;
 
   if (data.limit === null) {
+    limitElement.textContent = "Unlimited";
+    progressElement.style.width = "0%";
+    remainingElement.textContent = "Unlimited";
     return;
   }
 
+  limitElement.textContent = data.limit;
 
-  const usedElement =
-    document.getElementById(
-      `${type}Used`
-    );
+  const percentage = Math.min(
+    (data.used / data.limit) * 100,
+    100
+  );
 
-  const limitElement =
-    document.getElementById(
-      `${type}Limit`
-    );
+  progressElement.style.width = `${percentage}%`;
 
-  const progressElement =
-    document.getElementById(
-      `${type}Progress`
-    );
+  const remaining = Math.max(
+    data.limit - data.used,
+    0
+  );
 
-  const remainingElement =
-    document.getElementById(
-      `${type}Remaining`
-    );
-
-
-  if (
-    !usedElement ||
-    !limitElement ||
-    !progressElement ||
-    !remainingElement
-  ) {
-    return;
-  }
-
-
-  // -------------------------------------------------------
-  // Update numbers
-  // -------------------------------------------------------
-
-  usedElement.textContent =
-    data.used;
-
-  limitElement.textContent =
-    data.limit;
-
-
-  // -------------------------------------------------------
-  // Calculate progress
-  // -------------------------------------------------------
-
-  const percentage =
-    Math.min(
-      (data.used / data.limit) * 100,
-      100
-    );
-
-
-  progressElement.style.width =
-    `${percentage}%`;
-
-
-  // -------------------------------------------------------
-  // Remaining generations
-  // -------------------------------------------------------
-
-  const remaining =
-    Math.max(
-      data.limit - data.used,
-      0
-    );
-
-
-  remainingElement.textContent =
-    remaining === 1
-      ? "1 remaining"
-      : `${remaining} remaining`;
-
-
-  // -------------------------------------------------------
-  // Limit reached
-  // -------------------------------------------------------
-
-  if (data.used >= data.limit) {
-
-    remainingElement.textContent =
-      "Daily limit reached";
-
-    progressElement.style.width =
-      "100%";
-
-  }
-
+  remainingElement.textContent = `${remaining} remaining`;
 }
 
-
-// =========================================================
-// UPDATE ALL USAGE
-// =========================================================
 
 function updateDashboardUsage() {
-
   updateUsageItem("voice");
-
   updateUsageItem("image");
-
   updateUsageItem("script");
-
 }
 
 
-// =========================================================
-// INITIALIZE DASHBOARD
-// =========================================================
+/* =========================
+   DASHBOARD NAVIGATION
+========================= */
+
+const navItems = document.querySelectorAll(".nav-item[data-view]");
+const views = document.querySelectorAll(".view[data-view-section]");
+
+
+function showView(viewName) {
+  views.forEach((view) => {
+    const isActive = view.dataset.viewSection === viewName;
+
+    view.classList.toggle("active", isActive);
+    view.hidden = !isActive;
+  });
+
+  navItems.forEach((item) => {
+    const isActive = item.dataset.view === viewName;
+
+    item.classList.toggle("active", isActive);
+  });
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+
+navItems.forEach((item) => {
+  item.addEventListener("click", () => {
+    const viewName = item.dataset.view;
+
+    if (!viewName) return;
+
+    showView(viewName);
+  });
+});
+
+
+/* =========================
+   INITIALIZE
+========================= */
 
 function initializeDashboard() {
-
+  showView("home");
   updateDashboardUsage();
-
 }
 
 
-// =========================================================
-// START
-// =========================================================
-
-document.addEventListener(
-  "DOMContentLoaded",
-  initializeDashboard
-);
+document.addEventListener("DOMContentLoaded", initializeDashboard);
