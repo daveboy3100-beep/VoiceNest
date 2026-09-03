@@ -110,7 +110,90 @@ async function updateDashboardUsage() {
   }
       }
 
+async function loadRecentCreations() {
+  const recentCreations = document.getElementById("recentCreations");
 
+  if (!recentCreations) return;
+
+  try {
+    const {
+      data: { session }
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      return;
+    }
+
+    const response = await fetch("/api/saved-scripts", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`
+      }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Unable to load recent creations."
+      );
+    }
+
+    const scripts = Array.isArray(data)
+      ? data
+      : data.scripts || [];
+
+    if (!scripts.length) {
+      return;
+    }
+
+    const recentScripts = scripts.slice(0, 3);
+
+    recentCreations.innerHTML = `
+      <div class="recent-list">
+        ${recentScripts.map((script) => `
+          <a
+            href="/scripts.html"
+            class="recent-item"
+          >
+            <div class="recent-item-content">
+              <span class="recent-item-type">
+                Script
+              </span>
+
+              <h3>
+                ${escapeHtml(
+                  script.title || "Untitled Script"
+                )}
+              </h3>
+
+              <p>
+                ${escapeHtml(
+                  script.topic || "Saved script"
+                )}
+              </p>
+            </div>
+
+            <span class="recent-item-arrow">→</span>
+          </a>
+        `).join("")}
+      </div>
+
+      <a
+        href="/scripts.html"
+        class="view-all-link"
+      >
+        View all scripts →
+      </a>
+    `;
+
+  } catch (error) {
+    console.error(
+      "Recent creations error:",
+      error
+    );
+  }
+      }
 /* =========================
    DASHBOARD NAVIGATION
 ========================= */
@@ -159,6 +242,6 @@ function initializeDashboard() {
   showView("home");
   updateDashboardUsage();
 }
-
+loadRecentCreations();
 
 document.addEventListener("DOMContentLoaded", initializeDashboard);
