@@ -547,6 +547,65 @@
   color: #fff;
   background: #6c3cff;
       }
+    .account-area {
+  position: relative;
+}
+
+.account-button {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: inherit;
+  padding: 9px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.account-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.account-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 220px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #151820;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+  z-index: 1000;
+}
+
+.account-email {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 4px 4px 12px;
+  word-break: break-word;
+}
+
+.logout-button {
+  width: 100%;
+  border: 0;
+  background: rgba(255, 80, 80, 0.1);
+  color: #ff8b8b;
+  padding: 10px 12px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.logout-button:hover {
+  background: rgba(255, 80, 80, 0.18);
+}
+
+.hidden {
+  display: none !important;
+                   }
     .auth-modal {
   position: fixed;
   inset: 0;
@@ -637,10 +696,40 @@
     VoiceNest
   </a>
 
-  <div class="public-auth">
-    <a href="/login.html" class="public-auth-login">Log in</a>
-    <a href="/signup.html" class="public-auth-signup">Sign up</a>
+<div class="public-auth">
+  <a href="/login.html" class="public-auth-login">Log in</a>
+  <a href="/signup.html" class="public-auth-signup">Sign up</a>
+</div>
+
+<div class="account-area hidden">
+  <button
+    type="button"
+    id="accountButton"
+    class="account-button"
+  >
+    👤 Account
+  </button>
+
+  <div
+    id="accountMenu"
+    class="account-menu hidden"
+  >
+    <div
+      id="accountEmail"
+      class="account-email"
+    >
+      Loading...
+    </div>
+
+    <button
+      type="button"
+      id="logoutButton"
+      class="logout-button"
+    >
+      Log out
+    </button>
   </div>
+</div>
     </header>
 
     <section class="hero">
@@ -914,6 +1003,76 @@ const supabaseClient =
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
   );
+  const publicAuth = document.querySelector(".public-auth");
+const accountArea = document.querySelector(".account-area");
+
+const accountButton = document.getElementById("accountButton");
+const accountMenu = document.getElementById("accountMenu");
+const accountEmail = document.getElementById("accountEmail");
+const logoutButton = document.getElementById("logoutButton");
+
+async function checkAuthSession() {
+  const {
+    data: { session }
+  } = await supabaseClient.auth.getSession();
+
+  if (session) {
+    publicAuth.classList.add("hidden");
+    accountArea.classList.remove("hidden");
+
+    const {
+      data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    accountEmail.textContent =
+      user?.email || "Signed in";
+  } else {
+    publicAuth.classList.remove("hidden");
+    accountArea.classList.add("hidden");
+  }
+
+  return session;
+}
+
+accountButton.addEventListener("click", () => {
+  accountMenu.classList.toggle("hidden");
+});
+
+logoutButton.addEventListener("click", async () => {
+  const confirmLogout = window.confirm(
+    "Are you sure you want to log out?"
+  );
+
+  if (!confirmLogout) return;
+
+  logoutButton.disabled = true;
+  logoutButton.textContent = "Logging out...";
+
+  const { error } =
+    await supabaseClient.auth.signOut();
+
+  if (error) {
+    console.error("Logout error:", error);
+
+    logoutButton.disabled = false;
+    logoutButton.textContent = "Log out";
+
+    return;
+  }
+
+  accountMenu.classList.add("hidden");
+
+  logoutButton.disabled = false;
+  logoutButton.textContent = "Log out";
+
+  await checkAuthSession();
+});
+
+supabaseClient.auth.onAuthStateChange(() => {
+  checkAuthSession();
+});
+
+checkAuthSession();
   const authModal = document.getElementById("authModal");
 const authModalClose = document.getElementById("authModalClose");
 
