@@ -154,7 +154,58 @@ a {
 .account-avatar:active {
   transform: scale(0.96);
 }
+.account-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 220px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #151820;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+  z-index: 1000;
+}
 
+.account-email {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 4px 4px 12px;
+  word-break: break-word;
+}
+
+.account-link,
+.logout-button {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  text-decoration: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 10px 12px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.account-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.logout-button {
+  color: #ff8b8b;
+}
+
+.logout-button:hover {
+  background: rgba(255, 80, 80, 0.12);
+}
+
+.hidden {
+  display: none !important;
+                               }
 
 /* =========================
    MAIN CONTENT
