@@ -123,22 +123,23 @@ a {
   font-size: 15px;
   font-weight: 800;
 }
+.account-area {
+  position: relative;
+}
 
-.account-avatar {
-  width: 42px;
-  height: 42px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.account-button {
+  padding: 10px 14px;
 
   border: 1px solid var(--border);
-  border-radius: 50%;
+  border-radius: 10px;
 
   background: var(--white);
   color: var(--text);
 
   cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 700;
 
   transition:
     background 0.2s ease,
@@ -146,14 +147,14 @@ a {
     transform 0.2s ease;
 }
 
-.account-avatar:hover {
+.account-button:hover {
   background: var(--surface-muted);
   border-color: var(--border-strong);
 }
 
-.account-avatar:active {
-  transform: scale(0.96);
-}
+.account-button:active {
+  transform: scale(0.97);
+   }
 .account-menu {
   position: absolute;
   top: calc(100% + 10px);
