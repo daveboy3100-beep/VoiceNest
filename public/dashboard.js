@@ -220,6 +220,134 @@ async function loadRecentCreations() {
   }
       }
 /* =========================
+   ACCOUNT / AUTH
+========================= */
+
+const accountArea =
+  document.querySelector(".account-area");
+
+const accountButton =
+  document.getElementById("accountButton");
+
+const accountMenu =
+  document.getElementById("accountMenu");
+
+const accountEmail =
+  document.getElementById("accountEmail");
+
+const loginLink =
+  document.getElementById("loginLink");
+
+const signupLink =
+  document.getElementById("signupLink");
+
+const accountLogoutButton =
+  document.getElementById("accountLogoutButton");
+
+const settingsLogoutButton =
+  document.getElementById("logoutButton");
+
+async function updateAccountUI() {
+  if (!supabaseClient) return;
+
+  try {
+    const {
+      data: { session }
+    } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+      accountEmail.textContent = "";
+      loginLink.classList.remove("hidden");
+      signupLink.classList.remove("hidden");
+      accountLogoutButton.classList.add("hidden");
+
+      return;
+    }
+
+    const {
+      data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    accountEmail.textContent =
+      user?.email || "Signed in";
+
+    loginLink.classList.add("hidden");
+    signupLink.classList.add("hidden");
+    accountLogoutButton.classList.remove("hidden");
+
+  } catch (error) {
+    console.error(
+      "Account UI error:",
+      error
+    );
+  }
+}
+
+accountButton.addEventListener(
+  "click",
+  () => {
+    accountMenu.classList.toggle("hidden");
+  }
+);
+
+async function logoutUser(button) {
+  if (!supabaseClient) return;
+
+  const confirmLogout =
+    window.confirm(
+      "Are you sure you want to log out?"
+    );
+
+  if (!confirmLogout) return;
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Logging out...";
+  }
+
+  const { error } =
+    await supabaseClient.auth.signOut();
+
+  if (error) {
+    console.error(
+      "Logout error:",
+      error
+    );
+
+    if (button) {
+      button.disabled = false;
+      button.textContent = "Log out";
+    }
+
+    return;
+  }
+
+  accountMenu.classList.add("hidden");
+
+  if (button) {
+    button.disabled = false;
+    button.textContent = "Log out";
+  }
+
+  await updateAccountUI();
+}
+
+accountLogoutButton.addEventListener(
+  "click",
+  () => {
+    logoutUser(accountLogoutButton);
+  }
+);
+
+settingsLogoutButton.addEventListener(
+  "click",
+  () => {
+    logoutUser(settingsLogoutButton);
+  }
+);
+
+
+/* =========================
    DASHBOARD NAVIGATION
 ========================= */
 
@@ -275,6 +403,12 @@ function initializeDashboard() {
     );
     return;
   }
+
+    updateAccountUI();
+
+  supabaseClient.auth.onAuthStateChange(() => {
+    updateAccountUI();
+  });
 
   updateDashboardUsage();
   loadRecentCreations();
