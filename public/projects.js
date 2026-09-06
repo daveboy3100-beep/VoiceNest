@@ -20,6 +20,8 @@ const createProjectForm =
 
 const projectNameInput =
   document.getElementById("projectName");
+const projectDescriptionInput =
+  document.getElementById("projectDescription");
 function openProjectModal() {
   createProjectModal.classList.remove("hidden");
   createProjectModal.setAttribute("aria-hidden", "false");
