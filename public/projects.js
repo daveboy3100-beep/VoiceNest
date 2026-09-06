@@ -83,8 +83,13 @@ projectCard.className =
 
 projectCard.innerHTML = `
   <h2>${projectName}</h2>
-`;
 
+  ${
+    projectDescription
+      ? `<p>${projectDescription}</p>`
+      : ""
+  }
+`;
 projectsList.appendChild(
   projectCard
 );
