@@ -72,9 +72,20 @@ createProjectForm.addEventListener(
       return;
     }
 
-    console.log(
-      "Project name:",
-      projectName
-    );
+    const projectCard =
+  document.createElement("article");
+
+projectCard.className =
+  "project-card";
+
+projectCard.innerHTML = `
+  <h2>${projectName}</h2>
+`;
+
+projectsList.appendChild(
+  projectCard
+);
+
+closeProjectModalHandler();
   }
 );
