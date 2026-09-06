@@ -77,7 +77,90 @@
     </section>
 
   </main>
+<div
+  id="createProjectModal"
+  class="modal hidden"
+  aria-hidden="true"
+>
+  <div
+    class="modal-backdrop"
+    id="modalBackdrop"
+  ></div>
 
+  <div
+    class="modal-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="createProjectTitle"
+  >
+
+    <div class="modal-header">
+
+      <div>
+        <h2 id="createProjectTitle">
+          Create Project
+        </h2>
+
+        <p>
+          Give your project a name to get started.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        id="closeProjectModal"
+        class="modal-close"
+        aria-label="Close"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <form id="createProjectForm">
+
+      <label
+        for="projectName"
+        class="project-name-label"
+      >
+        Project name
+      </label>
+
+      <input
+        type="text"
+        id="projectName"
+        name="projectName"
+        class="project-name-input"
+        placeholder="e.g. My YouTube Video"
+        maxlength="100"
+        autocomplete="off"
+        required
+      >
+
+      <div class="modal-actions">
+
+        <button
+          type="button"
+          id="cancelProjectButton"
+          class="cancel-project-button"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          id="submitProjectButton"
+          class="submit-project-button"
+        >
+          Create Project
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+</div>
 
   <script src="/projects.js"></script>
 
