@@ -13,6 +13,18 @@ const projectName =
 
 const projectDescriptionText =
   projectParams.get("description");
+if (projectName) {
+  projectTitle.textContent =
+    projectName;
+}
+
+if (projectDescriptionText) {
+  projectDescription.textContent =
+    projectDescriptionText;
+} else {
+  projectDescription.textContent =
+    "Your project workspace.";
+}
 console.log("VoiceNest Project Workspace loaded");
 
 document.addEventListener(
