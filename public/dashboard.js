@@ -222,7 +222,8 @@ async function loadRecentCreations() {
 /* =========================
    ACCOUNT / AUTH
 ========================= */
-
+const publicAuth =
+  document.querySelector(".public-auth");
 const accountArea =
   document.querySelector(".account-area");
 
@@ -235,11 +236,7 @@ const accountMenu =
 const accountEmail =
   document.getElementById("accountEmail");
 
-const loginLink =
-  document.getElementById("loginLink");
 
-const signupLink =
-  document.getElementById("signupLink");
 
 const accountLogoutButton =
   document.getElementById("accountLogoutButton");
@@ -255,25 +252,23 @@ async function updateAccountUI() {
       data: { session }
     } = await supabaseClient.auth.getSession();
 
-    if (!session) {
-      accountEmail.textContent = "";
-      loginLink.classList.remove("hidden");
-      signupLink.classList.remove("hidden");
-      accountLogoutButton.classList.add("hidden");
+    if (session) {
+      publicAuth.classList.add("hidden");
+      accountArea.classList.remove("hidden");
+
+      const {
+        data: { user }
+      } = await supabaseClient.auth.getUser();
+
+      accountEmail.textContent =
+        user?.email || "Signed in";
 
       return;
     }
 
-    const {
-      data: { user }
-    } = await supabaseClient.auth.getUser();
-
-    accountEmail.textContent =
-      user?.email || "Signed in";
-
-    loginLink.classList.add("hidden");
-    signupLink.classList.add("hidden");
-    accountLogoutButton.classList.remove("hidden");
+    publicAuth.classList.remove("hidden");
+    accountArea.classList.add("hidden");
+    accountMenu.classList.add("hidden");
 
   } catch (error) {
     console.error(
@@ -281,7 +276,7 @@ async function updateAccountUI() {
       error
     );
   }
-}
+   }
 
 accountButton.addEventListener(
   "click",
@@ -404,42 +399,15 @@ function initializeDashboard() {
     return;
   }
 
-    async function updateAccountUI() {
-  if (!supabaseClient) return;
+  updateAccountUI();
 
-  try {
-    const {
-      data: { session }
-    } = await supabaseClient.auth.getSession();
-
-    if (session) {
-      publicAuth.classList.add("hidden");
-      accountArea.classList.remove("hidden");
-
-      const {
-        data: { user }
-      } = await supabaseClient.auth.getUser();
-
-      accountEmail.textContent =
-        user?.email || "Signed in";
-
-      return;
-    }
-
-    publicAuth.classList.remove("hidden");
-    accountArea.classList.add("hidden");
-    accountMenu.classList.add("hidden");
-  } catch (error) {
-    console.error(
-      "Account UI error:",
-      error
-    );
-  }
-     }
+  supabaseClient.auth.onAuthStateChange(() => {
+    updateAccountUI();
+  });
 
   updateDashboardUsage();
   loadRecentCreations();
-}
+                        }
 
 document.addEventListener(
   "DOMContentLoaded",
