@@ -69,7 +69,8 @@ createProjectForm.addEventListener(
 
     const projectName =
       projectNameInput.value.trim();
-
+const projectDescription =
+  projectDescriptionInput.value.trim();
     if (!projectName) {
       return;
     }
