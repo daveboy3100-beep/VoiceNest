@@ -1,3 +1,8 @@
+const createProjectButton =
+  document.getElementById("createProjectButton");
+
+const projectsList =
+  document.getElementById("projectsList");
 const createProjectModal =
   document.getElementById("createProjectModal");
 
@@ -46,11 +51,6 @@ modalBackdrop.addEventListener(
   "click",
   closeProjectModalHandler
 );
-const createProjectButton =
-  document.getElementById("createProjectButton");
-
-const projectsList =
-  document.getElementById("projectsList");
 
 console.log("VoiceNest Projects loaded");
 createProjectButton.addEventListener(
