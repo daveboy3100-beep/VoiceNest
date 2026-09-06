@@ -80,7 +80,15 @@ const projectDescription =
 
 projectCard.className =
   "project-card";
-
+projectCard.addEventListener(
+  "click",
+  () => {
+    console.log(
+      "Project opened:",
+      projectName
+    );
+  }
+);
 projectCard.innerHTML = `
   <h2>${projectName}</h2>
 
