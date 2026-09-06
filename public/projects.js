@@ -83,10 +83,14 @@ projectCard.className =
 projectCard.addEventListener(
   "click",
   () => {
-    console.log(
-      "Project opened:",
-      projectName
-    );
+    const projectParams =
+      new URLSearchParams({
+        name: projectName,
+        description: projectDescription
+      });
+
+    window.location.href =
+      `/project.html?${projectParams.toString()}`;
   }
 );
 projectCard.innerHTML = `
