@@ -560,3 +560,56 @@ body {
 
   overflow: hidden;
 }
+/* =========================
+   PROJECT DESCRIPTION INPUT
+========================= */
+
+.project-description-label {
+  display: block;
+
+  margin-top: 18px;
+  margin-bottom: 8px;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.project-description-input {
+  display: block;
+
+  width: 100%;
+  min-height: 120px;
+
+  padding: 12px 13px;
+
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+
+  background: var(--white);
+  color: var(--text);
+
+  outline: none;
+
+  resize: vertical;
+
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+
+  box-sizing: border-box;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.project-description-input::placeholder {
+  color: var(--text-muted);
+}
+
+.project-description-input:focus {
+  border-color: var(--black);
+
+  box-shadow:
+    0 0 0 3px rgba(0, 0, 0, 0.08);
+  }
