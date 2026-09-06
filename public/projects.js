@@ -27,7 +27,9 @@ function openProjectModal() {
   createProjectModal.setAttribute("aria-hidden", "false");
 
   projectNameInput.value = "";
-  projectNameInput.focus();
+projectDescriptionInput.value = "";
+
+projectNameInput.focus();
 }
 
 function closeProjectModalHandler() {
