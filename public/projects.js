@@ -53,12 +53,7 @@ modalBackdrop.addEventListener(
 );
 
 console.log("VoiceNest Projects loaded");
-createProjectButton.addEventListener(
-  "click",
-  () => {
-    console.log("Create Project clicked");
-  }
-);
+
 document.addEventListener(
   "DOMContentLoaded",
   () => {
