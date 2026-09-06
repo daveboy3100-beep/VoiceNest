@@ -224,7 +224,59 @@ a {
 .hidden {
   display: none !important;
                                }
+.public-auth {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
+.public-auth-login,
+.public-auth-signup {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 40px;
+  padding: 0 14px;
+
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.public-auth-login {
+  background: var(--white);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.public-auth-login:hover {
+  background: var(--surface-muted);
+  border-color: var(--border-strong);
+}
+
+.public-auth-signup {
+  background: var(--text);
+  color: var(--white);
+  border: 1px solid var(--text);
+}
+
+.public-auth-signup:hover {
+  opacity: 0.88;
+}
+
+.public-auth-login:active,
+.public-auth-signup:active {
+  transform: scale(0.97);
+   }
 /* =========================
    MAIN CONTENT
 ========================= */
