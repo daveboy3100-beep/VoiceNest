@@ -1,0 +1,204 @@
+/* =========================
+   PROJECT WORKSPACE
+========================= */
+
+:root {
+  --black: #000000;
+  --white: #ffffff;
+
+  --text: #111111;
+  --text-muted: #666666;
+
+  --surface: #ffffff;
+  --surface-muted: #f7f7f7;
+
+  --border: #e5e5e5;
+  --border-strong: #cccccc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+
+  background: var(--surface-muted);
+  color: var(--text);
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+/* =========================
+   TOP BAR
+========================= */
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 64px;
+
+  padding: 0 24px;
+
+  border-bottom: 1px solid var(--border);
+
+  background: var(--white);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 9px;
+
+  color: var(--text);
+
+  text-decoration: none;
+
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+
+  border-radius: 8px;
+
+  background: var(--black);
+  color: var(--white);
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.back-button {
+  color: var(--text-muted);
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition: color 0.2s ease;
+}
+
+.back-button:hover {
+  color: var(--text);
+}
+
+/* =========================
+   PROJECT PAGE
+========================= */
+
+.project-page {
+  width: min(1000px, 100%);
+
+  margin: 0 auto;
+
+  padding: 48px 24px;
+}
+
+/* =========================
+   PROJECT HEADER
+========================= */
+
+.project-header {
+  margin-bottom: 32px;
+}
+
+.project-header h1 {
+  margin: 0 0 8px;
+
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+.project-header p {
+  margin: 0;
+
+  max-width: 700px;
+
+  color: var(--text-muted);
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* =========================
+   WORKSPACE
+========================= */
+
+.project-workspace {
+  padding: 24px;
+
+  border: 1px solid var(--border);
+  border-radius: 14px;
+
+  background: var(--surface);
+}
+
+.workspace-placeholder {
+  padding: 48px 24px;
+
+  text-align: center;
+}
+
+.workspace-placeholder h2 {
+  margin: 0 0 10px;
+
+  font-size: 20px;
+}
+
+.workspace-placeholder p {
+  width: min(600px, 100%);
+
+  margin: 0 auto;
+
+  color: var(--text-muted);
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+  .top-bar {
+    padding: 0 16px;
+  }
+
+  .project-page {
+    padding: 32px 16px;
+  }
+
+  .project-header h1 {
+    font-size: 25px;
+  }
+
+  .project-workspace {
+    padding: 16px;
+  }
+
+  .workspace-placeholder {
+    padding: 36px 16px;
+  }
+  }
