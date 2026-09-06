@@ -404,11 +404,38 @@ function initializeDashboard() {
     return;
   }
 
-    updateAccountUI();
+    async function updateAccountUI() {
+  if (!supabaseClient) return;
 
-  supabaseClient.auth.onAuthStateChange(() => {
-    updateAccountUI();
-  });
+  try {
+    const {
+      data: { session }
+    } = await supabaseClient.auth.getSession();
+
+    if (session) {
+      publicAuth.classList.add("hidden");
+      accountArea.classList.remove("hidden");
+
+      const {
+        data: { user }
+      } = await supabaseClient.auth.getUser();
+
+      accountEmail.textContent =
+        user?.email || "Signed in";
+
+      return;
+    }
+
+    publicAuth.classList.remove("hidden");
+    accountArea.classList.add("hidden");
+    accountMenu.classList.add("hidden");
+  } catch (error) {
+    console.error(
+      "Account UI error:",
+      error
+    );
+  }
+     }
 
   updateDashboardUsage();
   loadRecentCreations();
