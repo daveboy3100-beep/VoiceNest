@@ -60,3 +60,21 @@ document.addEventListener(
     console.log("Projects page ready");
   }
 );
+createProjectForm.addEventListener(
+  "submit",
+  (event) => {
+    event.preventDefault();
+
+    const projectName =
+      projectNameInput.value.trim();
+
+    if (!projectName) {
+      return;
+    }
+
+    console.log(
+      "Project name:",
+      projectName
+    );
+  }
+);
