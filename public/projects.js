@@ -78,7 +78,25 @@ const projectDescription =
     if (!projectName) {
       return;
     }
+const projects =
+  JSON.parse(
+    localStorage.getItem(
+      PROJECTS_STORAGE_KEY
+    )
+  ) || [];
 
+const newProject = {
+  id: Date.now().toString(),
+  name: projectName,
+  description: projectDescription
+};
+
+projects.push(newProject);
+
+localStorage.setItem(
+  PROJECTS_STORAGE_KEY,
+  JSON.stringify(projects)
+);
     const projectCard =
   document.createElement("article");
 
