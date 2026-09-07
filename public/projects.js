@@ -22,6 +22,8 @@ const projectNameInput =
   document.getElementById("projectName");
 const projectDescriptionInput =
   document.getElementById("projectDescription");
+const PROJECTS_STORAGE_KEY =
+  "voicenest_projects";
 function openProjectModal() {
   createProjectModal.classList.remove("hidden");
   createProjectModal.setAttribute("aria-hidden", "false");
