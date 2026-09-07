@@ -3,6 +3,8 @@ const createProjectButton =
 
 const projectsList =
   document.getElementById("projectsList");
+const emptyState =
+  projectsList.querySelector(".empty-state");
 const createProjectModal =
   document.getElementById("createProjectModal");
 
@@ -133,7 +135,12 @@ const projects =
       PROJECTS_STORAGE_KEY
     )
   ) || [];
-
+if (emptyState) {
+  emptyState.style.display =
+    projects.length === 0
+      ? "block"
+      : "none";
+  }
 const newProject = {
   id: Date.now().toString(),
   name: projectName,
