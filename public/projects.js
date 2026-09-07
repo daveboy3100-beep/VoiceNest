@@ -60,10 +60,59 @@ modalBackdrop.addEventListener(
 
 console.log("VoiceNest Projects loaded");
 
+function loadProjects() {
+  const projects =
+    JSON.parse(
+      localStorage.getItem(
+        PROJECTS_STORAGE_KEY
+      )
+    ) || [];
+
+  projects.forEach(
+    (project) => {
+      const projectCard =
+        document.createElement("article");
+
+      projectCard.className =
+        "project-card";
+
+      projectCard.addEventListener(
+        "click",
+        () => {
+          const projectParams =
+            new URLSearchParams({
+              id: project.id,
+              name: project.name,
+              description: project.description
+            });
+
+          window.location.href =
+            `/project.html?${projectParams.toString()}`;
+        }
+      );
+
+      projectCard.innerHTML = `
+        <h2>${project.name}</h2>
+
+        ${
+          project.description
+            ? `<p>${project.description}</p>`
+            : ""
+        }
+      `;
+
+      projectsList.appendChild(
+        projectCard
+      );
+    }
+  );
+}
+
 document.addEventListener(
   "DOMContentLoaded",
   () => {
     console.log("Projects page ready");
+    loadProjects();
   }
 );
 createProjectForm.addEventListener(
