@@ -69,7 +69,12 @@ function loadProjects() {
         PROJECTS_STORAGE_KEY
       )
     ) || [];
-
+if (emptyState) {
+  emptyState.style.display =
+    projects.length === 0
+      ? "block"
+      : "none";
+}
   projects.forEach(
     (project) => {
       const projectCard =
