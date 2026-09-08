@@ -140,12 +140,7 @@ const projects =
       PROJECTS_STORAGE_KEY
     )
   ) || [];
-if (emptyState) {
-  emptyState.style.display =
-    projects.length === 0
-      ? "block"
-      : "none";
-  }
+
 const newProject = {
   id: Date.now().toString(),
   name: projectName,
