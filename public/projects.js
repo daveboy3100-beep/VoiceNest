@@ -78,10 +78,23 @@ if (emptyState) {
   projects.forEach(
     (project) => {
       const projectCard =
-        document.createElement("article");
+  document.createElement("article");
 
-      projectCard.className =
-        "project-card";
+projectCard.className =
+  "project-card";
+
+const projectCardHeader =
+  document.createElement("div");
+
+projectCardHeader.className =
+  "project-card-header";
+
+const projectTitle =
+  document.createElement("h2");
+
+projectTitle.textContent =
+  project.name;
+
 const projectMenuButton =
   document.createElement("button");
 
@@ -94,9 +107,29 @@ projectMenuButton.setAttribute(
 );
 projectMenuButton.textContent = "⋮";
 
-projectCard.appendChild(
+projectCardHeader.appendChild(
+  projectTitle
+);
+
+projectCardHeader.appendChild(
   projectMenuButton
 );
+
+projectCard.appendChild(
+  projectCardHeader
+);
+
+if (project.description) {
+  const projectDescription =
+    document.createElement("p");
+
+  projectDescription.textContent =
+    project.description;
+
+  projectCard.appendChild(
+    projectDescription
+  );
+  }
       projectCard.addEventListener(
         "click",
         () => {
@@ -185,15 +218,7 @@ projectCard.addEventListener(
       `/project.html?${projectParams.toString()}`;
   }
 );
-projectCard.innerHTML = `
-  <h2>${projectName}</h2>
 
-  ${
-    projectDescription
-      ? `<p>${projectDescription}</p>`
-      : ""
-  }
-`;
 projectsList.appendChild(
   projectCard
 );
