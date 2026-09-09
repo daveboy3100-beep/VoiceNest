@@ -629,3 +629,14 @@ body {
   background: var(--surface-muted);
   color: var(--text);
     }
+.project-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.project-card-header h2 {
+  min-width: 0;
+  flex: 1;
+  }
