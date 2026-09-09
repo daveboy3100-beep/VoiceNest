@@ -145,15 +145,7 @@ if (project.description) {
         }
       );
 
-      projectCard.innerHTML = `
-        <h2>${project.name}</h2>
-
-        ${
-          project.description
-            ? `<p>${project.description}</p>`
-            : ""
-        }
-      `;
+      
 
       projectsList.appendChild(
         projectCard
