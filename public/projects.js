@@ -82,7 +82,21 @@ if (emptyState) {
 
       projectCard.className =
         "project-card";
+const projectMenuButton =
+  document.createElement("button");
 
+projectMenuButton.type = "button";
+projectMenuButton.className =
+  "project-menu-button";
+projectMenuButton.setAttribute(
+  "aria-label",
+  "Project options"
+);
+projectMenuButton.textContent = "⋮";
+
+projectCard.appendChild(
+  projectMenuButton
+);
       projectCard.addEventListener(
         "click",
         () => {
