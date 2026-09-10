@@ -110,6 +110,47 @@ projectMenuButton.addEventListener(
   "click",
   (event) => {
     event.stopPropagation();
+
+    const existingMenu =
+      projectCard.querySelector(
+        ".project-options-menu"
+      );
+
+    if (existingMenu) {
+      existingMenu.remove();
+      return;
+    }
+
+    const projectOptionsMenu =
+      document.createElement("div");
+
+    projectOptionsMenu.className =
+      "project-options-menu";
+
+    const deleteProjectButton =
+      document.createElement("button");
+
+    deleteProjectButton.type = "button";
+    deleteProjectButton.textContent =
+      "Delete project";
+
+    deleteProjectButton.className =
+      "delete-project-button";
+
+    deleteProjectButton.addEventListener(
+      "click",
+      (menuEvent) => {
+        menuEvent.stopPropagation();
+      }
+    );
+
+    projectOptionsMenu.appendChild(
+      deleteProjectButton
+    );
+
+    projectCard.appendChild(
+      projectOptionsMenu
+    );
   }
 );
 projectCardHeader.appendChild(
