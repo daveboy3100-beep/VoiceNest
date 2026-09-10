@@ -138,11 +138,40 @@ projectMenuButton.addEventListener(
       "delete-project-button";
 
     deleteProjectButton.addEventListener(
-      "click",
-      (menuEvent) => {
-        menuEvent.stopPropagation();
-      }
+  "click",
+  (menuEvent) => {
+    menuEvent.stopPropagation();
+
+    const confirmDelete =
+      window.confirm(
+        `Delete "${project.name}"?`
+      );
+
+    if (!confirmDelete) {
+      return;
+    }
+
+    const updatedProjects =
+      projects.filter(
+        (savedProject) =>
+          savedProject.id !== project.id
+      );
+
+    localStorage.setItem(
+      PROJECTS_STORAGE_KEY,
+      JSON.stringify(updatedProjects)
     );
+
+    projectCard.remove();
+
+    if (emptyState) {
+      emptyState.style.display =
+        updatedProjects.length === 0
+          ? "block"
+          : "none";
+    }
+  }
+);
 
     projectOptionsMenu.appendChild(
       deleteProjectButton
