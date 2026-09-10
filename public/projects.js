@@ -272,11 +272,144 @@ localStorage.setItem(
 
 projectCard.className =
   "project-card";
+
+const projectCardHeader =
+  document.createElement("div");
+
+projectCardHeader.className =
+  "project-card-header";
+
+const projectTitle =
+  document.createElement("h2");
+
+projectTitle.textContent =
+  projectName;
+
+const projectMenuButton =
+  document.createElement("button");
+
+projectMenuButton.type = "button";
+projectMenuButton.className =
+  "project-menu-button";
+projectMenuButton.setAttribute(
+  "aria-label",
+  "Project options"
+);
+projectMenuButton.textContent = "⋮";
+
+projectMenuButton.addEventListener(
+  "click",
+  (event) => {
+    event.stopPropagation();
+
+    const existingMenu =
+      projectCard.querySelector(
+        ".project-options-menu"
+      );
+
+    if (existingMenu) {
+      existingMenu.remove();
+      return;
+    }
+
+    const projectOptionsMenu =
+      document.createElement("div");
+
+    projectOptionsMenu.className =
+      "project-options-menu";
+
+    const deleteProjectButton =
+      document.createElement("button");
+
+    deleteProjectButton.type = "button";
+    deleteProjectButton.textContent =
+      "Delete project";
+    deleteProjectButton.className =
+      "delete-project-button";
+
+    deleteProjectButton.addEventListener(
+      "click",
+      (menuEvent) => {
+        menuEvent.stopPropagation();
+
+        const confirmDelete =
+          window.confirm(
+            `Delete "${projectName}"?`
+          );
+
+        if (!confirmDelete) {
+          return;
+        }
+
+        const currentProjects =
+          JSON.parse(
+            localStorage.getItem(
+              PROJECTS_STORAGE_KEY
+            )
+          ) || [];
+
+        const updatedProjects =
+          currentProjects.filter(
+            (savedProject) =>
+              savedProject.id !== newProject.id
+          );
+
+        localStorage.setItem(
+          PROJECTS_STORAGE_KEY,
+          JSON.stringify(updatedProjects)
+        );
+
+        projectCard.remove();
+
+        if (emptyState) {
+          emptyState.style.display =
+            updatedProjects.length === 0
+              ? "block"
+              : "none";
+        }
+      }
+    );
+
+    projectOptionsMenu.appendChild(
+      deleteProjectButton
+    );
+
+    projectCard.appendChild(
+      projectOptionsMenu
+    );
+  }
+);
+
+projectCardHeader.appendChild(
+  projectTitle
+);
+
+projectCardHeader.appendChild(
+  projectMenuButton
+);
+
+projectCard.appendChild(
+  projectCardHeader
+);
+
+if (projectDescription) {
+  const projectDescriptionElement =
+    document.createElement("p");
+
+  projectDescriptionElement.textContent =
+    projectDescription;
+
+  projectCard.appendChild(
+    projectDescriptionElement
+  );
+}
+
 projectCard.addEventListener(
   "click",
   () => {
     const projectParams =
       new URLSearchParams({
+        id: newProject.id,
         name: projectName,
         description: projectDescription
       });
@@ -289,6 +422,10 @@ projectCard.addEventListener(
 projectsList.appendChild(
   projectCard
 );
+
+if (emptyState) {
+  emptyState.style.display = "none";
+      }
 
 closeProjectModalHandler();
   }
