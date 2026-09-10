@@ -519,6 +519,7 @@ body {
     background 0.2s ease,
     border-color 0.2s ease,
     transform 0.2s ease;
+  position: relative;
 }
 
 .project-card:hover {
@@ -639,4 +640,35 @@ body {
 .project-card-header h2 {
   min-width: 0;
   flex: 1;
+  }
+.project-options-menu {
+  position: absolute;
+  top: 46px;
+  right: 12px;
+  z-index: 10;
+  min-width: 150px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--white);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.delete-project-button {
+  display: block;
+  width: 100%;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.delete-project-button:hover {
+  background: var(--surface-muted);
   }
