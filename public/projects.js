@@ -106,7 +106,12 @@ projectMenuButton.setAttribute(
   "Project options"
 );
 projectMenuButton.textContent = "⋮";
-
+projectMenuButton.addEventListener(
+  "click",
+  (event) => {
+    event.stopPropagation();
+  }
+);
 projectCardHeader.appendChild(
   projectTitle
 );
