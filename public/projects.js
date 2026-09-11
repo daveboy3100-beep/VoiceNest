@@ -229,101 +229,14 @@ if (emptyState) {
       ? "block"
       : "none";
 }
-  projects.forEach(
-    (project) => {
-      const projectCard =
-  document.createElement("article");
+ projects.forEach(
+  (project) => {
+    const projectCard =
+      createProjectCard(project);
 
-projectCard.className =
-  "project-card";
-
-const projectCardHeader =
-  document.createElement("div");
-
-projectCardHeader.className =
-  "project-card-header";
-
-const projectTitle =
-  document.createElement("h2");
-
-projectTitle.textContent =
-  project.name;
-
-const projectMenuButton =
-  document.createElement("button");
-
-projectMenuButton.type = "button";
-projectMenuButton.className =
-  "project-menu-button";
-projectMenuButton.setAttribute(
-  "aria-label",
-  "Project options"
-);
-projectMenuButton.textContent = "⋮";
-projectMenuButton.addEventListener(
-  "click",
-  (event) => {
-    event.stopPropagation();
-
-    const existingMenu =
-      projectCard.querySelector(
-        ".project-options-menu"
-      );
-
-    if (existingMenu) {
-      existingMenu.remove();
-      return;
-    }
-
-    const projectOptionsMenu =
-      document.createElement("div");
-
-    projectOptionsMenu.className =
-      "project-options-menu";
-
-    const deleteProjectButton =
-      document.createElement("button");
-
-    deleteProjectButton.type = "button";
-    deleteProjectButton.textContent =
-      "Delete project";
-
-    deleteProjectButton.className =
-      "delete-project-button";
-
-    deleteProjectButton.addEventListener(
-  "click",
-  (menuEvent) => {
-    menuEvent.stopPropagation();
-
-    const confirmDelete =
-      window.confirm(
-        `Delete "${project.name}"?`
-      );
-
-    if (!confirmDelete) {
-      return;
-    }
-
-    const updatedProjects =
-      projects.filter(
-        (savedProject) =>
-          savedProject.id !== project.id
-      );
-
-    localStorage.setItem(
-      PROJECTS_STORAGE_KEY,
-      JSON.stringify(updatedProjects)
+    projectsList.appendChild(
+      projectCard
     );
-
-    projectCard.remove();
-
-    if (emptyState) {
-      emptyState.style.display =
-        updatedProjects.length === 0
-          ? "block"
-          : "none";
-    }
   }
 );
 
