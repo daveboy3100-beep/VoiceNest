@@ -61,7 +61,161 @@ modalBackdrop.addEventListener(
 );
 
 console.log("VoiceNest Projects loaded");
+function createProjectCard(project) {
+  const projectCard =
+    document.createElement("article");
 
+  projectCard.className =
+    "project-card";
+
+  const projectCardHeader =
+    document.createElement("div");
+
+  projectCardHeader.className =
+    "project-card-header";
+
+  const projectTitle =
+    document.createElement("h2");
+
+  projectTitle.textContent =
+    project.name;
+
+  const projectMenuButton =
+    document.createElement("button");
+
+  projectMenuButton.type = "button";
+  projectMenuButton.className =
+    "project-menu-button";
+  projectMenuButton.setAttribute(
+    "aria-label",
+    "Project options"
+  );
+  projectMenuButton.textContent = "⋮";
+
+  projectMenuButton.addEventListener(
+    "click",
+    (event) => {
+      event.stopPropagation();
+
+      const existingMenu =
+        projectCard.querySelector(
+          ".project-options-menu"
+        );
+
+      if (existingMenu) {
+        existingMenu.remove();
+        return;
+      }
+
+      const projectOptionsMenu =
+        document.createElement("div");
+
+      projectOptionsMenu.className =
+        "project-options-menu";
+
+      const deleteProjectButton =
+        document.createElement("button");
+
+      deleteProjectButton.type = "button";
+      deleteProjectButton.textContent =
+        "Delete project";
+      deleteProjectButton.className =
+        "delete-project-button";
+
+      deleteProjectButton.addEventListener(
+        "click",
+        (menuEvent) => {
+          menuEvent.stopPropagation();
+
+          const confirmDelete =
+            window.confirm(
+              `Delete "${project.name}"?`
+            );
+
+          if (!confirmDelete) {
+            return;
+          }
+
+          const currentProjects =
+            JSON.parse(
+              localStorage.getItem(
+                PROJECTS_STORAGE_KEY
+              )
+            ) || [];
+
+          const updatedProjects =
+            currentProjects.filter(
+              (savedProject) =>
+                savedProject.id !== project.id
+            );
+
+          localStorage.setItem(
+            PROJECTS_STORAGE_KEY,
+            JSON.stringify(updatedProjects)
+          );
+
+          projectCard.remove();
+
+          if (emptyState) {
+            emptyState.style.display =
+              updatedProjects.length === 0
+                ? "block"
+                : "none";
+          }
+        }
+      );
+
+      projectOptionsMenu.appendChild(
+        deleteProjectButton
+      );
+
+      projectCard.appendChild(
+        projectOptionsMenu
+      );
+    }
+  );
+
+  projectCardHeader.appendChild(
+    projectTitle
+  );
+
+  projectCardHeader.appendChild(
+    projectMenuButton
+  );
+
+  projectCard.appendChild(
+    projectCardHeader
+  );
+
+  if (project.description) {
+    const projectDescription =
+      document.createElement("p");
+
+    projectDescription.textContent =
+      project.description;
+
+    projectCard.appendChild(
+      projectDescription
+    );
+  }
+
+  projectCard.addEventListener(
+    "click",
+    () => {
+      const projectParams =
+        new URLSearchParams({
+          id: project.id,
+          name: project.name,
+          description: project.description
+        });
+
+      window.location.href =
+        `/project.html?${projectParams.toString()}`;
+    }
+  );
+
+  return projectCard;
+    }
 function loadProjects() {
   const projects =
     JSON.parse(
