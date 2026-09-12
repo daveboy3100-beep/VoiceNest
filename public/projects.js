@@ -240,61 +240,10 @@ if (emptyState) {
   }
 );
 
-    projectOptionsMenu.appendChild(
-      deleteProjectButton
-    );
+    
+    
+  
 
-    projectCard.appendChild(
-      projectOptionsMenu
-    );
-  }
-);
-projectCardHeader.appendChild(
-  projectTitle
-);
-
-projectCardHeader.appendChild(
-  projectMenuButton
-);
-
-projectCard.appendChild(
-  projectCardHeader
-);
-
-if (project.description) {
-  const projectDescription =
-    document.createElement("p");
-
-  projectDescription.textContent =
-    project.description;
-
-  projectCard.appendChild(
-    projectDescription
-  );
-  }
-      projectCard.addEventListener(
-        "click",
-        () => {
-          const projectParams =
-            new URLSearchParams({
-              id: project.id,
-              name: project.name,
-              description: project.description
-            });
-
-          window.location.href =
-            `/project.html?${projectParams.toString()}`;
-        }
-      );
-
-      
-
-      projectsList.appendChild(
-        projectCard
-      );
-    }
-  );
-}
 
 document.addEventListener(
   "DOMContentLoaded",
