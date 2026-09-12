@@ -112,7 +112,21 @@ function createProjectCard(project) {
 
       projectOptionsMenu.className =
         "project-options-menu";
+const renameProjectButton =
+  document.createElement("button");
 
+renameProjectButton.type = "button";
+renameProjectButton.textContent =
+  "Rename project";
+renameProjectButton.className =
+  "rename-project-button";
+
+renameProjectButton.addEventListener(
+  "click",
+  (menuEvent) => {
+    menuEvent.stopPropagation();
+  }
+);
       const deleteProjectButton =
         document.createElement("button");
 
@@ -166,8 +180,12 @@ function createProjectCard(project) {
       );
 
       projectOptionsMenu.appendChild(
-        deleteProjectButton
-      );
+  renameProjectButton
+);
+
+projectOptionsMenu.appendChild(
+  deleteProjectButton
+);
 
       projectCard.appendChild(
         projectOptionsMenu
