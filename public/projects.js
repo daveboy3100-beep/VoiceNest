@@ -350,7 +350,7 @@ const newProject = {
 };
 
 projects.unshift(newProject);
-
+    
 localStorage.setItem(
   PROJECTS_STORAGE_KEY,
   JSON.stringify(projects)
