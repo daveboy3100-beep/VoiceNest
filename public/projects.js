@@ -349,7 +349,7 @@ const newProject = {
   description: projectDescription
 };
 
-projects.push(newProject);
+projects.unshift(newProject);
 
 localStorage.setItem(
   PROJECTS_STORAGE_KEY,
