@@ -125,6 +125,60 @@ renameProjectButton.addEventListener(
   "click",
   (menuEvent) => {
     menuEvent.stopPropagation();
+
+    const newProjectName =
+      window.prompt(
+        "Rename project:",
+        project.name
+      );
+
+    if (newProjectName === null) {
+      return;
+    }
+
+    const trimmedProjectName =
+      newProjectName.trim();
+
+    if (!trimmedProjectName) {
+      return;
+    }
+
+    const currentProjects =
+      JSON.parse(
+        localStorage.getItem(
+          PROJECTS_STORAGE_KEY
+        )
+      ) || [];
+
+    const updatedProjects =
+      currentProjects.map(
+        (savedProject) => {
+          if (savedProject.id !== project.id) {
+            return savedProject;
+          }
+
+          return {
+            ...savedProject,
+            name: trimmedProjectName
+          };
+        }
+      );
+
+    localStorage.setItem(
+      PROJECTS_STORAGE_KEY,
+      JSON.stringify(updatedProjects)
+    );
+
+    project.name =
+      trimmedProjectName;
+
+    const projectTitle =
+      projectCard.querySelector("h2");
+
+    if (projectTitle) {
+      projectTitle.textContent =
+        trimmedProjectName;
+    }
   }
 );
       const deleteProjectButton =
