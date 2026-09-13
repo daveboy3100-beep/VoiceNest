@@ -14,6 +14,21 @@ const projectName =
 
 const projectDescriptionText =
   projectParams.get("description");
+const PROJECTS_STORAGE_KEY =
+  "voicenest_projects";
+
+const projects =
+  JSON.parse(
+    localStorage.getItem(
+      PROJECTS_STORAGE_KEY
+    )
+  ) || [];
+
+const currentProject =
+  projects.find(
+    (project) =>
+      project.id === projectId
+  );
 if (projectName) {
   projectTitle.textContent =
     projectName;
