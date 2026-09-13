@@ -37,13 +37,12 @@ if (!currentProject) {
 const projectName =
   currentProject
     ? currentProject.name
-    : projectParams.get("name");
+    : null;
 
 const projectDescription =
   currentProject
     ? currentProject.description
-    : projectParams.get("description");
-
+    : null;
 if (projectName) {
   projectTitle.textContent =
     projectName;
