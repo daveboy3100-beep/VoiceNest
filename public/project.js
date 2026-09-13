@@ -7,7 +7,8 @@ const projectParams =
   new URLSearchParams(
     window.location.search
   );
-
+const projectId =
+  projectParams.get("id");
 const projectName =
   projectParams.get("name");
 
