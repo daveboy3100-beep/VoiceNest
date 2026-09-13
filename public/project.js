@@ -1,23 +1,17 @@
 const projectTitle =
   document.getElementById("projectTitle");
 
-const projectDescription =
+const projectDescriptionElement =
   document.getElementById("projectDescription");
+
 const projectParams =
   new URLSearchParams(
     window.location.search
   );
+
 const projectId =
   projectParams.get("id");
-const projectName =
-  currentProject
-    ? currentProject.name
-    : projectParams.get("name");
 
-const projectDescription =
-  currentProject
-    ? currentProject.description
-    : projectParams.get("description");
 const PROJECTS_STORAGE_KEY =
   "voicenest_projects";
 
@@ -33,18 +27,29 @@ const currentProject =
     (project) =>
       project.id === projectId
   );
+
+const projectName =
+  currentProject
+    ? currentProject.name
+    : projectParams.get("name");
+
+const projectDescription =
+  currentProject
+    ? currentProject.description
+    : projectParams.get("description");
+
 if (projectName) {
   projectTitle.textContent =
     projectName;
 }
 
-if (projectDescriptionText) {
-  projectDescription.textContent =
-    projectDescriptionText;
+if (projectDescription) {
+  projectDescriptionElement.textContent =
+    projectDescription;
 } else {
-  projectDescription.textContent =
+  projectDescriptionElement.textContent =
     "Your project workspace.";
-}
+} 
 console.log("VoiceNest Project Workspace loaded");
 
 document.addEventListener(
