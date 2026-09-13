@@ -10,10 +10,14 @@ const projectParams =
 const projectId =
   projectParams.get("id");
 const projectName =
-  projectParams.get("name");
+  currentProject
+    ? currentProject.name
+    : projectParams.get("name");
 
-const projectDescriptionText =
-  projectParams.get("description");
+const projectDescription =
+  currentProject
+    ? currentProject.description
+    : projectParams.get("description");
 const PROJECTS_STORAGE_KEY =
   "voicenest_projects";
 
