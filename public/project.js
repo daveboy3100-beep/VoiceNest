@@ -27,7 +27,13 @@ const currentProject =
     (project) =>
       project.id === projectId
   );
+if (!currentProject) {
+  projectTitle.textContent =
+    "Project not found";
 
+  projectDescriptionElement.textContent =
+    "This project does not exist or may have been deleted.";
+}
 const projectName =
   currentProject
     ? currentProject.name
