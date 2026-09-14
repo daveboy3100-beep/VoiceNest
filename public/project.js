@@ -31,6 +31,13 @@ const currentProjectId =
   currentProject
     ? currentProject.id
     : null;
+function getCurrentProject() {
+  if (!currentProjectId) {
+    return null;
+  }
+
+  return currentProject;
+}
 if (!currentProject) {
   projectTitle.textContent =
     "Project not found";
