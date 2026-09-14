@@ -27,6 +27,10 @@ const currentProject =
     (project) =>
       project.id === projectId
   );
+const currentProjectId =
+  currentProject
+    ? currentProject.id
+    : null;
 if (!currentProject) {
   projectTitle.textContent =
     "Project not found";
