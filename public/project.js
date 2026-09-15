@@ -38,7 +38,11 @@ function getCurrentProject() {
 
   return currentProject;
 }
-let projectScript = null;
+let projectScript =
+  currentProject &&
+  currentProject.script
+    ? currentProject.script
+    : null;
 if (!currentProject) {
   projectTitle.textContent =
     "Project not found";
